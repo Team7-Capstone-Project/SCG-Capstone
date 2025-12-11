@@ -10,9 +10,11 @@ use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ShipmentController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of shipments with filters
      */
