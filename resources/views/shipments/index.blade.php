@@ -25,15 +25,16 @@
             {{-- Filters --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <form method="GET" action="{{ route('shipments.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <form id="filterForm" method="GET" action="{{ route('shipments.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-scg-gray-dark mb-2">Search</label>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="PO, Booking Number..."
+                            <input type="text" name="search" id="searchInput" value="{{ request('search') }}" 
+                                placeholder="PO, Booking Number..."
                                 class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-scg-gray-dark mb-2">Status</label>
-                            <select name="status" class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                            <select name="status" id="statusFilter" class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                                 <option value="">All Status</option>
                                 <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="In Transit" {{ request('status') == 'In Transit' ? 'selected' : '' }}>In Transit</option>
@@ -43,7 +44,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-scg-gray-dark mb-2">Customer</label>
-                            <select name="customer_id" class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                            <select name="customer_id" id="customerFilter" class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                                 <option value="">All Customers</option>
                                 @foreach($customers as $customer)
                                     <option value="{{ $customer->id }}" {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
@@ -52,15 +53,19 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="flex items-end">
-                            <button type="submit" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded transition mr-2">
-                                Filter
-                            </button>
-                            <a href="{{ route('shipments.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition">
+                        <div class="flex items-end space-x-2">
+                            <button type="button" id="resetFilters" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition">
                                 Reset
-                            </a>
+                            </button>
+                            <button type="submit" class="w-1/2 bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition">
+                                Apply
+                            </button>
                         </div>
                     </form>
+                    <div id="loadingIndicator" class="hidden mt-4 text-center">
+                        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-scg-red"></div>
+                        <span class="ml-2 text-sm text-gray-600">Loading shipments...</span>
+                    </div>
                 </div>
             </div>
 
@@ -153,4 +158,122 @@
             </div>
         </div>
     </div>
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('filterForm');
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const customerFilter = document.getElementById('customerFilter');
+            const resetButton = document.getElementById('resetFilters');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const tableContainer = document.querySelector('.overflow-x-auto');
+            const paginationContainer = document.querySelector('.mt-4');
+            
+            let debounceTimer;
+            const debounceDelay = 500; // 500ms delay
+            let isSubmitting = false;
+
+            // Function to submit form with debounce
+            function submitForm(e) {
+                if (e && e.type === 'submit') {
+                    e.preventDefault();
+                }
+                
+                if (isSubmitting) return;
+                
+                clearTimeout(debounceTimer);
+                loadingIndicator.classList.remove('hidden');
+                isSubmitting = true;
+                
+                debounceTimer = setTimeout(() => {
+                    // Update URL without page reload
+                    const url = new URL(window.location.href);
+                    const params = new URLSearchParams(new FormData(form));
+                    url.search = params.toString();
+                    
+                    // Use fetch to get the HTML response
+                    fetch(`${url.toString()}&ajax=1`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'text/html',
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        // Parse the response and update the table
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newTable = doc.querySelector('table');
+                        const newPagination = doc.querySelector('.pagination');
+                        const noResults = doc.querySelector('.text-gray-500');
+                        
+                        // Update the table content
+                        if (tableContainer) {
+                            if (newTable) {
+                                tableContainer.innerHTML = '';
+                                tableContainer.appendChild(newTable);
+                            } else if (noResults) {
+                                tableContainer.innerHTML = '';
+                                tableContainer.appendChild(noResults);
+                            }
+                        }
+                        
+                        // Update pagination
+                        if (paginationContainer) {
+                            if (newPagination) {
+                                paginationContainer.innerHTML = newPagination.innerHTML;
+                            } else if (noResults) {
+                                paginationContainer.innerHTML = '';
+                                paginationContainer.parentNode.insertBefore(noResults, paginationContainer);
+                            }
+                        }
+                        
+                        // Update browser URL for SEO
+                        window.history.pushState({}, '', url);
+                        document.title = `Shipments - ${document.title.split(' - ').pop()}`;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Fallback to normal form submission if AJAX fails
+                        form.submit();
+                    })
+                    .finally(() => {
+                        loadingIndicator.classList.add('hidden');
+                        isSubmitting = false;
+                    });
+                }, debounceDelay);
+            }
+
+            // Reset form
+            function resetForm() {
+                searchInput.value = '';
+                statusFilter.value = '';
+                customerFilter.value = '';
+                submitForm();
+            }
+
+            // Event listeners
+            form.addEventListener('submit', submitForm);
+            resetButton.addEventListener('click', resetForm);
+            
+            // Auto-submit when filters change
+            [statusFilter, customerFilter].forEach(select => {
+                select.addEventListener('change', submitForm);
+            });
+
+            // Debounced search input
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(submitForm, debounceDelay);
+            });
+
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', function() {
+                // Force a full page reload to handle back/forward navigation
+                window.location.reload();
+            });
+        });
+    </script>
+    @endpush
 </x-app-layout>

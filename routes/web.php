@@ -8,9 +8,10 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
+// Redirect root URL to login page
 Route::get('/', function () {
     return redirect()->route('login');
-});
+})->middleware('guest');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard with OTD Metrics
