@@ -22,6 +22,15 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
+                    <div class="mb-6">
+                        <a href="{{ route('shipments.show', $shipment) }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                            Back to Shipment Details
+                        </a>
+                    </div>
+                    
                     <form action="{{ route('shipments.update', $shipment) }}" method="POST" id="shipmentForm">
                         @csrf
                         @method('PUT')
@@ -216,20 +225,13 @@
                         </div>
 
                         {{-- Form Actions --}}
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <a href="{{ route('shipments.show', $shipment) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                    ← Back to Shipment Details
-                                </a>
-                            </div>
-                            <div class="space-x-4">
-                                <a href="{{ route('shipments.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded transition">
-                                    Cancel
-                                </a>
-                                <button type="submit" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded transition">
-                                    Update Shipment
-                                </button>
-                            </div>
+                        <div class="flex justify-end space-x-4 pt-4">
+                            <a href="{{ route('shipments.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded transition">
+                                Cancel
+                            </a>
+                            <button type="submit" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded transition">
+                                Update Shipment
+                            </button>
                         </div>
                     </form>
                 </div>

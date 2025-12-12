@@ -225,53 +225,29 @@
                                 paginationContainer.innerHTML = newPagination.innerHTML;
                             } else if (noResults) {
                                 paginationContainer.innerHTML = '';
-                                paginationContainer.parentNode.insertBefore(noResults, paginationContainer);
-                            }
-                        }
-                        
-                        // Update browser URL for SEO
-                        window.history.pushState({}, '', url);
-                        document.title = `Shipments - ${document.title.split(' - ').pop()}`;
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        // Fallback to normal form submission if AJAX fails
-                        form.submit();
-                    })
-                    .finally(() => {
-                        loadingIndicator.classList.add('hidden');
-                        isSubmitting = false;
-                    });
-                }, debounceDelay);
             }
 
-            // Reset form
-            function resetForm() {
-                searchInput.value = '';
-                statusFilter.value = '';
-                customerFilter.value = '';
-                submitForm();
-            }
-
-            // Event listeners
-            form.addEventListener('submit', submitForm);
-            resetButton.addEventListener('click', resetForm);
-            
-            // Auto-submit when filters change
-            [statusFilter, customerFilter].forEach(select => {
-                select.addEventListener('change', submitForm);
-            });
-
-            // Debounced search input
+            // Debounce the search input
             searchInput.addEventListener('input', function() {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(submitForm, debounceDelay);
             });
 
-            // Handle browser back/forward buttons
-            window.addEventListener('popstate', function() {
-                // Force a full page reload to handle back/forward navigation
-                window.location.reload();
+            // Filter changes
+            statusFilter.addEventListener('change', submitForm);
+            customerFilter.addEventListener('change', submitForm);
+            
+            // Reset filters button
+            document.getElementById('resetFilters').addEventListener('click', function(e) {
+                e.preventDefault();
+                // Reset all form fields
+                searchInput.value = '';
+                statusFilter.selectedIndex = 0;
+                customerFilter.selectedIndex = 0;
+                
+                // Submit the form
+                const formAction = form.getAttribute('action').split('?')[0];
+                window.location.href = formAction;
             });
         });
     </script>
