@@ -14,6 +14,7 @@ class Shipment extends Model
     protected $fillable = [
         'customer_id',
         'supplier_id',
+        'type',
         'created_by_user_id',
         'customer_po',
         'scg_po',

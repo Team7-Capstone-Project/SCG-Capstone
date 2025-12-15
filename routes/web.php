@@ -16,18 +16,19 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard with OTD Metrics
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Shipment Management
+    Route::get('shipments/export', [ShipmentController::class, 'export'])->name('shipments.export');
     Route::resource('shipments', ShipmentController::class);
     Route::post('shipments/{shipment}/update-status', [ShipmentController::class, 'updateStatus'])
         ->name('shipments.update-status')
         ->middleware('can:updateStatus,shipment');
-    
+
     // Master Data Management
     Route::resource('customers', CustomerController::class);
     Route::resource('suppliers', SupplierController::class);
     Route::resource('products', ProductController::class);
-    
+
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

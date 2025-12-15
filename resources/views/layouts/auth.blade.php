@@ -13,19 +13,27 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-50">
-        <div class="w-full sm:max-w-md px-6 py-8 bg-white shadow-md overflow-hidden sm:rounded-lg">
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div class="w-full sm:max-w-md px-6 py-8 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg transition-colors duration-300">
             <div class="flex justify-center mb-8">
                 <div class="text-center">
                     <div class="flex justify-center mb-4">
-                        <img src="{{ asset('images/scg_logo.png') }}" alt="SCG Logo" class="h-16">
+                        <img src="{{ asset('images/logoSCG.png') }}" alt="SCG Logo" class="h-16">
                     </div>
-                    <h1 class="text-2xl font-bold text-[#A6192E] mb-1">
+                    <h1 class="text-2xl font-bold text-[#A6192E] dark:text-red-500 mb-1">
                         {{ config('app.name', 'SCG SCM') }}
                     </h1>
-                    <p class="text-sm text-gray-600">Supply Chain Management System</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Supply Chain Management System</p>
                 </div>
             </div>
 

@@ -18,7 +18,10 @@ class ShipmentController extends Controller
     /**
      * Display a listing of shipments with filters
      */
-    public function index(Request $request)
+    /**
+     * Get filtered query builder
+     */
+    private function getFilteredQuery(Request $request)
     {
         $query = Shipment::with(['customer', 'supplier', 'createdBy']);
 
@@ -27,23 +30,120 @@ class ShipmentController extends Controller
             $query->where('status', $request->status);
         }
 
-        if ($request->filled('customer_id')) {
-            $query->where('customer_id', $request->customer_id);
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('late')) {
+            $query->late();
+        }
+
+        if ($request->filled('on_time')) {
+            $query->onTime();
         }
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('customer_po', 'like', "%{$search}%")
-                  ->orWhere('scg_po', 'like', "%{$search}%")
-                  ->orWhere('booking_number', 'like', "%{$search}%");
+                    ->orWhere('scg_po', 'like', "%{$search}%")
+                    ->orWhere('booking_number', 'like', "%{$search}%");
             });
         }
 
-        $shipments = $query->latest()->paginate(15);
+        // Apply sorting
+        if ($request->filled('sort') && $request->sort === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        return $query;
+    }
+
+    /**
+     * Display a listing of shipments with filters
+     */
+    public function index(Request $request)
+    {
+        $query = $this->getFilteredQuery($request);
+        $shipments = $query->paginate(15)->withQueryString();
+        $customers = Customer::orderBy('name')->get();
         $customers = Customer::orderBy('name')->get();
 
         return view('shipments.index', compact('shipments', 'customers'));
+    }
+
+    /**
+     * Export shipments to CSV
+     */
+    public function export(Request $request)
+    {
+        $query = $this->getFilteredQuery($request);
+        $shipments = $query->get();
+
+        $filename = 'shipments-' . date('Y-m-d-His') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($shipments) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, [
+                'ID',
+                'Customer PO',
+                'SCG PO',
+                'Booking Number',
+                'Customer',
+                'Supplier',
+                'Status',
+                'ETD Port',
+                'ETA Port',
+                'ATA Port',
+                'Delivery Schedule',
+                'ATA Customer',
+                'Shipping Cost',
+                'Customs Cost',
+                'Other Costs',
+                'Total Cost',
+                'OTD Status'
+            ]);
+
+            foreach ($shipments as $shipment) {
+                $otdStatus = 'Pending';
+                if ($shipment->isDelivered()) {
+                    $otdStatus = $shipment->isOnTime() ? 'On-Time' : 'Late';
+                }
+
+                fputcsv($file, [
+                    $shipment->id,
+                    $shipment->customer_po,
+                    $shipment->scg_po,
+                    $shipment->booking_number,
+                    $shipment->customer->name,
+                    $shipment->supplier->name,
+                    $shipment->status,
+                    $shipment->etd_port?->format('Y-m-d'),
+                    $shipment->eta_port?->format('Y-m-d'),
+                    $shipment->ata_port?->format('Y-m-d'),
+                    $shipment->customer_receiving_schedule?->format('Y-m-d'),
+                    $shipment->ata_customer?->format('Y-m-d'),
+                    $shipment->shipping_cost,
+                    $shipment->customs_cost,
+                    $shipment->other_costs,
+                    $shipment->total_cost,
+                    $otdStatus
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     /**
@@ -72,6 +172,7 @@ class ShipmentController extends Controller
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'supplier_id' => 'required|exists:suppliers,id',
+            'type' => 'required|in:Import,Export',
             'customer_po' => 'nullable|string|max:255',
             'scg_po' => 'nullable|string|max:255',
             'booking_number' => 'nullable|string|max:255',
@@ -105,6 +206,7 @@ class ShipmentController extends Controller
             $shipment = Shipment::create([
                 'customer_id' => $validated['customer_id'],
                 'supplier_id' => $validated['supplier_id'],
+                'type' => $validated['type'],
                 'created_by_user_id' => Auth::id(),
                 'customer_po' => $validated['customer_po'] ?? null,
                 'scg_po' => $validated['scg_po'] ?? null,
@@ -188,6 +290,7 @@ class ShipmentController extends Controller
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'supplier_id' => 'required|exists:suppliers,id',
+            'type' => 'required|in:Import,Export',
             'customer_po' => 'nullable|string|max:255',
             'scg_po' => 'nullable|string|max:255',
             'booking_number' => 'nullable|string|max:255',
@@ -253,7 +356,7 @@ class ShipmentController extends Controller
         try {
             $oldStatus = $shipment->status;
             $oldAtaCustomer = $shipment->ata_customer?->format('Y-m-d');
-            
+
             // Auto-set status to Delivered if ata_customer is provided
             if (!empty($validated['ata_customer'])) {
                 $shipment->status = 'Delivered';
@@ -305,7 +408,7 @@ class ShipmentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
