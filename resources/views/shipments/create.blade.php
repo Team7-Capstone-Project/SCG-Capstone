@@ -593,6 +593,7 @@
         </div>
     </div>
 
+    @push('scripts')
     <script>
         // Product template
         let productIndex = 0;
