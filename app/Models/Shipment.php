@@ -18,6 +18,7 @@ class Shipment extends Model
         'created_by_user_id',
         'customer_po',
         'scg_po',
+        'scg_so',
         'booking_number',
         'delivery_note_number',
         'supplier_invoice',
