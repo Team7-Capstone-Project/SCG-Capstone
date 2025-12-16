@@ -126,6 +126,43 @@ class Shipment extends Model
     }
 
     /**
+     * Get days difference (late or early)
+     * Returns positive number for late, negative for early
+     */
+    public function getDaysDifference(): ?int
+    {
+        if (!$this->isDelivered() || !$this->ata_customer || !$this->customer_receiving_schedule) {
+            return null;
+        }
+
+        // Calculate difference: positive = late, negative = early
+        // If ata_customer > schedule, result is positive (late)
+        // If ata_customer < schedule, result is negative (early)
+        return $this->customer_receiving_schedule->diffInDays($this->ata_customer, false);
+    }
+
+    /**
+     * Get formatted days difference text
+     */
+    public function getDaysDifferenceText(): ?string
+    {
+        $days = $this->getDaysDifference();
+        
+        if ($days === null) {
+            return null;
+        }
+
+        if ($days > 0) {
+            return $days . ' day' . ($days > 1 ? 's' : '') . ' late';
+        } elseif ($days < 0) {
+            $earlyDays = abs($days);
+            return $earlyDays . ' day' . ($earlyDays > 1 ? 's' : '') . ' early';
+        } else {
+            return 'On schedule';
+        }
+    }
+
+    /**
      * Get total cost
      */
     public function getTotalCostAttribute(): float

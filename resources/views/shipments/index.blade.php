@@ -132,14 +132,33 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @if($shipment->isDelivered())
+                                                    @php
+                                                        $daysDiff = $shipment->getDaysDifference();
+                                                        $daysText = $shipment->getDaysDifferenceText();
+                                                    @endphp
+                                                    
                                                     @if($shipment->isOnTime())
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                                            ✓ On-Time
-                                                        </span>
+                                                        <div class="flex flex-col">
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                                                ✓ On-Time
+                                                            </span>
+                                                            @if($daysDiff !== null && $daysDiff < 0)
+                                                                <span class="text-xs text-green-600 dark:text-green-400 mt-1">
+                                                                    {{ $daysText }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
                                                     @elseif($shipment->isLate())
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                                                            ✗ Late
-                                                        </span>
+                                                        <div class="flex flex-col">
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                                                ✗ Late
+                                                            </span>
+                                                            @if($daysText)
+                                                                <span class="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">
+                                                                    {{ $daysText }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
                                                     @else
                                                         <span class="text-gray-400 text-xs">-</span>
                                                     @endif
