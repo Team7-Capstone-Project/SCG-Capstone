@@ -5,11 +5,11 @@
                 <h2 class="font-semibold text-xl text-scg-gray-dark dark:text-gray-200 leading-tight">
                     PT SCG International Indonesia
                 </h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Supply Chain Management Dashboard</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('Supply Chain Management Dashboard') }}</p>
             </div>
             @can('create', App\Models\Shipment::class)
                 <a href="{{ route('shipments.create') }}" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition duration-150">
-                    + Create Shipment
+                    + {{ __('Create Shipment') }}
                 </a>
             @endcan
         </div>
@@ -33,7 +33,7 @@
                     <div class="p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Shipments</p>
+                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ __('Total Shipments') }}</p>
                                 <p class="text-4xl font-extrabold text-gray-800 dark:text-white mt-2">{{ $totalShipments }}</p>
                             </div>
                             <div class="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-2xl p-4 shadow-sm">
@@ -50,7 +50,7 @@
                     <div class="p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Delivered Shipments</p>
+                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ __('Delivered Shipments') }}</p>
                                 <p class="text-4xl font-extrabold text-gray-800 dark:text-white mt-2">{{ $deliveredShipments }}</p>
                             </div>
                             <div class="bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 rounded-2xl p-4 shadow-sm">
@@ -67,7 +67,7 @@
                     <div class="p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Late Shipments</p>
+                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ __('Late Shipments') }}</p>
                                 <p class="text-4xl font-extrabold text-scg-red dark:text-red-400 mt-2">{{ $lateShipments }}</p>
                             </div>
                             <div class="bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900 dark:to-red-800 rounded-2xl p-4 shadow-sm">
@@ -84,7 +84,7 @@
                     <div class="p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">On-Time Delivery Rate</p>
+                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ __('On-Time Delivery Rate') }}</p>
                                 <p class="text-4xl font-extrabold {{ $otdRate >= 80 ? 'text-green-600 dark:text-green-400' : ($otdRate >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-scg-red dark:text-red-400') }} mt-2">
                                     {{ number_format($otdRate, 1) }}%
                                 </p>
@@ -104,9 +104,9 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-scg-gray-dark dark:text-gray-200">Recent Shipments</h3>
+                        <h3 class="text-lg font-semibold text-scg-gray-dark dark:text-gray-200">{{ __('Recent Shipments') }}</h3>
                         <a href="{{ route('shipments.index') }}" class="text-scg-red dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium">
-                            View All →
+                            {{ __('View All') }} →
                         </a>
                     </div>
 
@@ -115,12 +115,12 @@
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-scg-gray-light dark:bg-gray-700">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Customer PO</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Customer</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Supplier</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">ETD Port</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Customer PO') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Customer') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Supplier') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Status') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('ETD Port') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -145,14 +145,14 @@
                                                     ];
                                                 @endphp
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
-                                                    {{ $shipment->status }}
+                                                    {{ __($shipment->status) }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                 {{ $shipment->etd_port?->format('d M Y') ?? 'N/A' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">View</a>
+                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">{{ __('View') }}</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -160,7 +160,7 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">No shipments found. Create your first shipment to get started.</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">{{ __('No shipments found. Create your first shipment to get started.') }}</p>
                     @endif
                 </div>
             </div>

@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-scg-gray-dark dark:text-gray-200 leading-tight">
-                Suppliers Management
+                {{ __('Suppliers Management') }}
             </h2>
             <a href="{{ route('suppliers.create') }}" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition">
-                + Add Supplier
+                + {{ __('Create Supplier') }}
             </a>
         </div>
     </x-slot>
@@ -26,12 +26,12 @@
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-scg-gray-light dark:bg-gray-700">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">{{ __('Name') }}</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">Country</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">Contact Person</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">Phone</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">Email</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">{{ __('Contact Person') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">{{ __('Phone') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">{{ __('Email') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase">{{ __('Actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -53,8 +53,8 @@
                                                 {{ $supplier->email ?? '-' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                                <a href="{{ route('suppliers.show', $supplier) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">View</a>
-                                                <a href="{{ route('suppliers.edit', $supplier) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">Edit</a>
+                                                <a href="{{ route('suppliers.show', $supplier) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">{{ __('View') }}</a>
+                                                <a href="{{ route('suppliers.edit', $supplier) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ __('Edit') }}</a>
                                             </td>
                                         </tr>
                                     @endforeach

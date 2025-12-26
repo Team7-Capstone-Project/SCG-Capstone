@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-scg-gray-dark dark:text-gray-200 leading-tight">
-                Shipments Management
+                {{ __('Shipments Management') }}
             </h2>
             @can('create', App\Models\Shipment::class)
                 <div class="flex space-x-2">
@@ -10,10 +10,10 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
-                        Export Excel
+                        {{ __('Export Excel') }}
                     </a>
                     <a href="{{ route('shipments.create') }}" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition shadow-md">
-                        + Create Shipment
+                        + {{ __('Create Shipment') }}
                     </a>
                 </div>
             @endcan
@@ -35,42 +35,42 @@
                 <div class="p-6">
                     <form id="filterForm" method="GET" action="{{ route('shipments.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">Search</label>
+                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">{{ __('Search') }}</label>
                             <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
                                 placeholder="PO, Booking Number..."
                                 class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">Status</label>
+                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">{{ __('Status') }}</label>
                             <select name="status" id="statusFilter" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-                                <option value="">All Status</option>
-                                <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="In Transit" {{ request('status') == 'In Transit' ? 'selected' : '' }}>In Transit</option>
-                                <option value="Delivered" {{ request('status') == 'Delivered' ? 'selected' : '' }}>Delivered</option>
-                                <option value="Cancelled" {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                <option value="">{{ __('All Status') }}</option>
+                                <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>{{ __('Pending') }}</option>
+                                <option value="In Transit" {{ request('status') == 'In Transit' ? 'selected' : '' }}>{{ __('In Transit') }}</option>
+                                <option value="Delivered" {{ request('status') == 'Delivered' ? 'selected' : '' }}>{{ __('Delivered') }}</option>
+                                <option value="Cancelled" {{ request('status') == 'Cancelled' ? 'selected' : '' }}>{{ __('Cancelled') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">Type</label>
+                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">{{ __('Type') }}</label>
                             <select name="type" id="typeFilter" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-                                <option value="">All Types</option>
-                                <option value="Import" {{ request('type') == 'Import' ? 'selected' : '' }}>Import</option>
-                                <option value="Export" {{ request('type') == 'Export' ? 'selected' : '' }}>Export</option>
+                                <option value="">{{ __('All Types') }}</option>
+                                <option value="Import" {{ request('type') == 'Import' ? 'selected' : '' }}>{{ __('Import') }}</option>
+                                <option value="Export" {{ request('type') == 'Export' ? 'selected' : '' }}>{{ __('Export') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">Sort By</label>
+                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">{{ __('Sort By') }}</label>
                             <select name="sort" id="sortFilter" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
-                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('Newest First') }}</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>{{ __('Oldest First') }}</option>
                             </select>
                         </div>
                         <div class="flex items-end space-x-2">
                             <button type="button" id="resetFilters" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition">
-                                Reset
+                                {{ __('Reset') }}
                             </button>
                             <button type="submit" class="w-1/2 bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition">
-                                Apply
+                                {{ __('Apply') }}
                             </button>
                         </div>
                     </form>
@@ -89,14 +89,14 @@
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-scg-gray-light dark:bg-gray-700">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Customer PO</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Customer</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Supplier</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">ETD Port</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">OTD</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('ID') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Customer PO') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Customer') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Supplier') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Status') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('ETD Port') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('OTD') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -124,7 +124,7 @@
                                                     ];
                                                 @endphp
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
-                                                    {{ $shipment->status }}
+                                                    {{ __($shipment->status) }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -140,22 +140,22 @@
                                                     @if($shipment->isOnTime())
                                                         <div class="flex flex-col">
                                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                                                ✓ On-Time
+                                                                ✓ {{ __('On-Time') }}
                                                             </span>
                                                             @if($daysDiff !== null && $daysDiff < 0)
                                                                 <span class="text-xs text-green-600 dark:text-green-400 mt-1">
-                                                                    {{ $daysText }}
+                                                                     {{ abs($daysDiff) }} {{ __('days early') }}
                                                                 </span>
                                                             @endif
                                                         </div>
                                                     @elseif($shipment->isLate())
                                                         <div class="flex flex-col">
                                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                                                                ✗ Late
+                                                                ✗ {{ __('Late') }}
                                                             </span>
-                                                            @if($daysText)
+                                                            @if($daysText && $daysDiff > 0)
                                                                 <span class="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">
-                                                                    {{ $daysText }}
+                                                                    {{ $daysDiff }} {{ __('days late') }}
                                                                 </span>
                                                             @endif
                                                         </div>
@@ -163,13 +163,13 @@
                                                         <span class="text-gray-400 text-xs">-</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-gray-400 text-xs">Pending</span>
+                                                    <span class="text-gray-400 text-xs">{{ __('Pending') }}</span>
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">View</a>
+                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">{{ __('View') }}</a>
                                                 @can('update', $shipment)
-                                                    <a href="{{ route('shipments.edit', $shipment) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">Edit</a>
+                                                    <a href="{{ route('shipments.edit', $shipment) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ __('Edit') }}</a>
                                                 @endcan
                                             </td>
                                         </tr>

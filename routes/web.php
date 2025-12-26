@@ -13,6 +13,13 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->middleware('guest');
 
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'id'])) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('lang.switch');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard with OTD Metrics
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
