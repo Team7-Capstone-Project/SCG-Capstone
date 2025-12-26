@@ -101,58 +101,58 @@
             </div>
 
             {{-- Recent Shipments Table --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-scg-gray-dark">Recent Shipments</h3>
-                        <a href="{{ route('shipments.index') }}" class="text-scg-red hover:text-red-800 font-medium">
+                        <h3 class="text-lg font-semibold text-scg-gray-dark dark:text-gray-200">Recent Shipments</h3>
+                        <a href="{{ route('shipments.index') }}" class="text-scg-red dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium">
                             View All →
                         </a>
                     </div>
 
                     @if($recentShipments->count() > 0)
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-scg-gray-light">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-scg-gray-light dark:bg-gray-700">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase tracking-wider">Customer PO</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase tracking-wider">Customer</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase tracking-wider">Supplier</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase tracking-wider">ETD Port</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Customer PO</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Customer</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Supplier</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">ETD Port</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach($recentShipments as $shipment)
-                                        <tr class="hover:bg-gray-50">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                                 {{ $shipment->customer_po ?? 'N/A' }}
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                 {{ $shipment->customer->name }}
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                 {{ $shipment->supplier->name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @php
                                                     $statusColors = [
-                                                        'Pending' => 'bg-yellow-100 text-yellow-800',
-                                                        'In Transit' => 'bg-blue-100 text-blue-800',
-                                                        'Delivered' => 'bg-green-100 text-green-800',
-                                                        'Cancelled' => 'bg-gray-100 text-gray-800',
+                                                        'Pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                                                        'In Transit' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+                                                        'Delivered' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                                                        'Cancelled' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
                                                     ];
                                                 @endphp
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800' }}">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
                                                     {{ $shipment->status }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                 {{ $shipment->etd_port?->format('d M Y') ?? 'N/A' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red hover:text-red-900">View</a>
+                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">View</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -160,7 +160,7 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-gray-500 text-center py-8">No shipments found. Create your first shipment to get started.</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">No shipments found. Create your first shipment to get started.</p>
                     @endif
                 </div>
             </div>

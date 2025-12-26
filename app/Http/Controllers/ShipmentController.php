@@ -77,73 +77,15 @@ class ShipmentController extends Controller
     /**
      * Export shipments to CSV
      */
+    /**
+     * Export shipments to XLSX
+     */
     public function export(Request $request)
     {
         $query = $this->getFilteredQuery($request);
-        $shipments = $query->get();
+        $filename = 'shipments-' . date('Y-m-d-His') . '.xlsx';
 
-        $filename = 'shipments-' . date('Y-m-d-His') . '.csv';
-
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
-
-        $callback = function () use ($shipments) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, [
-                'ID',
-                'Customer PO',
-                'SCG PO',
-                'Booking Number',
-                'Customer',
-                'Supplier',
-                'Status',
-                'ETD Port',
-                'ETA Port',
-                'ATA Port',
-                'Delivery Schedule',
-                'ATA Customer',
-                'Shipping Cost',
-                'Customs Cost',
-                'Other Costs',
-                'Total Cost',
-                'OTD Status'
-            ]);
-
-            foreach ($shipments as $shipment) {
-                $otdStatus = 'Pending';
-                if ($shipment->isDelivered()) {
-                    $otdStatus = $shipment->isOnTime() ? 'On-Time' : 'Late';
-                }
-
-                fputcsv($file, [
-                    $shipment->id,
-                    $shipment->customer_po,
-                    $shipment->scg_po,
-                    $shipment->booking_number,
-                    $shipment->customer->name,
-                    $shipment->supplier->name,
-                    $shipment->status,
-                    $shipment->etd_port?->format('Y-m-d'),
-                    $shipment->eta_port?->format('Y-m-d'),
-                    $shipment->ata_port?->format('Y-m-d'),
-                    $shipment->customer_receiving_schedule?->format('Y-m-d'),
-                    $shipment->ata_customer?->format('Y-m-d'),
-                    $shipment->shipping_cost,
-                    $shipment->customs_cost,
-                    $shipment->other_costs,
-                    $shipment->total_cost,
-                    $otdStatus
-                ]);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\ShipmentsExport($query), $filename);
     }
 
     /**
