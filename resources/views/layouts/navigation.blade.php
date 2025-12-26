@@ -41,6 +41,8 @@
                     <a href="{{ route('lang.switch', 'id') }}" class="{{ app()->getLocale() == 'id' ? 'font-bold text-scg-red' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} text-sm transition-colors duration-200">ID</a>
                     <span class="mx-1 text-gray-300 dark:text-gray-600">|</span>
                     <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'font-bold text-scg-red' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} text-sm transition-colors duration-200">EN</a>
+                    <span class="mx-1 text-gray-300 dark:text-gray-600">|</span>
+                    <a href="{{ route('lang.switch', 'th') }}" class="{{ app()->getLocale() == 'th' ? 'font-bold text-scg-red' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} text-sm transition-colors duration-200">TH</a>
                 </div>
 
                 <!-- Dark Mode Toggle -->
@@ -136,6 +138,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('lang.switch', 'en')" :active="app()->getLocale() == 'en'">
                     English
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('lang.switch', 'th')" :active="app()->getLocale() == 'th'">
+                    ไทย (Thai)
                 </x-responsive-nav-link>
 
                 <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>

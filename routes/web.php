@@ -14,7 +14,7 @@ Route::get('/', function () {
 })->middleware('guest');
 
 Route::get('lang/{locale}', function ($locale) {
-    if (in_array($locale, ['en', 'id'])) {
+    if (in_array($locale, ['en', 'id', 'th'])) {
         session(['locale' => $locale]);
     }
     return back();
