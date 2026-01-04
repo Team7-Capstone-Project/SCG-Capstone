@@ -52,8 +52,22 @@ class ShipmentController extends Controller
         }
 
         // Apply sorting
-        if ($request->filled('sort') && $request->sort === 'oldest') {
-            $query->orderBy('created_at', 'asc');
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'oldest':
+                    $query->orderBy('created_at', 'asc');
+                    break;
+                case 'month_asc':
+                    $query->orderBy('etd_port', 'asc');
+                    break;
+                case 'month_desc':
+                    $query->orderBy('etd_port', 'desc');
+                    break;
+                case 'newest':
+                default:
+                    $query->latest();
+                    break;
+            }
         } else {
             $query->latest();
         }

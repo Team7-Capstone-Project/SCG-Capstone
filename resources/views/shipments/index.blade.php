@@ -63,6 +63,8 @@
                             <select name="sort" id="sortFilter" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                                 <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('Newest First') }}</option>
                                 <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>{{ __('Oldest First') }}</option>
+                                <option value="month_asc" {{ request('sort') == 'month_asc' ? 'selected' : '' }}>{{ __('Month (Earliest)') }}</option>
+                                <option value="month_desc" {{ request('sort') == 'month_desc' ? 'selected' : '' }}>{{ __('Month (Latest)') }}</option>
                             </select>
                         </div>
                         <div class="flex items-end space-x-2">
