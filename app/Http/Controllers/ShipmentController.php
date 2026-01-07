@@ -47,7 +47,10 @@ class ShipmentController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('customer_po', 'like', "%{$search}%")
                     ->orWhere('scg_po', 'like', "%{$search}%")
-                    ->orWhere('booking_number', 'like', "%{$search}%");
+                    ->orWhere('scg_so', 'like', "%{$search}%")
+                    ->orWhere('booking_number', 'like', "%{$search}%")
+                    ->orWhere('supplier_invoice', 'like', "%{$search}%")
+                    ->orWhere('delivery_note_number', 'like', "%{$search}%");
             });
         }
 
@@ -129,12 +132,13 @@ class ShipmentController extends Controller
             'customer_id' => 'required|exists:customers,id',
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
-            'customer_po' => 'nullable|string|max:255',
-            'scg_po' => 'nullable|string|max:255',
-            'scg_so' => 'nullable|string|max:255',
-            'booking_number' => 'nullable|string|max:255',
-            'delivery_note_number' => 'nullable|string|max:255',
-            'supplier_invoice' => 'nullable|string|max:255',
+            // Document numbers - must be unique globally
+            'customer_po' => 'nullable|string|max:255|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|max:255|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|max:255|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|max:255|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|max:255|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:255|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
             'etd_port' => 'required|date',
             'eta_port' => 'nullable|date|after_or_equal:etd_port',
             'ata_port' => 'nullable|date',
@@ -155,6 +159,13 @@ class ShipmentController extends Controller
             'customer_receiving_schedule.after_or_equal' => 'Customer receiving schedule must be after or equal to ETA Port',
             'products.required' => 'At least one product is required',
             'products.min' => 'At least one product is required',
+            // Unique validation error messages
+            'customer_po.unique' => 'Customer PO already exists in the system',
+            'scg_po.unique' => 'SCG PO already exists in the system',
+            'scg_so.unique' => 'SCG SO already exists in the system',
+            'booking_number.unique' => 'Booking Number already exists in the system',
+            'delivery_note_number.unique' => 'Delivery Note Number already exists in the system',
+            'supplier_invoice.unique' => 'Supplier Invoice already exists in the system',
         ]);
 
         DB::beginTransaction();
@@ -259,12 +270,13 @@ class ShipmentController extends Controller
             'customer_id' => 'required|exists:customers,id',
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
-            'customer_po' => 'nullable|string|max:255',
-            'scg_po' => 'nullable|string|max:255',
-            'scg_so' => 'nullable|string|max:255',
-            'booking_number' => 'nullable|string|max:255',
-            'delivery_note_number' => 'nullable|string|max:255',
-            'supplier_invoice' => 'nullable|string|max:255',
+            // Document numbers - must be unique globally (ignore current shipment)
+            'customer_po' => 'nullable|string|max:255|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|max:255|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|max:255|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|max:255|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|max:255|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:255|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
             'status' => 'required|in:Pending,In Transit,Delivered,Cancelled',
             'etd_port' => 'required|date',
             'eta_port' => 'nullable|date|after_or_equal:etd_port',
