@@ -4,9 +4,11 @@
             <h2 class="font-semibold text-xl text-scg-gray-dark dark:text-gray-200 leading-tight">
                 {{ __('Products Management') }}
             </h2>
-            <a href="{{ route('products.create') }}" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition">
-                + {{ __('Create Product') }}
-            </a>
+            @can('create', App\Models\Product::class)
+                <a href="{{ route('products.create') }}" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition">
+                    + {{ __('Create Product') }}
+                </a>
+            @endcan
         </div>
     </x-slot>
 
@@ -50,7 +52,9 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                                 <a href="{{ route('products.show', $product) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">{{ __('View') }}</a>
-                                                <a href="{{ route('products.edit', $product) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ __('Edit') }}</a>
+                                                @can('update', $product)
+                                                    <a href="{{ route('products.edit', $product) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ __('Edit') }}</a>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach

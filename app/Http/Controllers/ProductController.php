@@ -10,18 +10,24 @@ class ProductController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Product::class);
+        
         $products = Product::with('supplier')->latest()->paginate(15);
         return view('products.index', compact('products'));
     }
 
     public function create()
     {
+        $this->authorize('create', Product::class);
+        
         $suppliers = Supplier::orderBy('name')->get();
         return view('products.create', compact('suppliers'));
     }
 
     public function store(Request $request)
     {
+        $this->authorize('create', Product::class);
+        
         $validated = $request->validate([
             'sku' => 'required|string|max:255|unique:products,sku',
             'name' => 'required|string|max:255',
@@ -38,18 +44,24 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        $this->authorize('view', $product);
+        
         $product->load('supplier', 'shipments');
         return view('products.show', compact('product'));
     }
 
     public function edit(Product $product)
     {
+        $this->authorize('update', $product);
+        
         $suppliers = Supplier::orderBy('name')->get();
         return view('products.edit', compact('product', 'suppliers'));
     }
 
     public function update(Request $request, Product $product)
     {
+        $this->authorize('update', $product);
+        
         $validated = $request->validate([
             'sku' => 'required|string|max:255|unique:products,sku,' . $product->id,
             'name' => 'required|string|max:255',
@@ -66,6 +78,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        $this->authorize('delete', $product);
+        
         $product->delete();
 
         return redirect()->route('products.index')

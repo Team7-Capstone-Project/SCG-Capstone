@@ -10,18 +10,24 @@ class CustomerController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Customer::class);
+        
         $customers = Customer::with('pic')->latest()->paginate(15);
         return view('customers.index', compact('customers'));
     }
 
     public function create()
     {
+        $this->authorize('create', Customer::class);
+        
         $picUsers = User::where('role', 'pic_sales')->orWhere('role', 'admin')->get();
         return view('customers.create', compact('picUsers'));
     }
 
     public function store(Request $request)
     {
+        $this->authorize('create', Customer::class);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'nullable|string',
@@ -39,18 +45,24 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
+        $this->authorize('view', $customer);
+        
         $customer->load('pic', 'shipments');
         return view('customers.show', compact('customer'));
     }
 
     public function edit(Customer $customer)
     {
+        $this->authorize('update', $customer);
+        
         $picUsers = User::where('role', 'pic_sales')->orWhere('role', 'admin')->get();
         return view('customers.edit', compact('customer', 'picUsers'));
     }
 
     public function update(Request $request, Customer $customer)
     {
+        $this->authorize('update', $customer);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'nullable|string',
@@ -68,6 +80,8 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer)
     {
+        $this->authorize('delete', $customer);
+        
         $customer->delete();
 
         return redirect()->route('customers.index')

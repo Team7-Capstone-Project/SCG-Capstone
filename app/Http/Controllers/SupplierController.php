@@ -9,17 +9,23 @@ class SupplierController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Supplier::class);
+        
         $suppliers = Supplier::latest()->paginate(15);
         return view('suppliers.index', compact('suppliers'));
     }
 
     public function create()
     {
+        $this->authorize('create', Supplier::class);
+        
         return view('suppliers.create');
     }
 
     public function store(Request $request)
     {
+        $this->authorize('create', Supplier::class);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'nullable|string',
@@ -37,17 +43,23 @@ class SupplierController extends Controller
 
     public function show(Supplier $supplier)
     {
+        $this->authorize('view', $supplier);
+        
         $supplier->load('products', 'shipments');
         return view('suppliers.show', compact('supplier'));
     }
 
     public function edit(Supplier $supplier)
     {
+        $this->authorize('update', $supplier);
+        
         return view('suppliers.edit', compact('supplier'));
     }
 
     public function update(Request $request, Supplier $supplier)
     {
+        $this->authorize('update', $supplier);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'nullable|string',
@@ -65,6 +77,8 @@ class SupplierController extends Controller
 
     public function destroy(Supplier $supplier)
     {
+        $this->authorize('delete', $supplier);
+        
         $supplier->delete();
 
         return redirect()->route('suppliers.index')
