@@ -226,11 +226,21 @@ class ShipmentController extends Controller
 
     /**
      * Show the form for editing the specified shipment
+     * NEW SYSTEM: Different forms for different roles
+     * - Admin SCM: Limited monitoring form (edit-admin.blade.php)
+     * - PIC Sales: Full edit form (edit.blade.php)
      */
     public function edit(Shipment $shipment)
     {
+        // Check if user is Admin SCM (monitoring only)
+        if (Auth::user()->isAdminSCM()) {
+            $this->authorize('updateStatus', $shipment);
+            return view('shipments.edit-admin', compact('shipment'));
+        }
+        
+        // PIC Sales gets full edit access
         $this->authorize('update', $shipment);
-
+        
         $customers = Customer::orderBy('name')->get();
         $suppliers = Supplier::orderBy('name')->get();
         $products = Product::with('supplier')->orderBy('name')->get();
@@ -297,9 +307,9 @@ class ShipmentController extends Controller
     }
 
     /**
-     * Update shipment status (FR-ST-03)
-     * Critical method for Staf SCM to update status and ata_customer
-     * Auto-sets status to 'Delivered' when ata_customer is filled
+     * Update shipment status and monitoring fields (Admin SCM only)
+     * NEW SYSTEM: Admin SCM can update monitoring fields only
+     * Fields: Status, ATA Port, ATA Customer, Delivery Note, Supplier Invoice, All Costs
      */
     public function updateStatus(Request $request, Shipment $shipment)
     {
@@ -309,6 +319,11 @@ class ShipmentController extends Controller
             'status' => 'nullable|in:Pending,In Transit,Delivered,Cancelled',
             'ata_port' => 'nullable|date',
             'ata_customer' => 'nullable|date',
+            'delivery_note_number' => 'nullable|string|max:255',
+            'supplier_invoice' => 'nullable|string|max:255',
+            'shipping_cost' => 'nullable|numeric|min:0',
+            'customs_cost' => 'nullable|numeric|min:0',
+            'other_costs' => 'nullable|numeric|min:0',
         ]);
 
         DB::beginTransaction();
@@ -322,17 +337,38 @@ class ShipmentController extends Controller
                 $shipment->ata_customer = $validated['ata_customer'];
             }
 
-            if (!empty($validated['ata_port'])) {
+            // Update ATA Port
+            if (isset($validated['ata_port'])) {
                 $shipment->ata_port = $validated['ata_port'];
             }
 
+            // Update status if provided and ata_customer is not set
             if (!empty($validated['status']) && empty($validated['ata_customer'])) {
                 $shipment->status = $validated['status'];
             }
 
+            // Update document numbers
+            if (isset($validated['delivery_note_number'])) {
+                $shipment->delivery_note_number = $validated['delivery_note_number'];
+            }
+            if (isset($validated['supplier_invoice'])) {
+                $shipment->supplier_invoice = $validated['supplier_invoice'];
+            }
+
+            // Update costs
+            if (isset($validated['shipping_cost'])) {
+                $shipment->shipping_cost = $validated['shipping_cost'];
+            }
+            if (isset($validated['customs_cost'])) {
+                $shipment->customs_cost = $validated['customs_cost'];
+            }
+            if (isset($validated['other_costs'])) {
+                $shipment->other_costs = $validated['other_costs'];
+            }
+
             $shipment->save();
 
-            // Log activity (FR-L-01)
+            // Log activity
             $description = [];
             if ($oldStatus !== $shipment->status) {
                 $description[] = "Status: {$oldStatus} → {$shipment->status}";
@@ -357,13 +393,13 @@ class ShipmentController extends Controller
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Status updated successfully',
+                    'message' => 'Monitoring data updated successfully',
                     'shipment' => $shipment->fresh(['customer', 'supplier']),
                 ]);
             }
 
             return redirect()->route('shipments.show', $shipment)
-                ->with('success', 'Status updated successfully!');
+                ->with('success', 'Monitoring data updated successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -371,11 +407,11 @@ class ShipmentController extends Controller
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to update status: ' . $e->getMessage(),
+                    'message' => 'Failed to update monitoring data: ' . $e->getMessage(),
                 ], 500);
             }
 
-            return back()->with('error', 'Failed to update status: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update monitoring data: ' . $e->getMessage());
         }
     }
 

@@ -4,19 +4,24 @@
             <h2 class="font-semibold text-xl text-scg-gray-dark dark:text-gray-200 leading-tight">
                 {{ __('Shipments Management') }}
             </h2>
-            @can('create', App\Models\Shipment::class)
-                <div class="flex space-x-2">
+            <div class="flex space-x-2">
+                {{-- Export Excel: Available for all roles who can view shipments --}}
+                @can('viewAny', App\Models\Shipment::class)
                     <a id="exportButton" href="{{ route('shipments.export', request()->query()) }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition shadow-md flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         {{ __('Export Excel') }}
                     </a>
+                @endcan
+                
+                {{-- Create Shipment: Only for PIC Sales --}}
+                @can('create', App\Models\Shipment::class)
                     <a href="{{ route('shipments.create') }}" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition shadow-md">
                         + {{ __('Create Shipment') }}
                     </a>
-                </div>
-            @endcan
+                @endcan
+            </div>
         </div>
     </x-slot>
 
