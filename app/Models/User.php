@@ -50,11 +50,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Role Helper Methods for RBAC
+     * Role Helper Methods for RBAC (NEW SYSTEM: admin_scm and pic_sales)
      */
-    public function isStafSCM(): bool
+    public function isAdminSCM(): bool
     {
-        return $this->role === 'staf_scm';
+        return $this->role === 'admin_scm';
     }
 
     public function isPICSales(): bool
@@ -62,9 +62,15 @@ class User extends Authenticatable
         return $this->role === 'pic_sales';
     }
 
+    // Legacy methods for backward compatibility (deprecated)
+    public function isStafSCM(): bool
+    {
+        return $this->isAdminSCM(); // Map old role to new role
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->isAdminSCM(); // Map old role to new role
     }
 
     /**

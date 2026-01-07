@@ -10,57 +10,63 @@ class ShipmentPolicy
 {
     /**
      * Determine whether the user can view any models.
-     * Both Staf SCM and PIC/Sales can view shipments list
+     * Both Admin SCM and PIC Sales can view shipments list
      */
     public function viewAny(User $user): bool
     {
-        return $user->isStafSCM() || $user->isPICSales() || $user->isAdmin();
+        return $user->isAdminSCM() || $user->isPICSales();
     }
 
     /**
      * Determine whether the user can view the model.
-     * Both Staf SCM and PIC/Sales can view shipment details
+     * Both Admin SCM and PIC Sales can view shipment details
      */
     public function view(User $user, Shipment $shipment): bool
     {
-        return $user->isStafSCM() || $user->isPICSales() || $user->isAdmin();
+        return $user->isAdminSCM() || $user->isPICSales();
     }
 
     /**
      * Determine whether the user can create models.
-     * Only Staf SCM can create shipments
+     * NEW SYSTEM: Only PIC Sales can create shipments
+     * Admin SCM is for monitoring only
      */
     public function create(User $user): bool
     {
-        return $user->isStafSCM() || $user->isAdmin();
+        return $user->isPICSales();
     }
 
     /**
-     * Determine whether the user can update the model.
-     * Only Staf SCM can update shipments
+     * Determine whether the user can update the model (FULL EDIT).
+     * Only PIC Sales can do full edit (all fields)
      */
     public function update(User $user, Shipment $shipment): bool
     {
-        return $user->isStafSCM() || $user->isAdmin();
+        return $user->isPICSales();
     }
 
     /**
-     * CRITICAL: Determine whether the user can update shipment status
-     * Only Staf SCM can update status (FR-ST-03)
-     * PIC/Sales CANNOT update status (read-only access)
+     * CRITICAL: Determine whether the user can update shipment status and monitoring fields
+     * Only Admin SCM can update monitoring fields:
+     * - ATA Port, ATA Customer
+     * - Status
+     * - Delivery Note Number, Supplier Invoice
+     * - Shipping Cost, Customs Cost, Other Costs
+     * 
+     * This is for monitoring and tracking purposes only (FR-ST-03)
      */
     public function updateStatus(User $user, Shipment $shipment): bool
     {
-        return $user->isStafSCM() || $user->isAdmin();
+        return $user->isAdminSCM();
     }
 
     /**
      * Determine whether the user can delete the model.
-     * Only Admin can delete shipments
+     * Only PIC Sales can delete shipments (they created them)
      */
     public function delete(User $user, Shipment $shipment): bool
     {
-        return $user->isAdmin();
+        return $user->isPICSales();
     }
 
     /**
@@ -68,7 +74,7 @@ class ShipmentPolicy
      */
     public function restore(User $user, Shipment $shipment): bool
     {
-        return $user->isAdmin();
+        return $user->isPICSales();
     }
 
     /**
@@ -76,6 +82,6 @@ class ShipmentPolicy
      */
     public function forceDelete(User $user, Shipment $shipment): bool
     {
-        return $user->isAdmin();
+        return $user->isPICSales();
     }
 }
