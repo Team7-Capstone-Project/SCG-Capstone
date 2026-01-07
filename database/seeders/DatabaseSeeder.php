@@ -18,19 +18,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Users with different roles
-        $adminUser = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@scg.com',
+        // Create Users with different roles (NEW SYSTEM: only admin_scm and pic_sales)
+        $adminScm1 = User::create([
+            'name' => 'Admin SCM 1',
+            'email' => 'admin.scm@scg.com',
             'password' => Hash::make('password'),
-            'role' => 'admin',
+            'role' => 'admin_scm',
         ]);
 
-        $stafScm = User::create([
+        $adminScm2 = User::create([
             'name' => 'Budi Santoso',
             'email' => 'budi.scm@scg.com',
             'password' => Hash::make('password'),
-            'role' => 'staf_scm',
+            'role' => 'admin_scm',
         ]);
 
         $picSales1 = User::create([
@@ -160,7 +160,7 @@ class DatabaseSeeder extends Seeder
             [
                 'customer_id' => 1,
                 'supplier_id' => 1,
-                'created_by_user_id' => $stafScm->id,
+                'created_by_user_id' => $adminScm2->id,
                 'customer_po' => 'PO-UNI-2025-001',
                 'scg_po' => 'SCG-2025-001',
                 'booking_number' => 'BK-001-2025',
@@ -182,7 +182,7 @@ class DatabaseSeeder extends Seeder
             [
                 'customer_id' => 2,
                 'supplier_id' => 1,
-                'created_by_user_id' => $stafScm->id,
+                'created_by_user_id' => $adminScm2->id,
                 'customer_po' => 'PO-IND-2025-002',
                 'scg_po' => 'SCG-2025-002',
                 'booking_number' => 'BK-002-2025',
@@ -203,7 +203,7 @@ class DatabaseSeeder extends Seeder
             [
                 'customer_id' => 3,
                 'supplier_id' => 2,
-                'created_by_user_id' => $stafScm->id,
+                'created_by_user_id' => $adminScm2->id,
                 'customer_po' => 'PO-NES-2025-003',
                 'scg_po' => 'SCG-2025-003',
                 'booking_number' => 'BK-003-2025',
@@ -224,7 +224,7 @@ class DatabaseSeeder extends Seeder
             [
                 'customer_id' => 1,
                 'supplier_id' => 3,
-                'created_by_user_id' => $stafScm->id,
+                'created_by_user_id' => $adminScm2->id,
                 'customer_po' => 'PO-UNI-2025-004',
                 'scg_po' => 'SCG-2025-004',
                 'booking_number' => 'BK-004-2025',
@@ -246,7 +246,7 @@ class DatabaseSeeder extends Seeder
             [
                 'customer_id' => 2,
                 'supplier_id' => 2,
-                'created_by_user_id' => $stafScm->id,
+                'created_by_user_id' => $adminScm2->id,
                 'customer_po' => 'PO-IND-2025-005',
                 'scg_po' => 'SCG-2025-005',
                 'booking_number' => 'BK-005-2025',
@@ -281,7 +281,7 @@ class DatabaseSeeder extends Seeder
 
             // Create activity log
             ActivityLog::logActivity(
-                $stafScm->id,
+                $adminScm2->id,
                 $shipment->id,
                 'created',
                 null,
@@ -292,7 +292,7 @@ class DatabaseSeeder extends Seeder
             // Add status change log for delivered shipments
             if ($shipment->status === 'Delivered') {
                 ActivityLog::logActivity(
-                    $stafScm->id,
+                    $adminScm2->id,
                     $shipment->id,
                     'updated_status',
                     'Pending',
@@ -305,8 +305,8 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Database seeded successfully!');
         $this->command->info('');
         $this->command->info('Test Users:');
-        $this->command->info('Admin: admin@scg.com / password');
-        $this->command->info('Staf SCM: budi.scm@scg.com / password');
+        $this->command->info('Admin SCM 1: admin.scm@scg.com / password');
+        $this->command->info('Admin SCM 2: budi.scm@scg.com / password');
         $this->command->info('PIC Sales 1: siti.sales@scg.com / password');
         $this->command->info('PIC Sales 2: ahmad.sales@scg.com / password');
     }
