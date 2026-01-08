@@ -278,9 +278,9 @@
         const products = @json($products);
         const selectedProducts = new Set();
 
-        // Add first product row on page load
+        // Don't add any product rows on page load - users should click "Add Product" button
         document.addEventListener('DOMContentLoaded', function() {
-            addProductRow();
+            // Page ready - products will be added via modal
         });
 
         // Modal functionality
