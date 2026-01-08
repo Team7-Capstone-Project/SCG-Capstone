@@ -186,11 +186,8 @@
 
                         {{-- Products Section --}}
                         <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
-                            <div class="flex justify-between items-center mb-4">
+                            <div class="mb-4">
                                 <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200">Products <span class="text-red-500">*</span></h3>
-                                <button type="button" id="addProduct" class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2 px-4 rounded transition">
-                                    + Add Product
-                                </button>
                             </div>
 
                             <div id="productsContainer">
@@ -223,161 +220,12 @@
         </div>
     </div>
 
-    {{-- Product Selection Modal --}}
-    <div id="productModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white dark:bg-gray-800">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-scg-gray-dark dark:text-gray-200">Select Product</h3>
-                <button type="button" id="closeModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="mb-4">
-                <input type="text" id="productSearch" placeholder="Search products by name or SKU..." 
-                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-            </div>
-
-            <div class="overflow-x-auto max-h-96">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-scg-gray-light dark:bg-gray-700">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-300 uppercase">SKU</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-300 uppercase">Name</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-300 uppercase">Supplier</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-300 uppercase">Unit Price</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-300 uppercase">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productTableBody" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($products as $product)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 product-row-modal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}" data-product-sku="{{ $product->sku }}" data-product-price="{{ $product->unit_price }}" data-supplier-name="{{ $product->supplier->name ?? '-' }}">
-                                <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-200">{{ $product->sku }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-200">{{ $product->name }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $product->supplier->name ?? '-' }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">Rp {{ number_format($product->unit_price, 0, ',', '.') }}</td>
-                                <td class="px-4 py-3 text-sm">
-                                    <button type="button" class="select-product-btn bg-scg-red hover:bg-red-800 text-white font-bold py-1 px-3 rounded text-xs transition">
-                                        Select
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
     @push('scripts')
     <script>
         // Product template
         let productIndex = 0;
         const products = @json($products);
         const selectedProducts = new Set();
-
-        // Don't add any product rows on page load - users should click "Add Product" button
-        document.addEventListener('DOMContentLoaded', function() {
-            // Page ready - products will be added via modal
-        });
-
-        // Modal functionality
-        const modal = document.getElementById('productModal');
-        const addProductBtn = document.getElementById('addProduct');
-        const closeModalBtn = document.getElementById('closeModal');
-        const productSearch = document.getElementById('productSearch');
-
-        addProductBtn.addEventListener('click', function() {
-            modal.classList.remove('hidden');
-        });
-
-        closeModalBtn.addEventListener('click', function() {
-            modal.classList.add('hidden');
-        });
-
-        // Close modal when clicking outside
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.classList.add('hidden');
-            }
-        });
-
-        // Product search functionality
-        productSearch.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.product-row-modal');
-            
-            rows.forEach(row => {
-                const name = row.dataset.productName.toLowerCase();
-                const sku = row.dataset.productSku.toLowerCase();
-                
-                if (name.includes(searchTerm) || sku.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-
-        // Select product from modal
-        document.querySelectorAll('.select-product-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const row = this.closest('.product-row-modal');
-                const productId = row.dataset.productId;
-                const productName = row.dataset.productName;
-                const productSku = row.dataset.productSku;
-                const productPrice = row.dataset.productPrice;
-                const supplierName = row.dataset.supplierName;
-                
-                addProductRowWithData(productId, productName, productSku, productPrice, supplierName);
-                modal.classList.add('hidden');
-                productSearch.value = '';
-                
-                // Reset search
-                document.querySelectorAll('.product-row-modal').forEach(r => {
-                    r.style.display = '';
-                });
-            });
-        });
-
-        // Add product row with pre-filled data
-        function addProductRowWithData(productId, productName, productSku, productPrice, supplierName) {
-            const container = document.getElementById('productsContainer');
-            const row = document.createElement('div');
-            row.className = 'grid grid-cols-12 gap-4 mb-3 product-row bg-white dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600';
-            row.innerHTML = `
-                <div class="col-span-5">
-                    <input type="hidden" name="products[${productIndex}][product_id]" value="${productId}">
-                    <div class="text-sm">
-                        <p class="font-semibold text-scg-gray-dark dark:text-gray-200">${productName} (${productSku})</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Supplier: ${supplierName}</p>
-                    </div>
-                </div>
-                <div class="col-span-3">
-                    <input type="number" name="products[${productIndex}][quantity]" placeholder="Quantity" min="1" value="1" required
-                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-quantity">
-                </div>
-                <div class="col-span-3">
-                    <input type="number" step="0.01" name="products[${productIndex}][unit_price]" placeholder="Unit Price" min="0" value="${productPrice}" required
-                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-price">
-                </div>
-                <div class="col-span-1 flex items-center">
-                    <button type="button" class="remove-product text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-bold text-xl">✕</button>
-                </div>
-            `;
-            container.appendChild(row);
-
-            // Remove product row
-            row.querySelector('.remove-product').addEventListener('click', function() {
-                row.remove();
-                validateProducts();
-            });
-
-            productIndex++;
-            validateProducts();
-        }
 
         // Add product row (legacy function for compatibility)
         function addProductRow() {
