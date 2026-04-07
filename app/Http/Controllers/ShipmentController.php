@@ -147,7 +147,7 @@ class ShipmentController extends Controller
             'customs_cost' => 'nullable|numeric|min:0',
             'other_costs' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
-            'products' => 'required|array|min:1',
+            'products' => 'nullable|array',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
             'products.*.unit_price' => 'required|numeric|min:0',
@@ -157,8 +157,6 @@ class ShipmentController extends Controller
             'etd_port.required' => 'ETD Port date is required',
             'customer_receiving_schedule.required' => 'Customer receiving schedule is required',
             'customer_receiving_schedule.after_or_equal' => 'Customer receiving schedule must be after or equal to ETA Port',
-            'products.required' => 'At least one product is required',
-            'products.min' => 'At least one product is required',
             // Unique validation error messages
             'customer_po.unique' => 'Customer PO already exists in the system',
             'scg_po.unique' => 'SCG PO already exists in the system',
@@ -193,12 +191,14 @@ class ShipmentController extends Controller
                 'notes' => $validated['notes'] ?? null,
             ]);
 
-            // Attach products
-            foreach ($validated['products'] as $productData) {
-                $shipment->products()->attach($productData['product_id'], [
-                    'quantity' => $productData['quantity'],
-                    'unit_price' => $productData['unit_price'],
-                ]);
+            // Attach products (if any)
+            if (!empty($validated['products'])) {
+                foreach ($validated['products'] as $productData) {
+                    $shipment->products()->attach($productData['product_id'], [
+                        'quantity' => $productData['quantity'],
+                        'unit_price' => $productData['unit_price'],
+                    ]);
+                }
             }
 
             // Log activity (FR-L-01)

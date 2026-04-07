@@ -187,13 +187,12 @@
                         {{-- Products Section --}}
                         <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
                             <div class="mb-4">
-                                <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200">Products <span class="text-red-500">*</span></h3>
+                                <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200">Products</h3>
                             </div>
 
                             <div id="productsContainer">
                                 {{-- Product rows will be added here dynamically --}}
                             </div>
-                            <p id="products_error" class="text-red-500 text-sm mt-2 hidden">❌ At least one product is required</p>
                         </div>
 
                         {{-- Notes --}}
@@ -358,14 +357,6 @@
         // VALIDATION 3: Product Quantity Validation
         function validateProducts() {
             const productRows = document.querySelectorAll('.product-row');
-            const productsError = document.getElementById('products_error');
-
-            if (productRows.length === 0) {
-                productsError.classList.remove('hidden');
-                return false;
-            } else {
-                productsError.classList.add('hidden');
-            }
 
             let allValid = true;
             productRows.forEach(row => {
