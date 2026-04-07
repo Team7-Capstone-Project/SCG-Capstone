@@ -186,8 +186,11 @@
 
                         {{-- Products Section --}}
                         <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
-                            <div class="mb-4">
+                            <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200">Products</h3>
+                                <button type="button" onclick="addProductRow()" class="bg-scg-red hover:bg-red-800 text-white font-bold py-1 px-4 rounded transition text-sm">
+                                    + Add Product
+                                </button>
                             </div>
 
                             <div id="productsContainer">
@@ -221,59 +224,105 @@
 
     @push('scripts')
     <script>
-        // Product template
+        // Product data from controller
         let productIndex = 0;
         const products = @json($products);
-        const selectedProducts = new Set();
+        const supplierSelect = document.getElementById('supplier_id');
 
-        // Add product row (legacy function for compatibility)
+        // Add product row
         function addProductRow() {
             const container = document.getElementById('productsContainer');
             const row = document.createElement('div');
-            row.className = 'grid grid-cols-12 gap-4 mb-3 product-row';
+            row.className = 'grid grid-cols-12 gap-4 mb-3 product-row p-3 bg-white dark:bg-gray-700/50 rounded shadow-sm border border-gray-100 dark:border-gray-600 animate-fade-in-down';
+            
+            // Get selected supplier
+            const selectedSupplierId = supplierSelect.value;
+            
+            // Filter products by supplier if one is selected
+            const filteredProducts = selectedSupplierId 
+                ? products.filter(p => p.supplier_id == selectedSupplierId) 
+                : products;
+
             row.innerHTML = `
                 <div class="col-span-5">
-                    <select name="products[${productIndex}][product_id]" required class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-                        <option value="">Select Product</option>
-                        ${products.map(p => `<option value="${p.id}" data-price="${p.unit_price}">${p.name} (${p.sku})</option>`).join('')}
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Select Product</label>
+                    <select name="products[${productIndex}][product_id]" required onchange="onProductChange(this, ${productIndex})" 
+                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                        <option value="">Select Product...</option>
+                        ${filteredProducts.map(p => `
+                            <option value="${p.id}" data-price="${p.unit_price}">
+                                ${p.sku ? `[${p.sku}] ` : ''}${p.name}
+                            </option>
+                        `).join('')}
                     </select>
                 </div>
                 <div class="col-span-3">
-                    <input type="number" name="products[${productIndex}][quantity]" placeholder="Quantity" min="1" required
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Quantity</label>
+                    <input type="number" name="products[${productIndex}][quantity]" placeholder="Qty" min="1" required
                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-quantity">
                 </div>
                 <div class="col-span-3">
-                    <input type="number" step="0.01" name="products[${productIndex}][unit_price]" placeholder="Unit Price" min="0" required
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Unit Price (IDR)</label>
+                    <input type="number" step="0.01" name="products[${productIndex}][unit_price]" id="price_${productIndex}" placeholder="Price" min="0" required
                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-price">
                 </div>
-                <div class="col-span-1 flex items-center">
-                    <button type="button" class="remove-product text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-bold">✕</button>
+                <div class="col-span-1 flex items-end pb-3">
+                    <button type="button" onclick="removeProductRow(this)" title="Remove" class="remove-product text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-bold p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
                 </div>
             `;
             container.appendChild(row);
-
-            // Auto-fill price when product selected
-            row.querySelector('select').addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const price = selectedOption.getAttribute('data-price');
-                if (price) {
-                    row.querySelector('.product-price').value = price;
-                }
-            });
-
-            // Remove product row
-            row.querySelector('.remove-product').addEventListener('click', function() {
-                if (document.querySelectorAll('.product-row').length > 1) {
-                    row.remove();
-                    validateProducts();
-                }
-            });
-
             productIndex++;
             validateProducts();
         }
 
-        // VALIDATION 1: Date Logic Validation
+        // Handle product selection change
+        function onProductChange(select, index) {
+            const selectedOption = select.options[select.selectedIndex];
+            const price = selectedOption.getAttribute('data-price');
+            const priceInput = document.getElementById('price_' + index);
+            if (price && priceInput) {
+                priceInput.value = price;
+            }
+        }
+
+        // Remove product row
+        function removeProductRow(button) {
+            const row = button.closest('.product-row');
+            if (document.querySelectorAll('.product-row').length > 1) {
+                row.remove();
+                validateProducts();
+            } else {
+                alert('At least one product is required.');
+            }
+        }
+
+        // Supplier filter logic: Refresh product dropdowns when supplier changes
+        supplierSelect.addEventListener('change', function() {
+            const selectedSupplierId = this.value;
+            const container = document.getElementById('productsContainer');
+            
+            // If rows already exist, alert user or just filter the choices
+            if (container.querySelectorAll('.product-row').length > 0) {
+                if (confirm('Changing supplier will reset your current product selection. Continue?')) {
+                    container.innerHTML = '';
+                    productIndex = 0;
+                    addProductRow();
+                } else {
+                    // Try to revert (simple demo version - real app needs more state)
+                }
+            } else {
+                addProductRow();
+            }
+        });
+
+        // Initialize with one row
+        document.addEventListener('DOMContentLoaded', function() {
+            addProductRow();
+        });
+
+        // VALIDATION: Date Logic
         const etdInput = document.getElementById('etd_port');
         const etaInput = document.getElementById('eta_port');
         const scheduleInput = document.getElementById('customer_receiving_schedule');
@@ -281,14 +330,13 @@
         const scheduleError = document.getElementById('schedule_error');
 
         function validateDates() {
-            const etd = new Date(etdInput.value);
-            const eta = new Date(etaInput.value);
-            const schedule = new Date(scheduleInput.value);
+            const etd = etdInput.value ? new Date(etdInput.value) : null;
+            const eta = etaInput.value ? new Date(etaInput.value) : null;
+            const schedule = scheduleInput.value ? new Date(scheduleInput.value) : null;
 
             let isValid = true;
 
-            // ETA must be >= ETD
-            if (etaInput.value && etdInput.value && eta < etd) {
+            if (eta && etd && eta < etd) {
                 etaError.classList.remove('hidden');
                 etaInput.classList.add('border-red-500');
                 isValid = false;
@@ -297,8 +345,7 @@
                 etaInput.classList.remove('border-red-500');
             }
 
-            // Schedule must be >= ETA
-            if (scheduleInput.value && etaInput.value && schedule < eta) {
+            if (schedule && eta && schedule < eta) {
                 scheduleError.classList.remove('hidden');
                 scheduleInput.classList.add('border-red-500');
                 isValid = false;
@@ -314,50 +361,19 @@
         etaInput.addEventListener('change', validateDates);
         scheduleInput.addEventListener('change', validateDates);
 
-        // VALIDATION 2: Duplicate PO Number Check (AJAX)
+        // VALIDATION: Duplicate PO Number Check
         const customerPoInput = document.getElementById('customer_po');
         const scgPoInput = document.getElementById('scg_po');
         let poCheckTimeout;
 
-        customerPoInput.addEventListener('input', function() {
-            clearTimeout(poCheckTimeout);
-            if (this.value.length > 0) {
-                poCheckTimeout = setTimeout(() => checkDuplicatePO('customer_po', this.value), 500);
-            } else {
-                document.getElementById('customer_po_warning').classList.add('hidden');
-            }
-        });
-
-        scgPoInput.addEventListener('input', function() {
-            clearTimeout(poCheckTimeout);
-            if (this.value.length > 0) {
-                poCheckTimeout = setTimeout(() => checkDuplicatePO('scg_po', this.value), 500);
-            } else {
-                document.getElementById('scg_po_warning').classList.add('hidden');
-            }
-        });
-
         function checkDuplicatePO(field, value) {
-            // Simulated AJAX check - in production, this would call a backend endpoint
-            // For now, we'll just show the warning as a demonstration
-            const warningEl = document.getElementById(field + '_warning');
-
-            // Example: You would implement actual AJAX call here
-            // fetch(`/api/check-po?field=${field}&value=${value}`)
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         if (data.exists) {
-            //             warningEl.classList.remove('hidden');
-            //         } else {
-            //             warningEl.classList.add('hidden');
-            //         }
-            //     });
+            // Demo warning - ideally this checks via AJAX
+            // Show potential duplicate warning if needed
         }
 
-        // VALIDATION 3: Product Quantity Validation
+        // VALIDATION: Product Quantity
         function validateProducts() {
             const productRows = document.querySelectorAll('.product-row');
-
             let allValid = true;
             productRows.forEach(row => {
                 const quantity = row.querySelector('.product-quantity');
@@ -368,26 +384,25 @@
                     quantity.classList.remove('border-red-500');
                 }
             });
-
             return allValid;
         }
 
-        // Form submission validation
+        // Final Form Submission
         document.getElementById('shipmentForm').addEventListener('submit', function(e) {
             const datesValid = validateDates();
             const productsValid = validateProducts();
+            const supplierSelected = supplierSelect.value !== '';
+
+            if (!supplierSelected) {
+                e.preventDefault();
+                alert('Please select a supplier first.');
+                return false;
+            }
 
             if (!datesValid || !productsValid) {
                 e.preventDefault();
                 alert('Please fix the validation errors before submitting.');
                 return false;
-            }
-        });
-
-        // Real-time product validation
-        document.addEventListener('input', function(e) {
-            if (e.target.classList.contains('product-quantity')) {
-                validateProducts();
             }
         });
     </script>

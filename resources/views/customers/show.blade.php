@@ -56,6 +56,7 @@
                                 <thead class="bg-scg-gray-light">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Customer PO</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Supplier</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Status</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">ETD Port</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Actions</th>
@@ -64,13 +65,14 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($customer->shipments as $shipment)
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->customer_po }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->customer_po ?? '-' }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->supplier->name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span class="px-2 py-1 rounded-full text-xs bg-{{ $shipment->status == 'Delivered' ? 'green' : ($shipment->status == 'Pending' ? 'yellow' : 'blue') }}-100">
                                                     {{ $shipment->status }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->etd_port?->format('d M Y') }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->etd_port?->format('d M Y') ?? '-' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                 <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red hover:text-red-900">View</a>
                                             </td>

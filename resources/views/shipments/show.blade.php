@@ -63,6 +63,18 @@
                             <label class="block text-sm font-medium text-gray-600">Booking Number</label>
                             <p class="mt-1">{{ $shipment->booking_number ?? '-' }}</p>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">SCG SO</label>
+                            <p class="mt-1 font-semibold">{{ $shipment->scg_so ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Delivery Note Number</label>
+                            <p class="mt-1">{{ $shipment->delivery_note_number ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Supplier Invoice</label>
+                            <p class="mt-1">{{ $shipment->supplier_invoice ?? '-' }}</p>
+                        </div>
                     </div>
                 </div>
             </div>

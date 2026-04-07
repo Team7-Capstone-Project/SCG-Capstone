@@ -225,6 +225,53 @@
                             </div>
                         </div>
 
+                        {{-- Products Section --}}
+                        <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200">Products</h3>
+                                <button type="button" onclick="addProductRow()" class="bg-scg-red hover:bg-red-800 text-white font-bold py-1 px-4 rounded transition text-sm">
+                                    + Add Product
+                                </button>
+                            </div>
+
+                            <div id="productsContainer">
+                                {{-- Product rows will be added here dynamically --}}
+                                @foreach($shipment->products as $index => $product)
+                                <div class="grid grid-cols-12 gap-4 mb-3 product-row p-3 bg-white dark:bg-gray-700/50 rounded shadow-sm border border-gray-100 dark:border-gray-600">
+                                    <div class="col-span-12 md:col-span-5">
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Select Product</label>
+                                        <select name="products[{{ $index }}][product_id]" required onchange="onProductChange(this, {{ $index }})" 
+                                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                            <option value="">Select Product...</option>
+                                            @foreach($products as $p)
+                                                @if($p->supplier_id == $shipment->supplier_id)
+                                                <option value="{{ $p->id }}" data-price="{{ $p->unit_price }}" {{ $p->id == $product->id ? 'selected' : '' }}>
+                                                    {{ $p->sku ? "[$p->sku] " : '' }}{{ $p->name }}
+                                                </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-span-5 md:col-span-3">
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Quantity</label>
+                                        <input type="number" name="products[{{ $index }}][quantity]" value="{{ $product->pivot->quantity }}" placeholder="Qty" min="1" required
+                                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-quantity">
+                                    </div>
+                                    <div class="col-span-5 md:col-span-3">
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Unit Price (IDR)</label>
+                                        <input type="number" step="0.01" name="products[{{ $index }}][unit_price]" id="price_{{ $index }}" value="{{ $product->pivot->unit_price }}" placeholder="Price" min="0" required
+                                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-price">
+                                    </div>
+                                    <div class="col-span-2 md:col-span-1 flex items-end pb-3">
+                                        <button type="button" onclick="removeProductRow(this)" title="Remove" class="remove-product text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-bold p-1">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+
                         {{-- Notes --}}
                         <div class="mb-6">
                             <label for="notes" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
@@ -251,7 +298,94 @@
 
     @push('scripts')
     <script>
-        // Date validation
+        // Product data config
+        let productIndex = {{ $shipment->products->count() }};
+        const products = @json($products);
+        const supplierSelect = document.getElementById('supplier_id');
+
+        // Add product row
+        function addProductRow() {
+            const container = document.getElementById('productsContainer');
+            const row = document.createElement('div');
+            row.className = 'grid grid-cols-12 gap-4 mb-3 product-row p-3 bg-white dark:bg-gray-700/50 rounded shadow-sm border border-gray-100 dark:border-gray-600 animate-fade-in-down';
+            
+            const selectedSupplierId = supplierSelect.value;
+            const filteredProducts = selectedSupplierId 
+                ? products.filter(p => p.supplier_id == selectedSupplierId) 
+                : products;
+
+            row.innerHTML = `
+                <div class="col-span-12 md:col-span-5">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Select Product</label>
+                    <select name="products[${productIndex}][product_id]" required onchange="onProductChange(this, ${productIndex})" 
+                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                        <option value="">Select Product...</option>
+                        ${filteredProducts.map(p => `
+                            <option value="${p.id}" data-price="${p.unit_price}">
+                                ${p.sku ? `[${p.sku}] ` : ''}${p.name}
+                            </option>
+                        `).join('')}
+                    </select>
+                </div>
+                <div class="col-span-5 md:col-span-3">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Quantity</label>
+                    <input type="number" name="products[${productIndex}][quantity]" placeholder="Qty" min="1" required
+                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-quantity">
+                </div>
+                <div class="col-span-5 md:col-span-3">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Unit Price (IDR)</label>
+                    <input type="number" step="0.01" name="products[${productIndex}][unit_price]" id="price_${productIndex}" placeholder="Price" min="0" required
+                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-price">
+                </div>
+                <div class="col-span-2 md:col-span-1 flex items-end pb-3">
+                    <button type="button" onclick="removeProductRow(this)" title="Remove" class="remove-product text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-bold p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+            `;
+            container.appendChild(row);
+            productIndex++;
+            validateProducts();
+        }
+
+        // Handle product selection change
+        function onProductChange(select, index) {
+            const selectedOption = select.options[select.selectedIndex];
+            const price = selectedOption.getAttribute('data-price');
+            const priceInput = document.getElementById('price_' + index);
+            if (price && priceInput) {
+                priceInput.value = price;
+            }
+        }
+
+        // Remove product row
+        function removeProductRow(button) {
+            const row = button.closest('.product-row');
+            if (document.querySelectorAll('.product-row').length > 1) {
+                row.remove();
+                validateProducts();
+            } else {
+                alert('At least one product is required.');
+            }
+        }
+
+        // Supplier filter logic
+        supplierSelect.addEventListener('change', function() {
+            const container = document.getElementById('productsContainer');
+            if (container.querySelectorAll('.product-row').length > 0) {
+                if (confirm('Changing supplier will reset your current product selection. Continue?')) {
+                    container.innerHTML = '';
+                    productIndex = 0;
+                    addProductRow();
+                } else {
+                    // This would ideally revert the supplier change, but simple for now
+                }
+            } else {
+                addProductRow();
+            }
+        });
+
+        // Date validation logic
         const etdInput = document.getElementById('etd_port');
         const etaInput = document.getElementById('eta_port');
         const scheduleInput = document.getElementById('customer_receiving_schedule');
@@ -261,16 +395,13 @@
         const scheduleError = document.getElementById('schedule_error');
 
         function validateDates() {
-            const etd = new Date(etdInput.value);
+            const etd = etdInput.value ? new Date(etdInput.value) : null;
             const eta = etaInput.value ? new Date(etaInput.value) : null;
             const schedule = scheduleInput.value ? new Date(scheduleInput.value) : null;
-            const ataPort = ataPortInput.value ? new Date(ataPortInput.value) : null;
-            const ataCustomer = ataCustomerInput.value ? new Date(ataCustomerInput.value) : null;
 
             let isValid = true;
 
-            // ETA must be >= ETD if both are provided
-            if (eta && etdInput.value && eta < etd) {
+            if (eta && etd && eta < etd) {
                 etaError.classList.remove('hidden');
                 etaInput.classList.add('border-red-500');
                 isValid = false;
@@ -279,7 +410,6 @@
                 etaInput.classList.remove('border-red-500');
             }
 
-            // Schedule must be >= ETA if both are provided
             if (schedule && eta && schedule < eta) {
                 scheduleError.classList.remove('hidden');
                 scheduleInput.classList.add('border-red-500');
@@ -289,40 +419,37 @@
                 scheduleInput.classList.remove('border-red-500');
             }
 
-            // ATA Port should be after ETD if both are provided
-            if (ataPort && etdInput.value && ataPort < etd) {
-                // Show error or warning if needed
-                ataPortInput.classList.add('border-yellow-500');
-            } else {
-                ataPortInput.classList.remove('border-yellow-500');
-            }
-
-            // ATA Customer should be after ATA Port if both are provided
-            if (ataCustomer && ataPort && ataCustomer < ataPort) {
-                // Show error or warning if needed
-                ataCustomerInput.classList.add('border-yellow-500');
-            } else {
-                ataCustomerInput.classList.remove('border-yellow-500');
-            }
-
             return isValid;
         }
 
-        // Add event listeners for date validation
-        [etdInput, etaInput, scheduleInput, ataPortInput, ataCustomerInput].forEach(input => {
-            if (input) {
-                input.addEventListener('change', validateDates);
-            }
-        });
+        [etdInput, etaInput, scheduleInput].forEach(inp => inp.addEventListener('change', validateDates));
 
-        // Form submission validation
+        // Product quantity validation
+        function validateProducts() {
+            const productRows = document.querySelectorAll('.product-row');
+            let allValid = true;
+            productRows.forEach(row => {
+                const quantity = row.querySelector('.product-quantity');
+                if (quantity && (quantity.value === '' || parseInt(quantity.value) < 1)) {
+                    quantity.classList.add('border-red-500');
+                    allValid = false;
+                } else if (quantity) {
+                    quantity.classList.remove('border-red-500');
+                }
+            });
+            return allValid;
+        }
+
+        // Form submission
         document.getElementById('shipmentForm').addEventListener('submit', function(e) {
-            if (!validateDates()) {
+            const datesValid = validateDates();
+            const productsValid = validateProducts();
+            
+            if (!datesValid || !productsValid) {
                 e.preventDefault();
-                alert('Please fix the date validation errors before submitting.');
+                alert('Please fix the validation errors before submitting.');
                 return false;
             }
-            return true;
         });
     </script>
     @endpush

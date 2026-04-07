@@ -46,7 +46,7 @@ class ProductController extends Controller
     {
         $this->authorize('view', $product);
         
-        $product->load('supplier', 'shipments');
+        $product->load(['supplier', 'shipments.customer']);
         return view('products.show', compact('product'));
     }
 

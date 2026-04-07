@@ -287,12 +287,31 @@ class ShipmentController extends Controller
             'customs_cost' => 'nullable|numeric|min:0',
             'other_costs' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
+            'products' => 'nullable|array',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.unit_price' => 'required|numeric|min:0',
         ]);
 
         DB::beginTransaction();
         try {
             $oldStatus = $shipment->status;
+            
+            // Extract products from validated data
+            $productsData = $validated['products'] ?? [];
+            unset($validated['products']);
+            
             $shipment->update($validated);
+
+            // Sync products
+            $syncData = [];
+            foreach ($productsData as $product) {
+                $syncData[$product['product_id']] = [
+                    'quantity' => $product['quantity'],
+                    'unit_price' => $product['unit_price'],
+                ];
+            }
+            $shipment->products()->sync($syncData);
 
             // Log status change if changed
             if ($oldStatus !== $validated['status']) {
@@ -341,7 +360,7 @@ class ShipmentController extends Controller
         DB::beginTransaction();
         try {
             $oldStatus = $shipment->status;
-            $oldAtaCustomer = $shipment->ata_customer?->format('Y-m-d');
+            $oldAtaCustomer = $shipment->ata_customer?->toDateString();
 
             // Auto-set status to Delivered if ata_customer is provided
             if (!empty($validated['ata_customer'])) {
@@ -385,8 +404,8 @@ class ShipmentController extends Controller
             if ($oldStatus !== $shipment->status) {
                 $description[] = "Status: {$oldStatus} → {$shipment->status}";
             }
-            if ($oldAtaCustomer !== $shipment->ata_customer?->format('Y-m-d')) {
-                $description[] = "ATA Customer: " . ($oldAtaCustomer ?? 'null') . " → " . ($shipment->ata_customer?->format('Y-m-d') ?? 'null');
+            if ($oldAtaCustomer !== $shipment->ata_customer?->toDateString()) {
+                $description[] = "ATA Customer: " . ($oldAtaCustomer ?? 'null') . " → " . ($shipment->ata_customer?->toDateString() ?? 'null');
             }
 
             if (!empty($description)) {
