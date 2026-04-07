@@ -45,7 +45,7 @@ class SupplierController extends Controller
     {
         $this->authorize('view', $supplier);
         
-        $supplier->load('products', 'shipments');
+        $supplier->load(['products', 'shipments.customer']);
         return view('suppliers.show', compact('supplier'));
     }
 

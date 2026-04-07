@@ -46,6 +46,46 @@
                     </div>
                 </div>
             </div>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">Shipments ({{ $supplier->shipments->count() }})</h3>
+                    @if($supplier->shipments->count() > 0)
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-scg-gray-light">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Customer</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Customer PO</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">ETD Port</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($supplier->shipments as $shipment)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->customer->name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->customer_po ?? '-' }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                <span class="px-2 py-1 rounded-full text-xs bg-{{ $shipment->status == 'Delivered' ? 'green' : ($shipment->status == 'Pending' ? 'yellow' : 'blue') }}-100">
+                                                    {{ $shipment->status }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->etd_port?->format('d M Y') ?? '-' }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red hover:text-red-900">View</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-gray-500 text-center py-4">No shipments yet.</p>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
