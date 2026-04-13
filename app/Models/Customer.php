@@ -16,17 +16,12 @@ class Customer extends Model
         'contact_person',
         'phone',
         'email',
-        'pic_user_id',
+        'country',
     ];
 
     /**
      * Relationships
      */
-    public function pic()
-    {
-        return $this->belongsTo(User::class, 'pic_user_id');
-    }
-
     public function shipments()
     {
         return $this->hasMany(Shipment::class);

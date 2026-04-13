@@ -12,7 +12,7 @@ class CustomerController extends Controller
     {
         $this->authorize('viewAny', Customer::class);
         
-        $customers = Customer::with('pic')->latest()->paginate(15);
+        $customers = Customer::latest()->paginate(15);
         return view('customers.index', compact('customers'));
     }
 
@@ -20,8 +20,7 @@ class CustomerController extends Controller
     {
         $this->authorize('create', Customer::class);
         
-        $picUsers = User::where('role', 'pic_sales')->orWhere('role', 'admin')->get();
-        return view('customers.create', compact('picUsers'));
+        return view('customers.create');
     }
 
     public function store(Request $request)
@@ -34,7 +33,7 @@ class CustomerController extends Controller
             'contact_person' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
-            'pic_user_id' => 'nullable|exists:users,id',
+            'country' => 'nullable|string|max:100',
         ]);
 
         Customer::create($validated);
@@ -47,7 +46,7 @@ class CustomerController extends Controller
     {
         $this->authorize('view', $customer);
         
-        $customer->load('pic', 'shipments');
+        $customer->load('shipments');
         return view('customers.show', compact('customer'));
     }
 
@@ -55,8 +54,7 @@ class CustomerController extends Controller
     {
         $this->authorize('update', $customer);
         
-        $picUsers = User::where('role', 'pic_sales')->orWhere('role', 'admin')->get();
-        return view('customers.edit', compact('customer', 'picUsers'));
+        return view('customers.edit', compact('customer'));
     }
 
     public function update(Request $request, Customer $customer)
@@ -69,7 +67,7 @@ class CustomerController extends Controller
             'contact_person' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
-            'pic_user_id' => 'nullable|exists:users,id',
+            'country' => 'nullable|string|max:100',
         ]);
 
         $customer->update($validated);

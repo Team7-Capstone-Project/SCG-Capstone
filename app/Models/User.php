@@ -76,11 +76,6 @@ class User extends Authenticatable
     /**
      * Relationships
      */
-    public function customers()
-    {
-        return $this->hasMany(Customer::class, 'pic_user_id');
-    }
-
     public function shipments()
     {
         return $this->hasMany(Shipment::class, 'created_by_user_id');

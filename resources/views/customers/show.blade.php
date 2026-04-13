@@ -15,8 +15,8 @@
                             <p class="mt-1 text-lg font-semibold text-scg-gray-dark">{{ $customer->name }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">PIC (Sales)</label>
-                            <p class="mt-1 text-lg">{{ $customer->pic->name ?? '-' }}</p>
+                            <label class="block text-sm font-medium text-gray-600">Country</label>
+                            <p class="mt-1 text-lg">{{ $customer->country ?? '-' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-600">Contact Person</label>

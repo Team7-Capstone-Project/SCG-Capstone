@@ -79,18 +79,12 @@
                             </div>
 
                             <div>
-                                <label for="pic_user_id" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    PIC (Sales Person)
+                                <label for="country" class="block text-sm font-medium text-scg-gray-dark mb-2">
+                                    {{ __('Country') }}
                                 </label>
-                                <select name="pic_user_id" id="pic_user_id"
+                                <input type="text" name="country" id="country" 
+                                    value="{{ old('country', $customer->country) }}"
                                     class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-                                    <option value="">Select PIC</option>
-                                    @foreach($picUsers as $user)
-                                        <option value="{{ $user->id }}" {{ (old('pic_user_id', $customer->pic_user_id) == $user->id) ? 'selected' : '' }}>
-                                            {{ $user->name }} ({{ $user->role }})
-                                        </option>
-                                    @endforeach
-                                </select>
                             </div>
                         </div>
 
