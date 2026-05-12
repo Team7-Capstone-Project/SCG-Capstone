@@ -10,7 +10,7 @@
         @csrf
 
         <div class="space-y-2">
-            <h2 class="text-2xl font-bold text-[#212529] dark:text-white text-center">Welcome Back</h2>
+            <h2 class="text-2xl font-bold text-[#212529] dark:text-white text-center">Welcome</h2>
             <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Please enter your credentials to login</p>
         </div>
 

@@ -121,7 +121,7 @@
                 <div class="bg-[#fff2f2] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/376] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden">
                     {{-- Laravel Logo --}}
                     <div class="flex items-center justify-center h-full">
-                        <img src="{{ asset('images/logoSCG.png') }}" alt="SCG Logo" class="w-48 lg:w-64 drop-shadow-xl">
+                        <img src="{{ asset('images/logoSCG.png') }}" alt="SCG Logo" class="w-32 lg:w-48 drop-shadow-xl">
                     </div>
 
                     {{-- Light Mode 12 SVG --}}
