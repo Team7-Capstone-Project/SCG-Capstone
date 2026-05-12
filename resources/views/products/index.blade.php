@@ -9,11 +9,9 @@
             </div>
             @can('create', App\Models\Product::class)
                 <a href="{{ route('products.create') }}" 
-                   class="inline-flex items-center gap-2 bg-gradient-to-r from-scg-red to-red-700 hover:from-red-700 hover:to-red-900 text-white font-semibold py-2.5 px-5 rounded-xl shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 hover:-translate-y-0.5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    {{ __('Add Product') }}
+                   class="inline-flex items-center gap-2 bg-[#A6192E] hover:bg-[#8B1527] text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-all duration-200">
+                    <span class="text-xl leading-none">+</span>
+                    <span class="text-base">{{ __('Add Product') }}</span>
                 </a>
             @endcan
         </div>
@@ -81,10 +79,10 @@
 
                             {{-- Product Info - Compact --}}
                             <div class="p-3">
-                                <h3 class="font-semibold text-sm text-gray-900 dark:text-white leading-tight group-hover:text-scg-red dark:group-hover:text-red-400 transition-colors duration-200 line-clamp-2 mb-1.5">
+                                <h3 class="font-semibold text-sm text-gray-900 dark:text-white leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200 line-clamp-2 mb-1.5">
                                     {{ $product->name }}
                                 </h3>
-                                <p class="text-sm font-bold text-scg-red dark:text-red-400">
+                                <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                                     Rp {{ number_format($product->unit_price, 0, ',', '.') }}
                                 </p>
                                 @if($product->description)
@@ -113,11 +111,9 @@
                     <p class="text-gray-500 dark:text-gray-400 mb-6">{{ __('Get started by creating your first product.') }}</p>
                     @can('create', App\Models\Product::class)
                         <a href="{{ route('products.create') }}" 
-                           class="inline-flex items-center gap-2 bg-gradient-to-r from-scg-red to-red-700 hover:from-red-700 hover:to-red-900 text-white font-semibold py-2.5 px-5 rounded-xl shadow-lg shadow-red-500/25 transition-all duration-300">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                            </svg>
-                            {{ __('Create First Product') }}
+                           class="inline-flex items-center gap-2 bg-[#A6192E] hover:bg-[#8B1527] text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-all duration-200">
+                            <span class="text-xl leading-none">+</span>
+                            <span class="text-base">{{ __('Create First Product') }}</span>
                         </a>
                     @endcan
                 </div>
