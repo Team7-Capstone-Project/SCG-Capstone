@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'SCG SCM Dashboard') }}</title>
+    <title>SCG SCM Dashboard</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -31,7 +31,7 @@
                         <img src="{{ asset('images/logoSCG.png') }}" alt="SCG Logo" class="h-16">
                     </div>
                     <h1 class="text-2xl font-bold text-[#A6192E] dark:text-red-500 mb-1">
-                        {{ config('app.name', 'SCG SCM') }}
+                        SCG SCM
                     </h1>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Supply Chain Management System</p>
                 </div>
