@@ -54,7 +54,13 @@ class ShipmentController extends Controller
                     ->orWhere('scg_so', 'like', "%{$search}%")
                     ->orWhere('booking_number', 'like', "%{$search}%")
                     ->orWhere('supplier_invoice', 'like', "%{$search}%")
-                    ->orWhere('delivery_note_number', 'like', "%{$search}%");
+                    ->orWhere('delivery_note_number', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($subQ) use ($search) {
+                        $subQ->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('supplier', function ($subQ) use ($search) {
+                        $subQ->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
