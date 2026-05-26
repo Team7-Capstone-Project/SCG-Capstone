@@ -27,7 +27,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div class="md:col-span-2">
                                 <label for="name" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Supplier Name <span class="text-red-500">*</span>
+                                    Supplier <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="name" id="name" value="{{ old('name') }}" required
                                     class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
@@ -51,7 +51,7 @@
 
                             <div>
                                 <label for="contact_person" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Contact Person
+                                    Name
                                 </label>
                                 <input type="text" name="contact_person" id="contact_person" value="{{ old('contact_person') }}"
                                     class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">

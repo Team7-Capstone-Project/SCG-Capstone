@@ -11,7 +11,7 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Name</label>
+                            <label class="block text-sm font-medium text-gray-600">Supplier</label>
                             <p class="mt-1 text-lg font-semibold text-scg-gray-dark">{{ $supplier->name }}</p>
                         </div>
                         <div>
@@ -19,8 +19,8 @@
                             <p class="mt-1 text-lg">{{ $supplier->country ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Contact Person</label>
-                            <p class="mt-1">{{ $supplier->contact_person ?? '-' }}</p>
+                            <label class="block text-sm font-medium text-gray-600">Name</label>
+                            <p class="mt-1 text-lg font-semibold text-scg-gray-dark">{{ $supplier->contact_person ?? '-' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-600">Phone</label>
