@@ -42,12 +42,31 @@ class CustomerController extends Controller
             ->with('success', 'Customer created successfully!');
     }
 
-    public function show(Customer $customer)
+    public function show(Customer $customer, Request $request)
     {
         $this->authorize('view', $customer);
         
-        $customer->load('shipments');
-        return view('customers.show', compact('customer'));
+        $query = $customer->shipments()->with(['supplier']);
+        
+        $quickFilter = $request->input('quick_filter', 'all');
+        
+        if ($quickFilter == 'this_month') {
+            $query->whereDate('etd_port', '>=', now()->startOfMonth()->toDateString())
+                  ->whereDate('etd_port', '<=', now()->endOfMonth()->toDateString());
+        } elseif ($quickFilter == 'prev_month') {
+            $query->whereDate('etd_port', '>=', now()->subMonth()->startOfMonth()->toDateString())
+                  ->whereDate('etd_port', '<=', now()->subMonth()->endOfMonth()->toDateString());
+        } elseif ($quickFilter == 'custom') {
+            if ($request->filled('start_date')) {
+                $query->whereDate('etd_port', '>=', $request->start_date);
+            }
+            if ($request->filled('end_date')) {
+                $query->whereDate('etd_port', '<=', $request->end_date);
+            }
+        }
+        
+        $shipments = $query->get();
+        return view('customers.show', compact('customer', 'shipments'));
     }
 
     public function edit(Customer $customer)

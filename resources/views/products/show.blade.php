@@ -111,13 +111,11 @@
                     </div>
                 </div>
             </div>
-            >
-
-            {{-- Shipment History --}}
+            >            {{-- Shipment History --}}
             <div
                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div class="p-6 border-b border-gray-100 dark:border-gray-700">
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <h3 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <div
                                 class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
@@ -129,14 +127,67 @@
                             </div>
                             {{ __('Shipment History') }}
                         </h3>
-                        <span
-                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                            {{ $product->shipments->count() }} {{ __('shipments') }}
-                        </span>
+                        
+                        <div class="flex flex-wrap items-end gap-3 bg-gray-50 dark:bg-gray-900/40 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
+                             @php
+                                 $defaultQuickFilter = request('quick_filter', 'all');
+                                 $startDateVal = request('start_date');
+                                 $endDateVal = request('end_date');
+                                 
+                                 if (!$startDateVal && !$endDateVal) {
+                                     if ($defaultQuickFilter == 'this_month') {
+                                         $startDateVal = now()->startOfMonth()->toDateString();
+                                         $endDateVal = now()->endOfMonth()->toDateString();
+                                     } elseif ($defaultQuickFilter == 'prev_month') {
+                                         $startDateVal = now()->subMonth()->startOfMonth()->toDateString();
+                                         $endDateVal = now()->subMonth()->endOfMonth()->toDateString();
+                                     }
+                                 }
+                             @endphp
+
+                             <form method="GET" action="{{ route('products.show', $product) }}" class="flex flex-wrap items-end gap-3">
+                                <div>
+                                    <label for="quick_filter" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{{ __('Filter Range') }}</label>
+                                    <select id="quick_filter" name="quick_filter" onchange="handleQuickFilter(this)" class="block border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm py-1 px-2 text-xs focus:outline-none focus:ring-[#A6192E] focus:border-[#A6192E]">
+                                        <option value="this_month" {{ $defaultQuickFilter == 'this_month' ? 'selected' : '' }}>{{ __('This Month') }}</option>
+                                        <option value="prev_month" {{ $defaultQuickFilter == 'prev_month' ? 'selected' : '' }}>{{ __('Previous Month') }}</option>
+                                        <option value="all" {{ $defaultQuickFilter == 'all' ? 'selected' : '' }}>{{ __('All Time') }}</option>
+                                        <option value="custom" {{ $defaultQuickFilter == 'custom' ? 'selected' : '' }}>{{ __('Custom Range') }}</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="flex items-end gap-3">
+                                    <div>
+                                        <label for="start_date" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{{ __('Start Date') }}</label>
+                                        <input type="date" id="start_date" name="start_date" value="{{ $startDateVal }}"
+                                            class="block border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm py-1 px-2 text-xs focus:outline-none focus:ring-[#A6192E] focus:border-[#A6192E]">
+                                    </div>
+                                    <div>
+                                        <label for="end_date" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{{ __('End Date') }}</label>
+                                        <input type="date" id="end_date" name="end_date" value="{{ $endDateVal }}"
+                                            class="block border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm py-1 px-2 text-xs focus:outline-none focus:ring-[#A6192E] focus:border-[#A6192E]">
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-bold rounded-md text-white bg-[#A6192E] hover:bg-[#8a1426] focus:outline-none">
+                                            {{ __('Filter') }}
+                                        </button>
+                                        @if(request('start_date') || request('end_date') || request('quick_filter'))
+                                            <a href="{{ route('products.show', $product) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-bold rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                                {{ __('Reset') }}
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </form>
+                            <span
+                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-150 dark:bg-gray-700 text-gray-700 dark:text-gray-300 h-8 self-end">
+                                {{ count($shipments) }} {{ __('shipments') }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                @if($product->shipments->count() > 0)
+                @if(count($shipments) > 0)
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
                             <thead>
@@ -162,7 +213,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                                @foreach($product->shipments as $shipment)
+                                @foreach($shipments as $shipment)
                                                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
                                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                                     <div class="flex items-center gap-3">
@@ -225,10 +276,63 @@
                             </svg>
                         </div>
                         <p class="text-gray-500 dark:text-gray-400 font-medium">
-                            {{ __("This product hasn't been included in any shipments yet.") }}</p>
+                            {{ __("No shipments found for the selected period.") }}</p>
                     </div>
                 @endif
             </div>
         </div>
     </div>
+    
+    <script>
+        function handleQuickFilter(select) {
+            const startInput = document.getElementById('start_date');
+            const endInput = document.getElementById('end_date');
+            const val = select.value;
+            
+            if (val === 'this_month') {
+                const now = new Date();
+                const start = new Date(now.getFullYear(), now.getMonth(), 1);
+                const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                startInput.value = formatDate(start);
+                endInput.value = formatDate(end);
+                select.form.submit();
+            } else if (val === 'prev_month') {
+                const now = new Date();
+                const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                const end = new Date(now.getFullYear(), now.getMonth(), 0);
+                startInput.value = formatDate(start);
+                endInput.value = formatDate(end);
+                select.form.submit();
+            } else if (val === 'all') {
+                startInput.value = '';
+                endInput.value = '';
+                select.form.submit();
+            }
+        }
+        
+        function formatDate(date) {
+            const d = new Date(date);
+            let month = '' + (d.getMonth() + 1);
+            let day = '' + d.getDate();
+            const year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const startInput = document.getElementById('start_date');
+            const endInput = document.getElementById('end_date');
+            const select = document.getElementById('quick_filter');
+            
+            const markCustom = () => {
+                select.value = 'custom';
+            };
+            
+            if (startInput) startInput.addEventListener('change', markCustom);
+            if (endInput) endInput.addEventListener('change', markCustom);
+        });
+    </script>
 </x-app-layout>

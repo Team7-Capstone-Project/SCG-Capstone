@@ -48,12 +48,31 @@ class ProductController extends Controller
             ->with('success', 'Product created successfully!');
     }
 
-    public function show(Product $product)
+    public function show(Product $product, Request $request)
     {
         $this->authorize('view', $product);
         
-        $product->load(['supplier', 'shipments.customer']);
-        return view('products.show', compact('product'));
+        $query = $product->shipments()->with(['supplier', 'customer']);
+        
+        $quickFilter = $request->input('quick_filter', 'all');
+        
+        if ($quickFilter == 'this_month') {
+            $query->whereDate('shipments.etd_port', '>=', now()->startOfMonth()->toDateString())
+                  ->whereDate('shipments.etd_port', '<=', now()->endOfMonth()->toDateString());
+        } elseif ($quickFilter == 'prev_month') {
+            $query->whereDate('shipments.etd_port', '>=', now()->subMonth()->startOfMonth()->toDateString())
+                  ->whereDate('shipments.etd_port', '<=', now()->subMonth()->endOfMonth()->toDateString());
+        } elseif ($quickFilter == 'custom') {
+            if ($request->filled('start_date')) {
+                $query->whereDate('shipments.etd_port', '>=', $request->start_date);
+            }
+            if ($request->filled('end_date')) {
+                $query->whereDate('shipments.etd_port', '<=', $request->end_date);
+            }
+        }
+        
+        $shipments = $query->get();
+        return view('products.show', compact('product', 'shipments'));
     }
 
     public function edit(Product $product)
