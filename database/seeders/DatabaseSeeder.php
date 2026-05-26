@@ -284,6 +284,111 @@ class DatabaseSeeder extends Seeder
                     ['product_id' => 5, 'quantity' => 150, 'unit_price' => 12500000],
                 ],
             ],
+            // Shipment 6: Early Delivery
+            [
+                'customer_id' => 3,
+                'supplier_id' => 1,
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-NES-2025-006',
+                'scg_po' => 'SCG-2025-006',
+                'booking_number' => 'BK-006-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-02-10',
+                'eta_port' => '2025-02-20',
+                'ata_port' => '2025-02-19',
+                'customer_receiving_schedule' => '2025-02-28',
+                'ata_customer' => '2025-02-25', // Early (3 days early)
+                'shipping_cost' => 14000000,
+                'customs_cost' => 4500000,
+                'other_costs' => 900000,
+                'products' => [
+                    ['product_id' => 3, 'quantity' => 120, 'unit_price' => 2100000],
+                ],
+            ],
+            // Shipment 7: Late Delivery
+            [
+                'customer_id' => 1,
+                'supplier_id' => 2,
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-UNI-2025-007',
+                'scg_po' => 'SCG-2025-007',
+                'booking_number' => 'BK-007-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-02-20',
+                'eta_port' => '2025-03-02',
+                'ata_port' => '2025-03-05',
+                'customer_receiving_schedule' => '2025-03-10',
+                'ata_customer' => '2025-03-15', // Late (5 days late)
+                'shipping_cost' => 17000000,
+                'customs_cost' => 5800000,
+                'other_costs' => 1300000,
+                'products' => [
+                    ['product_id' => 6, 'quantity' => 80, 'unit_price' => 850000],
+                ],
+            ],
+            // Shipment 8: On-Time Delivery
+            [
+                'customer_id' => 3,
+                'supplier_id' => 3,
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-NES-2025-008',
+                'scg_po' => 'SCG-2025-008',
+                'booking_number' => 'BK-008-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-02-15',
+                'eta_port' => '2025-02-25',
+                'ata_port' => '2025-02-24',
+                'customer_receiving_schedule' => '2025-03-05',
+                'ata_customer' => '2025-03-05', // On-time (Ideal)
+                'shipping_cost' => 9000000,
+                'customs_cost' => 3000000,
+                'other_costs' => 600000,
+                'products' => [
+                    ['product_id' => 7, 'quantity' => 300, 'unit_price' => 18000],
+                ],
+            ],
+            // Shipment 9: Early Delivery
+            [
+                'customer_id' => 2,
+                'supplier_id' => 3,
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-IND-2025-009',
+                'scg_po' => 'SCG-2025-009',
+                'booking_number' => 'BK-009-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-03-25',
+                'eta_port' => '2025-04-05',
+                'ata_port' => '2025-04-04',
+                'customer_receiving_schedule' => '2025-04-12',
+                'ata_customer' => '2025-04-10', // Early (2 days early)
+                'shipping_cost' => 11000000,
+                'customs_cost' => 3800000,
+                'other_costs' => 700000,
+                'products' => [
+                    ['product_id' => 8, 'quantity' => 150, 'unit_price' => 8500],
+                ],
+            ],
+            // Shipment 10: On-Time Delivery
+            [
+                'customer_id' => 1,
+                'supplier_id' => 2,
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-UNI-2025-010',
+                'scg_po' => 'SCG-2025-010',
+                'booking_number' => 'BK-010-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-04-01',
+                'eta_port' => '2025-04-10',
+                'ata_port' => '2025-04-09',
+                'customer_receiving_schedule' => '2025-04-20',
+                'ata_customer' => '2025-04-20', // On-time (Ideal)
+                'shipping_cost' => 15500000,
+                'customs_cost' => 5200000,
+                'other_costs' => 95000,
+                'products' => [
+                    ['product_id' => 1, 'quantity' => 250, 'unit_price' => 95000],
+                ],
+            ],
         ];
 
         foreach ($shipments as $shipmentData) {
