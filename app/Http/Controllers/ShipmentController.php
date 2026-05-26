@@ -38,6 +38,10 @@ class ShipmentController extends Controller
             $query->late();
         }
 
+        if ($request->filled('early')) {
+            $query->early();
+        }
+
         if ($request->filled('on_time')) {
             $query->onTime();
         }

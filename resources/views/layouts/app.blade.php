@@ -8,8 +8,9 @@
         <title>SCG SCM Dashboard</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -22,23 +23,29 @@
             }
         </script>
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-            @include('layouts.navigation')
+    <body class="font-sans antialiased text-slate-800 dark:text-slate-200">
+        <div class="min-h-screen bg-slate-50/60 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden pb-12">
+            <!-- Ambient Glow Accents -->
+            <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-tr from-blue-300/20 to-indigo-300/10 dark:from-blue-900/10 dark:to-transparent blur-[120px] pointer-events-none"></div>
+            <div class="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-gradient-to-br from-rose-300/10 to-red-300/20 dark:from-red-950/10 dark:to-transparent blur-[120px] pointer-events-none"></div>
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow transition-colors duration-300">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 dark:text-gray-200">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+            <div class="relative z-10">
+                @include('layouts.navigation')
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                <!-- Page Heading -->
+                @isset($header)
+                    <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm transition-colors duration-300">
+                        <div class="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endisset
+
+                <!-- Page Content -->
+                <main>
+                    {{ $slot }}
+                </main>
+            </div>
         </div>
         @stack('scripts')
     </body>

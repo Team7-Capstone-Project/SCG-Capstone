@@ -195,6 +195,14 @@ class Shipment extends Model
             ->whereRaw('ata_customer > customer_receiving_schedule');
     }
 
+    public function scopeEarly($query)
+    {
+        return $query->delivered()
+            ->whereNotNull('ata_customer')
+            ->whereNotNull('customer_receiving_schedule')
+            ->whereRaw('ata_customer < customer_receiving_schedule');
+    }
+
     public function scopePending($query)
     {
         return $query->where('status', 'Pending');
