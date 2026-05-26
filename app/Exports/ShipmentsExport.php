@@ -57,13 +57,16 @@ class ShipmentsExport implements FromQuery, WithHeadings, WithMapping, WithStyle
     {
         $otdStatus = 'Pending';
         if ($shipment->isDelivered()) {
-            $baseStatus = $shipment->isOnTime() ? 'On-Time' : 'Late';
-            $daysText = $shipment->getDaysDifferenceText();
-
-            if ($daysText && $daysText !== 'On schedule') {
-                $otdStatus = "{$baseStatus} ({$daysText})";
+            if ($shipment->isOnTime()) {
+                $otdStatus = 'Ideal';
+            } elseif ($shipment->isEarly()) {
+                $daysText = $shipment->getDaysDifferenceText();
+                $otdStatus = $daysText ? "Early ({$daysText})" : 'Early';
+            } elseif ($shipment->isLate()) {
+                $daysText = $shipment->getDaysDifferenceText();
+                $otdStatus = $daysText ? "Late ({$daysText})" : 'Late';
             } else {
-                $otdStatus = $baseStatus;
+                $otdStatus = 'Delivered';
             }
         }
 

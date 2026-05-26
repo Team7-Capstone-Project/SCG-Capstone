@@ -143,14 +143,20 @@
                                                         $daysDiff = $shipment->getDaysDifference();
                                                         $daysText = $shipment->getDaysDifferenceText();
                                                     @endphp
-
+ 
                                                     @if($shipment->isOnTime())
                                                         <div class="flex flex-col">
                                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                                                ✓ {{ __('On-Time') }}
+                                                                ✓ {{ __('Ideal') }}
                                                             </span>
-                                                            @if($daysDiff !== null && $daysDiff < 0)
-                                                                <span class="text-xs text-green-600 dark:text-green-400 mt-1">
+                                                        </div>
+                                                    @elseif($shipment->isEarly())
+                                                        <div class="flex flex-col">
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                                                                ✓ {{ __('Early') }}
+                                                            </span>
+                                                            @if($daysDiff !== null)
+                                                                <span class="text-xs text-amber-600 dark:text-amber-400 mt-1">
                                                                      {{ abs($daysDiff) }} {{ __('days early') }}
                                                                 </span>
                                                             @endif
@@ -160,9 +166,9 @@
                                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                                                                 ✗ {{ __('Late') }}
                                                             </span>
-                                                            @if($daysText && $daysDiff > 0)
+                                                            @if($daysDiff !== null)
                                                                 <span class="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">
-                                                                    {{ $daysDiff }} {{ __('days late') }}
+                                                                    {{ abs($daysDiff) }} {{ __('days late') }}
                                                                 </span>
                                                             @endif
                                                         </div>

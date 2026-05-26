@@ -23,16 +23,16 @@ class DashboardController extends Controller
         // Late Shipments (Delivered but ata_customer > customer_receiving_schedule)
         $lateShipments = Shipment::late()->count();
 
-        // On-Time Shipments (Delivered and ata_customer <= customer_receiving_schedule)
+        // On-Time Shipments (Delivered and ata_customer == customer_receiving_schedule)
         $onTimeShipments = Shipment::onTime()->count();
 
         // Early Shipments (Delivered and ata_customer < customer_receiving_schedule)
         $earlyShipments = Shipment::early()->count();
 
         // Calculate On-Time Delivery Rate
-        // OTD Rate = (On-Time Shipments / Total Delivered Shipments) * 100
+        // OTD Rate = ((On-Time Shipments + Early Shipments) / Total Delivered Shipments) * 100
         $otdRate = $deliveredShipments > 0 
-            ? round(($onTimeShipments / $deliveredShipments) * 100, 1) 
+            ? round((($onTimeShipments + $earlyShipments) / $deliveredShipments) * 100, 1) 
             : 0;
 
         // Recent Shipments (last 10)

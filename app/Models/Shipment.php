@@ -87,8 +87,8 @@ class Shipment extends Model
     }
 
     /**
-     * Check if shipment is On-Time
-     * OTD Definition: ata_customer <= customer_receiving_schedule
+     * Check if shipment is On-Time (Ideal)
+     * Ideal Definition: ata_customer == customer_receiving_schedule
      */
     public function isOnTime(): bool
     {
@@ -96,7 +96,19 @@ class Shipment extends Model
             return false;
         }
 
-        return $this->ata_customer->lte($this->customer_receiving_schedule);
+        return $this->ata_customer->eq($this->customer_receiving_schedule);
+    }
+
+    /**
+     * Check if shipment is Early
+     */
+    public function isEarly(): bool
+    {
+        if (!$this->isDelivered() || !$this->ata_customer || !$this->customer_receiving_schedule) {
+            return false;
+        }
+
+        return $this->ata_customer->lt($this->customer_receiving_schedule);
     }
 
     /**
@@ -184,7 +196,7 @@ class Shipment extends Model
         return $query->delivered()
             ->whereNotNull('ata_customer')
             ->whereNotNull('customer_receiving_schedule')
-            ->whereRaw('ata_customer <= customer_receiving_schedule');
+            ->whereColumn('ata_customer', 'customer_receiving_schedule');
     }
 
     public function scopeLate($query)
@@ -192,7 +204,7 @@ class Shipment extends Model
         return $query->delivered()
             ->whereNotNull('ata_customer')
             ->whereNotNull('customer_receiving_schedule')
-            ->whereRaw('ata_customer > customer_receiving_schedule');
+            ->whereColumn('ata_customer', '>', 'customer_receiving_schedule');
     }
 
     public function scopeEarly($query)
@@ -200,7 +212,7 @@ class Shipment extends Model
         return $query->delivered()
             ->whereNotNull('ata_customer')
             ->whereNotNull('customer_receiving_schedule')
-            ->whereRaw('ata_customer < customer_receiving_schedule');
+            ->whereColumn('ata_customer', '<', 'customer_receiving_schedule');
     }
 
     public function scopePending($query)

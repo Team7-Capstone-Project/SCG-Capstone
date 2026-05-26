@@ -119,10 +119,16 @@
                                     @if($shipment->isOnTime())
                                         <div class="flex flex-col space-y-1">
                                             <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-green-100 text-green-800 w-fit">
-                                                ✓ On-Time
+                                                ✓ {{ __('Ideal') }}
                                             </span>
-                                            @if($daysDiff !== null && $daysDiff < 0)
-                                                <span class="text-sm text-green-600 font-medium">
+                                        </div>
+                                    @elseif($shipment->isEarly())
+                                        <div class="flex flex-col space-y-1">
+                                            <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-amber-100 text-amber-800 w-fit">
+                                                ✓ {{ __('Early') }}
+                                            </span>
+                                            @if($daysText)
+                                                <span class="text-sm text-amber-600 font-medium">
                                                     {{ $daysText }}
                                                 </span>
                                             @endif
@@ -130,7 +136,7 @@
                                     @elseif($shipment->isLate())
                                         <div class="flex flex-col space-y-1">
                                             <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-red-100 text-red-800 w-fit">
-                                                ✗ Late
+                                                ✗ {{ __('Late') }}
                                             </span>
                                             @if($daysText)
                                                 <span class="text-sm text-red-600 font-bold">

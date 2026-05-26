@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
                 'contact_person' => 'John Doe',
                 'phone' => '021-5123456',
                 'email' => 'procurement@unilever.co.id',
-                'pic_user_id' => $picSales1->id,
+                'country' => 'Indonesia',
             ],
             [
                 'name' => 'PT Indofood Sukses Makmur',
@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
                 'contact_person' => 'Jane Smith',
                 'phone' => '021-5789012',
                 'email' => 'purchasing@indofood.co.id',
-                'pic_user_id' => $picSales1->id,
+                'country' => 'Indonesia',
             ],
             [
                 'name' => 'PT Nestle Indonesia',
@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
                 'contact_person' => 'Robert Chen',
                 'phone' => '021-4567890',
                 'email' => 'supply@nestle.co.id',
-                'pic_user_id' => $picSales2->id,
+                'country' => 'Indonesia',
             ],
         ];
 
@@ -114,38 +114,59 @@ class DatabaseSeeder extends Seeder
         // Create Products
         $products = [
             [
-                'sku' => 'CHM-001',
-                'name' => 'Sodium Hydroxide (Caustic Soda)',
-                'description' => 'Industrial grade caustic soda for manufacturing',
-                'unit_price' => 450000,
+                'sku' => 'CON-001',
+                'name' => 'SCG Low Carbon Cement',
+                'description' => 'Eco-friendly and high-strength construction cement',
+                'unit_price' => 95000,
                 'supplier_id' => 1,
             ],
             [
-                'sku' => 'CHM-002',
-                'name' => 'Polyethylene Resin',
-                'description' => 'High-density polyethylene for packaging',
-                'unit_price' => 1250000,
+                'sku' => 'CON-002',
+                'name' => 'SCG Smartwood Wall Capping',
+                'description' => 'Premium fiber cement decor wall paneling',
+                'unit_price' => 120000,
                 'supplier_id' => 1,
             ],
             [
-                'sku' => 'CHM-003',
-                'name' => 'Titanium Dioxide',
-                'description' => 'White pigment for coating applications',
-                'unit_price' => 850000,
+                'sku' => 'CON-003',
+                'name' => 'SCG Roofing Ceramic Tile',
+                'description' => 'Premium terracotta ceramic tiles for roofing',
+                'unit_price' => 15000,
+                'supplier_id' => 1,
+            ],
+            [
+                'sku' => 'ENG-001',
+                'name' => 'SCG Solar Panel System',
+                'description' => 'High efficiency monocrystalline solar PV panel system',
+                'unit_price' => 4500000,
                 'supplier_id' => 2,
             ],
             [
-                'sku' => 'PKG-001',
-                'name' => 'Corrugated Boxes',
-                'description' => 'Heavy-duty shipping boxes',
-                'unit_price' => 15000,
+                'sku' => 'ENG-002',
+                'name' => 'SCG Microgrid Energy Storage',
+                'description' => 'Battery energy storage system for microgrid solution',
+                'unit_price' => 12500000,
+                'supplier_id' => 2,
+            ],
+            [
+                'sku' => 'IND-001',
+                'name' => 'Corn and Tapioca Starch',
+                'description' => 'Premium tapioca starch for industrial chemical binder',
+                'unit_price' => 12000,
+                'supplier_id' => 1,
+            ],
+            [
+                'sku' => 'REC-001',
+                'name' => 'Recycled Plastic Resin',
+                'description' => 'Eco-friendly recycled PCR polyethylene resin pellets',
+                'unit_price' => 18000,
                 'supplier_id' => 3,
             ],
             [
-                'sku' => 'PKG-002',
-                'name' => 'Plastic Pallets',
-                'description' => 'Reusable plastic pallets for logistics',
-                'unit_price' => 350000,
+                'sku' => 'REC-002',
+                'name' => 'Recycled Paper Roll RCP',
+                'description' => 'Recycled cardboard medium craft paper roll',
+                'unit_price' => 8500,
                 'supplier_id' => 3,
             ],
         ];
@@ -169,13 +190,13 @@ class DatabaseSeeder extends Seeder
                 'eta_port' => '2025-01-15',
                 'ata_port' => '2025-01-14',
                 'customer_receiving_schedule' => '2025-01-20',
-                'ata_customer' => '2025-01-18', // On-time
+                'ata_customer' => '2025-01-18', // Early (2 days early)
                 'shipping_cost' => 15000000,
                 'customs_cost' => 5000000,
                 'other_costs' => 1000000,
                 'products' => [
-                    ['product_id' => 1, 'quantity' => 100, 'unit_price' => 450000],
-                    ['product_id' => 2, 'quantity' => 50, 'unit_price' => 1250000],
+                    ['product_id' => 1, 'quantity' => 100, 'unit_price' => 95000],
+                    ['product_id' => 2, 'quantity' => 50, 'unit_price' => 120000],
                 ],
             ],
             // Shipment 2: Late Delivery
@@ -196,7 +217,7 @@ class DatabaseSeeder extends Seeder
                 'customs_cost' => 4000000,
                 'other_costs' => 800000,
                 'products' => [
-                    ['product_id' => 2, 'quantity' => 75, 'unit_price' => 1250000],
+                    ['product_id' => 2, 'quantity' => 75, 'unit_price' => 120000],
                 ],
             ],
             // Shipment 3: In Transit
@@ -217,7 +238,7 @@ class DatabaseSeeder extends Seeder
                 'customs_cost' => 6000000,
                 'other_costs' => 1200000,
                 'products' => [
-                    ['product_id' => 3, 'quantity' => 200, 'unit_price' => 850000],
+                    ['product_id' => 4, 'quantity' => 200, 'unit_price' => 4500000],
                 ],
             ],
             // Shipment 4: Pending
@@ -238,8 +259,8 @@ class DatabaseSeeder extends Seeder
                 'customs_cost' => 2500000,
                 'other_costs' => 500000,
                 'products' => [
-                    ['product_id' => 4, 'quantity' => 500, 'unit_price' => 15000],
-                    ['product_id' => 5, 'quantity' => 20, 'unit_price' => 350000],
+                    ['product_id' => 7, 'quantity' => 500, 'unit_price' => 18000],
+                    ['product_id' => 8, 'quantity' => 20, 'unit_price' => 8500],
                 ],
             ],
             // Shipment 5: On-Time Delivery
@@ -255,12 +276,12 @@ class DatabaseSeeder extends Seeder
                 'eta_port' => '2025-01-30',
                 'ata_port' => '2025-01-29',
                 'customer_receiving_schedule' => '2025-02-05',
-                'ata_customer' => '2025-02-03', // On-time
+                'ata_customer' => '2025-02-03', // Early (2 days early)
                 'shipping_cost' => 16000000,
                 'customs_cost' => 5500000,
                 'other_costs' => 1100000,
                 'products' => [
-                    ['product_id' => 3, 'quantity' => 150, 'unit_price' => 850000],
+                    ['product_id' => 5, 'quantity' => 150, 'unit_price' => 12500000],
                 ],
             ],
         ];
