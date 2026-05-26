@@ -276,7 +276,7 @@ class DatabaseSeeder extends Seeder
                 'eta_port' => '2025-01-30',
                 'ata_port' => '2025-01-29',
                 'customer_receiving_schedule' => '2025-02-05',
-                'ata_customer' => '2025-02-03', // Early (2 days early)
+                'ata_customer' => '2025-02-05', // On-time (Ideal)
                 'shipping_cost' => 16000000,
                 'customs_cost' => 5500000,
                 'other_costs' => 1100000,

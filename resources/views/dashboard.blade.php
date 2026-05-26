@@ -146,33 +146,29 @@
                     </div>
                 </a>
 
-                {{-- OTD Rate --}}
-                <a href="{{ route('shipments.index', ['on_time' => 1]) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-400 @if($otdRate >= 80) hover:shadow-emerald-500/5 hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10 @elseif($otdRate >= 50) hover:shadow-amber-500/5 hover:border-amber-500/30 dark:hover:shadow-amber-500/10 @else hover:shadow-rose-500/5 hover:border-rose-500/30 dark:hover:shadow-rose-500/10 @endif">
-                    <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r @if($otdRate >= 80) from-emerald-500 to-teal-600 @elseif($otdRate >= 50) from-amber-500 to-orange-500 @else from-rose-500 to-red-600 @endif opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {{-- On-Time Shipments --}}
+                <a href="{{ route('shipments.index', ['on_time' => 1]) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 dark:hover:shadow-emerald-500/10 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-400">
+                    <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div>
                         <div class="flex items-start justify-between">
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('OTD Rate') }}</p>
-                                <p class="text-4xl font-extrabold mt-3 tracking-tight @if($otdRate >= 80) text-emerald-600 dark:text-emerald-400 @elseif($otdRate >= 50) text-amber-600 dark:text-amber-400 @else text-rose-600 dark:text-rose-400 @endif">
-                                    {{ number_format($otdRate, 1) }}%
-                                </p>
+                                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('On-Time Shipments') }}</p>
+                                <p class="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-3 tracking-tight">{{ $onTimeShipments }}</p>
                             </div>
-                            <div class="rounded-xl p-3.5 shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 @if($otdRate >= 80) bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 @elseif($otdRate >= 50) bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 @else bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 @endif">
+                            <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl p-3.5 shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                         </div>
                     </div>
                     <div class="mt-4 flex flex-col gap-1.5">
                         <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 dark:text-slate-500">
-                            <span class="tracking-wide uppercase">{{ __('Target: 95.0%') }}</span>
-                            <span class="font-semibold @if($otdRate >= 80) text-emerald-600 dark:text-emerald-400 @elseif($otdRate >= 50) text-amber-600 dark:text-amber-400 @else text-rose-600 dark:text-rose-400 @endif">
-                                @if($otdRate >= 80) Good @elseif($otdRate >= 50) Warning @else Critical @endif
-                            </span>
+                            <span class="tracking-wide uppercase">{{ __('On-Time Share') }}</span>
+                            <span class="text-emerald-600 dark:text-emerald-400 font-semibold">{{ $totalShipments > 0 ? round(($onTimeShipments / $totalShipments) * 100) : 0 }}%</span>
                         </div>
                         <div class="w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full @if($otdRate >= 80) bg-emerald-500 @elseif($otdRate >= 50) bg-amber-500 @else bg-rose-500 @endif" style="width: {{ min($otdRate, 100) }}%"></div>
+                            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full" style="width: {{ $totalShipments > 0 ? ($onTimeShipments / $totalShipments) * 100 : 0 }}%"></div>
                         </div>
                     </div>
                 </a>
