@@ -73,6 +73,62 @@ class DatabaseSeeder extends Seeder
                 'email' => 'supply@nestle.co.id',
                 'country' => 'Indonesia',
             ],
+            [
+                'name' => 'PT Astra International Tbk',
+                'address' => 'Jl. Gaya Motor Raya No. 8, Sunter II, Jakarta',
+                'contact_person' => 'Budi Utomo',
+                'phone' => '021-6522555',
+                'email' => 'purchasing@astra.co.id',
+                'country' => 'Indonesia',
+            ],
+            [
+                'name' => 'Siam Cement Group (SCG)',
+                'address' => '1 Siam Cement Road, Bangsue, Bangkok',
+                'contact_person' => 'Somchai Somboon',
+                'phone' => '+66-2-5864444',
+                'email' => 'contact@scg.com',
+                'country' => 'Thailand',
+            ],
+            [
+                'name' => 'Petronas Chemicals Group Berhad',
+                'address' => 'Tower 1, Petronas Twin Towers, Kuala Lumpur',
+                'contact_person' => 'Mohd Azlan',
+                'phone' => '+60-3-20515000',
+                'email' => 'info.pcg@petronas.com',
+                'country' => 'Malaysia',
+            ],
+            [
+                'name' => 'JG Summit Holdings, Inc.',
+                'address' => '43rd Floor, Robinsons Equitable Tower, ADB Ave, Pasig',
+                'contact_person' => 'Maria Santos',
+                'phone' => '+63-2-86337631',
+                'email' => 'procurement@jgsummit.com.ph',
+                'country' => 'Philippines',
+            ],
+            [
+                'name' => 'Charoen Pokphand Group (CP Group)',
+                'address' => '313 C.P. Tower, Silom Road, Bangrak, Bangkok',
+                'contact_person' => 'Kiatnakin Prasert',
+                'phone' => '+66-2-7667000',
+                'email' => 'supply_chain@cpgroup.cn',
+                'country' => 'Thailand',
+            ],
+            [
+                'name' => 'PT Semen Indonesia Tbk',
+                'address' => 'South Quarter Tower A, Jl. RA Kartini, Jakarta',
+                'contact_person' => 'Agus Wijaya',
+                'phone' => '021-5261254',
+                'email' => 'marketing@sig.id',
+                'country' => 'Indonesia',
+            ],
+            [
+                'name' => 'Vietnam Dairy Products JSC (Vinamilk)',
+                'address' => '10 Tan Trao, Tan Phu Ward, District 7, Ho Chi Minh City',
+                'contact_person' => 'Nguyen Van A',
+                'phone' => '+84-28-54155555',
+                'email' => 'import_export@vinamilk.com.vn',
+                'country' => 'Vietnam',
+            ],
         ];
 
         foreach ($customers as $customerData) {
@@ -104,6 +160,54 @@ class DatabaseSeeder extends Seeder
                 'phone' => '+65-6234-5678',
                 'email' => 'info@sgtrading.com.sg',
                 'country' => 'Singapore',
+            ],
+            [
+                'name' => 'Mitsui & Co., Ltd.',
+                'address' => '1-3, Marunouchi 1-chome, Chiyoda-ku, Tokyo',
+                'contact_person' => 'Kenji Yamamoto',
+                'phone' => '+81-3-32851111',
+                'email' => 'chemical_dept@mitsui.com',
+                'country' => 'Japan',
+            ],
+            [
+                'name' => 'Hanwha Corporation',
+                'address' => '86 Cheonggyecheon-ro, Jung-gu, Seoul',
+                'contact_person' => 'Min-ho Kim',
+                'phone' => '+82-2-7292114',
+                'email' => 'global_trade@hanwha.com',
+                'country' => 'South Korea',
+            ],
+            [
+                'name' => 'BASF SE',
+                'address' => 'Carl-Bosch-Strasse 38, Ludwigshafen',
+                'contact_person' => 'Dieter Mueller',
+                'phone' => '+49-621-600',
+                'email' => 'orders@basf.com',
+                'country' => 'Germany',
+            ],
+            [
+                'name' => 'Dow Chemical Company',
+                'address' => '2211 H.H. Dow Way, Midland, Michigan',
+                'contact_person' => 'Sarah Jenkins',
+                'phone' => '+1-989-6361000',
+                'email' => 'custhelp@dow.com',
+                'country' => 'United States',
+            ],
+            [
+                'name' => 'Formosa Plastics Corporation',
+                'address' => 'No. 201 Dunhua N. Road, Songshan District, Taipei',
+                'contact_person' => 'Chao-Ming Chen',
+                'phone' => '+886-2-27122211',
+                'email' => 'sales@fpc.com.tw',
+                'country' => 'Taiwan',
+            ],
+            [
+                'name' => 'SABIC (Saudi Basic Industries Corp)',
+                'address' => 'Qordoba, Airport Road, Riyadh',
+                'contact_person' => 'Fahad Al-Harbi',
+                'phone' => '+966-11-2258000',
+                'email' => 'info@sabic.com',
+                'country' => 'Saudi Arabia',
             ],
         ];
 
@@ -168,6 +272,48 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Recycled cardboard medium craft paper roll',
                 'unit_price' => 8500,
                 'supplier_id' => 3,
+            ],
+            [
+                'sku' => 'CHE-001',
+                'name' => 'High Purity Propylene Glycol',
+                'description' => 'Industrial grade solvent and raw material',
+                'unit_price' => 28000,
+                'supplier_id' => 4,
+            ],
+            [
+                'sku' => 'CHE-002',
+                'name' => 'Caustic Soda Flakes',
+                'description' => 'Sodium hydroxide flakes for soap and paper industries',
+                'unit_price' => 15000,
+                'supplier_id' => 5,
+            ],
+            [
+                'sku' => 'POL-001',
+                'name' => 'Polyurethane Foam Catalyst',
+                'description' => 'Polymer additive for high resiliency cushioning',
+                'unit_price' => 89000,
+                'supplier_id' => 6,
+            ],
+            [
+                'sku' => 'POL-002',
+                'name' => 'Polyethylene Resin DOWLEX',
+                'description' => 'Linear low density polyethylene film grade',
+                'unit_price' => 24500,
+                'supplier_id' => 7,
+            ],
+            [
+                'sku' => 'PLA-001',
+                'name' => 'PVC Resin Suspension Grade',
+                'description' => 'Polyvinyl chloride resin for pipe extrusion',
+                'unit_price' => 19500,
+                'supplier_id' => 8,
+            ],
+            [
+                'sku' => 'PLA-002',
+                'name' => 'Polypropylene Homopolymer',
+                'description' => 'High flow injection molding PP granules',
+                'unit_price' => 22000,
+                'supplier_id' => 9,
             ],
         ];
 
@@ -387,6 +533,153 @@ class DatabaseSeeder extends Seeder
                 'other_costs' => 95000,
                 'products' => [
                     ['product_id' => 1, 'quantity' => 250, 'unit_price' => 95000],
+                ],
+            ],
+            // Shipment 11: On-Time Delivery
+            [
+                'customer_id' => 4, // PT Astra International Tbk
+                'supplier_id' => 4, // Mitsui & Co.
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-AST-2025-011',
+                'scg_po' => 'SCG-2025-011',
+                'booking_number' => 'BK-011-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-04-10',
+                'eta_port' => '2025-04-20',
+                'ata_port' => '2025-04-19',
+                'customer_receiving_schedule' => '2025-04-25',
+                'ata_customer' => '2025-04-24', // Early (1 day early)
+                'shipping_cost' => 22000000,
+                'customs_cost' => 7500000,
+                'other_costs' => 1500000,
+                'products' => [
+                    ['product_id' => 9, 'quantity' => 1000, 'unit_price' => 28000],
+                ],
+            ],
+            // Shipment 12: In Transit
+            [
+                'customer_id' => 5, // Siam Cement Group (SCG)
+                'supplier_id' => 5, // Hanwha Corporation
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-SCG-2025-012',
+                'scg_po' => 'SCG-2025-012',
+                'booking_number' => 'BK-012-2025',
+                'status' => 'In Transit',
+                'etd_port' => '2025-04-15',
+                'eta_port' => '2025-04-25',
+                'ata_port' => '2025-04-24',
+                'customer_receiving_schedule' => '2025-05-01',
+                'ata_customer' => null,
+                'shipping_cost' => 13500000,
+                'customs_cost' => 4500000,
+                'other_costs' => 800000,
+                'products' => [
+                    ['product_id' => 10, 'quantity' => 500, 'unit_price' => 15000],
+                ],
+            ],
+            // Shipment 13: Pending
+            [
+                'customer_id' => 6, // Petronas Chemicals Group
+                'supplier_id' => 6, // BASF SE
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-PET-2025-013',
+                'scg_po' => 'SCG-2025-013',
+                'booking_number' => 'BK-013-2025',
+                'status' => 'Pending',
+                'etd_port' => '2025-05-01',
+                'eta_port' => '2025-05-10',
+                'ata_port' => null,
+                'customer_receiving_schedule' => '2025-05-15',
+                'ata_customer' => null,
+                'shipping_cost' => 19000000,
+                'customs_cost' => 6500000,
+                'other_costs' => 1200000,
+                'products' => [
+                    ['product_id' => 11, 'quantity' => 200, 'unit_price' => 89000],
+                ],
+            ],
+            // Shipment 14: Late Delivery
+            [
+                'customer_id' => 7, // JG Summit Holdings
+                'supplier_id' => 7, // Dow Chemical Company
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-JGS-2025-014',
+                'scg_po' => 'SCG-2025-014',
+                'booking_number' => 'BK-014-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-04-05',
+                'eta_port' => '2025-04-15',
+                'ata_port' => '2025-04-18',
+                'customer_receiving_schedule' => '2025-04-20',
+                'ata_customer' => '2025-04-23', // Late (3 days late)
+                'shipping_cost' => 26000000,
+                'customs_cost' => 9000000,
+                'other_costs' => 2000000,
+                'products' => [
+                    ['product_id' => 12, 'quantity' => 1500, 'unit_price' => 24500],
+                ],
+            ],
+            // Shipment 15: Early Delivery
+            [
+                'customer_id' => 8, // CP Group
+                'supplier_id' => 8, // Formosa Plastics Corporation
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-CPG-2025-015',
+                'scg_po' => 'SCG-2025-015',
+                'booking_number' => 'BK-015-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-04-12',
+                'eta_port' => '2025-04-22',
+                'ata_port' => '2025-04-19',
+                'customer_receiving_schedule' => '2025-04-28',
+                'ata_customer' => '2025-04-24', // Early (4 days early)
+                'shipping_cost' => 15000000,
+                'customs_cost' => 5000000,
+                'other_costs' => 1000000,
+                'products' => [
+                    ['product_id' => 13, 'quantity' => 800, 'unit_price' => 19500],
+                ],
+            ],
+            // Shipment 16: On-Time Delivery
+            [
+                'customer_id' => 9, // PT Semen Indonesia Tbk
+                'supplier_id' => 9, // SABIC
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-SIG-2025-016',
+                'scg_po' => 'SCG-2025-016',
+                'booking_number' => 'BK-016-2025',
+                'status' => 'Delivered',
+                'etd_port' => '2025-04-20',
+                'eta_port' => '2025-04-30',
+                'ata_port' => '2025-04-29',
+                'customer_receiving_schedule' => '2025-05-05',
+                'ata_customer' => '2025-05-05', // On-time
+                'shipping_cost' => 18500000,
+                'customs_cost' => 6000000,
+                'other_costs' => 1100000,
+                'products' => [
+                    ['product_id' => 14, 'quantity' => 1200, 'unit_price' => 22000],
+                ],
+            ],
+            // Shipment 17: In Transit
+            [
+                'customer_id' => 10, // Vinamilk
+                'supplier_id' => 3, // Singapore Trading
+                'created_by_user_id' => $adminScm2->id,
+                'customer_po' => 'PO-VNM-2025-017',
+                'scg_po' => 'SCG-2025-017',
+                'booking_number' => 'BK-017-2025',
+                'status' => 'In Transit',
+                'etd_port' => '2025-04-25',
+                'eta_port' => '2025-05-05',
+                'ata_port' => '2025-05-04',
+                'customer_receiving_schedule' => '2025-05-10',
+                'ata_customer' => null,
+                'shipping_cost' => 11000000,
+                'customs_cost' => 3500000,
+                'other_costs' => 600000,
+                'products' => [
+                    ['product_id' => 7, 'quantity' => 400, 'unit_price' => 18000],
                 ],
             ],
         ];
