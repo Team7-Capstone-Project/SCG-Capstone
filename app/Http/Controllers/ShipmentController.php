@@ -316,7 +316,24 @@ class ShipmentController extends Controller
             'status' => 'required|in:Pending,In Transit,Delivered,Cancelled',
             'etd_port' => 'required|date',
             'eta_port' => 'nullable|date|after_or_equal:etd_port',
-            'ata_port' => 'nullable|date|after_or_equal:etd_port',
+            'ata_port' => [
+                'required_if:status,Delivered',
+                'nullable',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    $status = $request->status;
+                    if (in_array($status, ['Pending', 'Cancelled']) && !empty($value)) {
+                        $fail(__('Actual Time Arrival at Port (ATA Port) cannot be set for ' . $status . ' shipments.'));
+                        return;
+                    }
+                    if (!empty($value)) {
+                        $ataPort = strtotime($value);
+                        if ($request->filled('etd_port') && $ataPort < strtotime($request->etd_port)) {
+                            $fail(__('The Actual Time Arrival at Port (ATA Port) must be after or equal to Departure from Port (ETD Port).'));
+                        }
+                    }
+                }
+            ],
             'customer_receiving_schedule' => [
                 'required',
                 'date',
@@ -326,25 +343,33 @@ class ShipmentController extends Controller
                         $eta = strtotime($request->eta_port);
                         $schedule = strtotime($value);
                         if ($schedule < $eta) {
-                            $fail('The Customer Receiving Schedule must be after or equal to ETA Port.');
+                            $fail(__('The Customer Receiving Schedule must be after or equal to ETA Port.'));
                         }
                     }
                 }
             ],
             'ata_customer' => [
+                'required_if:status,Delivered',
                 'nullable',
                 'date',
                 function ($attribute, $value, $fail) use ($request) {
-                    $ataCustomer = strtotime($value);
-                    if ($request->filled('ata_port')) {
-                        $ataPort = strtotime($request->ata_port);
-                        if ($ataCustomer < $ataPort) {
-                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).');
-                        }
-                    } elseif ($request->filled('etd_port')) {
-                        $etd = strtotime($request->etd_port);
-                        if ($ataCustomer < $etd) {
-                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Departure from Port (ETD Port).');
+                    $status = $request->status;
+                    if (in_array($status, ['Pending', 'In Transit', 'Cancelled']) && !empty($value)) {
+                        $fail(__('Actual Time Arrival at Customer (ATA Customer) cannot be set for ' . $status . ' shipments.'));
+                        return;
+                    }
+                    if (!empty($value)) {
+                        $ataCustomer = strtotime($value);
+                        if ($request->filled('ata_port')) {
+                            $ataPort = strtotime($request->ata_port);
+                            if ($ataCustomer < $ataPort) {
+                                $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).'));
+                            }
+                        } elseif ($request->filled('etd_port')) {
+                            $etd = strtotime($request->etd_port);
+                            if ($ataCustomer < $etd) {
+                                $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Departure from Port (ETD Port).'));
+                            }
                         }
                     }
                 }
@@ -435,31 +460,71 @@ class ShipmentController extends Controller
         $validated = $request->validate([
             'status' => 'nullable|in:Pending,In Transit,Delivered,Cancelled',
             'ata_port' => [
+                'required_if:status,Delivered',
+                'required_with:ata_customer',
                 'nullable',
                 'date',
-                function ($attribute, $value, $fail) use ($shipment) {
-                    if ($shipment->etd_port && strtotime($value) < strtotime($shipment->etd_port)) {
-                        $fail('The Actual Time Arrival at Port (ATA Port) must be after or equal to Departure from Port (ETD Port).');
+                function ($attribute, $value, $fail) use ($request, $shipment) {
+                    $targetStatus = $request->input('status') ?: $shipment->status;
+                    if ($request->filled('ata_customer')) {
+                        $targetStatus = 'Delivered';
+                    }
+
+                    if (in_array($targetStatus, ['Pending', 'Cancelled']) && !empty($value)) {
+                        $fail(__('Actual Time Arrival at Port (ATA Port) cannot be set for ' . $targetStatus . ' shipments.'));
+                        return;
+                    }
+
+                    if (!empty($value)) {
+                        $ataPort = strtotime($value);
+                        if ($shipment->etd_port && $ataPort < strtotime($shipment->etd_port)) {
+                            $fail(__('The Actual Time Arrival at Port (ATA Port) must be after or equal to Departure from Port (ETD Port).'));
+                            return;
+                        }
+
+                        // Check against ata_customer
+                        if ($request->filled('ata_customer')) {
+                            if ($ataPort > strtotime($request->ata_customer)) {
+                                $fail(__('The Actual Time Arrival at Port (ATA Port) must be before or equal to Actual Time Arrival at Customer (ATA Customer).'));
+                            }
+                        } elseif ($shipment->ata_customer) {
+                            if ($ataPort > strtotime($shipment->ata_customer)) {
+                                $fail(__('The Actual Time Arrival at Port (ATA Port) must be before or equal to Actual Time Arrival at Customer (ATA Customer).'));
+                            }
+                        }
                     }
                 }
             ],
             'ata_customer' => [
+                'required_if:status,Delivered',
                 'nullable',
                 'date',
                 function ($attribute, $value, $fail) use ($request, $shipment) {
-                    $ataCustomer = strtotime($value);
-                    if ($request->filled('ata_port')) {
-                        $ataPort = strtotime($request->ata_port);
-                        if ($ataCustomer < $ataPort) {
-                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).');
-                        }
-                    } elseif ($shipment->ata_port) {
-                        if ($ataCustomer < strtotime($shipment->ata_port)) {
-                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).');
-                        }
-                    } elseif ($shipment->etd_port) {
-                        if ($ataCustomer < strtotime($shipment->etd_port)) {
-                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Departure from Port (ETD Port).');
+                    $targetStatus = $request->input('status') ?: $shipment->status;
+                    if (!empty($value)) {
+                        $targetStatus = 'Delivered';
+                    }
+
+                    if (in_array($targetStatus, ['Pending', 'In Transit', 'Cancelled']) && !empty($value)) {
+                        $fail(__('Actual Time Arrival at Customer (ATA Customer) cannot be set for ' . $targetStatus . ' shipments.'));
+                        return;
+                    }
+
+                    if (!empty($value)) {
+                        $ataCustomer = strtotime($value);
+                        if ($request->filled('ata_port')) {
+                            $ataPort = strtotime($request->ata_port);
+                            if ($ataCustomer < $ataPort) {
+                                $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).'));
+                            }
+                        } elseif ($shipment->ata_port) {
+                            if ($ataCustomer < strtotime($shipment->ata_port)) {
+                                $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).'));
+                            }
+                        } elseif ($shipment->etd_port) {
+                            if ($ataCustomer < strtotime($shipment->etd_port)) {
+                                $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Departure from Port (ETD Port).'));
+                            }
                         }
                     }
                 }

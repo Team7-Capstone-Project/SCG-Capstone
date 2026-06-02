@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-scg-gray-dark leading-tight">
-            Customer Details
+            {{ __('Customer Details') }}
         </h2>
     </x-slot>
 
@@ -11,27 +11,27 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Customer</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Customer') }}</label>
                             <p class="mt-1 text-lg font-semibold text-scg-gray-dark">{{ $customer->name }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Country</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Country') }}</label>
                             <p class="mt-1 text-lg">{{ $customer->country ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Name</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Name') }}</label>
                             <p class="mt-1 text-lg font-semibold text-scg-gray-dark">{{ $customer->contact_person ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Phone</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Phone') }}</label>
                             <p class="mt-1">{{ $customer->phone ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Email</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Email') }}</label>
                             <p class="mt-1">{{ $customer->email ?? '-' }}</p>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-600">Address</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Address') }}</label>
                             <p class="mt-1">{{ $customer->address ?? '-' }}</p>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                        <h3 class="text-lg font-semibold text-scg-gray-dark">Shipments ({{ count($shipments) }})</h3>
+                        <h3 class="text-lg font-semibold text-scg-gray-dark">{{ __('Shipments') }} ({{ count($shipments) }})</h3>
                         
                         @php
                             $defaultQuickFilter = request('quick_filter', 'all');
@@ -118,11 +118,11 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-scg-gray-light">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Customer PO</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Supplier</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">ETD Port</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('Customer PO') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('Supplier') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('Status') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('ETD Port') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('Actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -132,12 +132,12 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->supplier->name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span class="px-2 py-1 rounded-full text-xs bg-{{ $shipment->status == 'Delivered' ? 'green' : ($shipment->status == 'Pending' ? 'yellow' : 'blue') }}-100">
-                                                    {{ $shipment->status }}
+                                                    {{ __($shipment->status) }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $shipment->etd_port?->format('d M Y') ?? '-' }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red hover:text-red-900">View</a>
+                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red hover:text-red-900">{{ __('View') }}</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -145,7 +145,7 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-gray-500 text-center py-4">No shipments found for the selected period.</p>
+                        <p class="text-gray-500 text-center py-4">{{ __('No shipments found for the selected period.') }}</p>
                     @endif
             </div>
         </div>

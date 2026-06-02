@@ -27,7 +27,7 @@
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
-                            Back to Shipment Details
+                            {{ __('Back to Shipment Details') }}
                         </a>
                     </div>
 
@@ -355,10 +355,10 @@
                         {{-- Form Actions --}}
                         <div class="flex justify-end space-x-4 pt-4">
                             <a href="{{ route('shipments.index') }}" class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-bold py-2 px-6 rounded transition">
-                                Cancel
+                                {{ __('Cancel') }}
                             </a>
                             <button type="submit" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded transition">
-                                Update Shipment
+                                {{ __('Update Shipment') }}
                             </button>
                         </div>
                     </form>

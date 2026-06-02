@@ -26,7 +26,7 @@
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
-                            Back to Supplier Details
+                            {{ __('Back to Supplier Details') }}
                         </a>
                     </div>
                     
@@ -37,7 +37,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div class="md:col-span-2">
                                 <label for="name" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Supplier <span class="text-red-500">*</span>
+                                    {{ __('Supplier') }} <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="name" id="name" value="{{ old('name', $supplier->name) }}" required
                                     pattern="^[a-zA-Z0-9\s\.,&'\-\(\)]+$"
@@ -50,7 +50,7 @@
 
                             <div class="md:col-span-2">
                                 <label for="address" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Address
+                                    {{ __('Address') }}
                                 </label>
                                 <textarea name="address" id="address" rows="3"
                                     class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('address') border-red-500 @enderror">{{ old('address', $supplier->address) }}</textarea>
@@ -61,7 +61,7 @@
 
                             <div>
                                 <label for="country" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Country
+                                    {{ __('Country') }}
                                 </label>
                                 <input type="text" name="country" id="country" value="{{ old('country', $supplier->country) }}"
                                     pattern="^[a-zA-Z\s\.\-\(\)]+$"
@@ -74,7 +74,7 @@
 
                             <div>
                                 <label for="contact_person" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Contact Person Name
+                                    {{ __('Contact Person') }}
                                 </label>
                                 <input type="text" name="contact_person" id="contact_person" 
                                     value="{{ old('contact_person', $supplier->contact_person) }}"
@@ -88,7 +88,7 @@
 
                             <div>
                                 <label for="phone" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Phone
+                                    {{ __('Phone') }}
                                 </label>
                                 <input type="text" name="phone" id="phone" 
                                     value="{{ old('phone', $supplier->phone) }}"
@@ -103,7 +103,7 @@
 
                             <div>
                                 <label for="email" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Email
+                                    {{ __('Email') }}
                                 </label>
                                 <input type="email" name="email" id="email" 
                                     value="{{ old('email', $supplier->email) }}"
@@ -116,10 +116,10 @@
 
                         <div class="flex justify-end space-x-4 pt-4">
                             <a href="{{ route('suppliers.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded transition">
-                                Cancel
+                                {{ __('Cancel') }}
                             </a>
                             <button type="submit" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded transition">
-                                Update Supplier
+                                {{ __('Update Supplier') }}
                             </button>
                         </div>
                     </form>

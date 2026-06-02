@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-scg-gray-dark leading-tight">
-            Shipment Details - {{ $shipment->customer_po ?? 'N/A' }}
+            {{ __('Shipment Details') }} - {{ $shipment->customer_po ?? 'N/A' }}
         </h2>
     </x-slot>
 
@@ -23,19 +23,19 @@
             {{-- Shipment Information --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">Shipment Information</h3>
+                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">{{ __('Shipment Information') }}</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Customer</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Customer') }}</label>
                             <p class="mt-1 text-lg font-semibold">{{ $shipment->customer->name }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Supplier</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Supplier') }}</label>
                             <p class="mt-1 text-lg font-semibold">{{ $shipment->supplier->name }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Status</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Status') }}</label>
                             <p class="mt-1">
                                 @php
                                     $statusColors = [
@@ -46,33 +46,33 @@
                                     ];
                                 @endphp
                                 <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800' }}">
-                                    {{ $shipment->status }}
+                                    {{ __($shipment->status) }}
                                 </span>
                             </p>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Customer PO</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Customer PO') }}</label>
                             <p class="mt-1">{{ $shipment->customer_po ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">SCG PO</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('SCG PO') }}</label>
                             <p class="mt-1">{{ $shipment->scg_po ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Booking Number</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Booking Number') }}</label>
                             <p class="mt-1">{{ $shipment->booking_number ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">SCG SO</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('SCG SO') }}</label>
                             <p class="mt-1 font-semibold">{{ $shipment->scg_so ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Delivery Note Number</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Delivery Note') }}</label>
                             <p class="mt-1">{{ $shipment->delivery_note_number ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Supplier Invoice</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Supplier Invoice') }}</label>
                             <p class="mt-1">{{ $shipment->supplier_invoice ?? '-' }}</p>
                         </div>
                     </div>
@@ -82,33 +82,33 @@
             {{-- Dates & OTD --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">Dates & OTD Tracking</h3>
+                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">{{ __('Dates & OTD Tracking') }}</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">ETD Port</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('ETD Port') }}</label>
                             <p class="mt-1">{{ $shipment->etd_port?->format('d M Y') ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">ETA Port</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('ETA Port') }}</label>
                             <p class="mt-1">{{ $shipment->eta_port?->format('d M Y') ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">ATA Port</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('ATA Port') }}</label>
                             <p class="mt-1">{{ $shipment->ata_port?->format('d M Y') ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Customer Receiving Schedule</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Customer Receiving Schedule') }}</label>
                             <p class="mt-1 font-semibold text-blue-600">{{ $shipment->customer_receiving_schedule?->format('d M Y') ?? '-' }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">ATA Customer (Actual Delivery)</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('ATA Customer (Actual Delivery)') }}</label>
                             <p class="mt-1 font-semibold {{ $shipment->ata_customer ? 'text-green-600' : '' }}">
                                 {{ $shipment->ata_customer?->format('d M Y') ?? '-' }}
                             </p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">OTD Status</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('OTD Status') }}</label>
                             <div class="mt-1">
                                 @if($shipment->isDelivered())
                                     @php
@@ -146,7 +146,7 @@
                                         </div>
                                     @endif
                                 @else
-                                    <span class="text-gray-400">Pending Delivery</span>
+                                    <span class="text-gray-400">{{ __('Pending Delivery') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -157,17 +157,17 @@
             {{-- Products --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">Products</h3>
+                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">{{ __('Products') }}</h3>
                     
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-scg-gray-light">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">SKU</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Product Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Quantity</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Unit Price</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">Subtotal</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('SKU') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('Product Name') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('Quantity') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('Unit Price') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark uppercase">{{ __('Subtotal') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -191,23 +191,23 @@
             {{-- Cost Structure --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">Cost Structure</h3>
+                    <h3 class="text-lg font-semibold text-scg-gray-dark mb-4">{{ __('Cost Structure') }}</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Shipping Cost</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Shipping Cost') }}</label>
                             <p class="mt-1 text-lg">Rp {{ number_format($shipment->shipping_cost, 0, ',', '.') }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Customs Cost</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Customs Cost') }}</label>
                             <p class="mt-1 text-lg">Rp {{ number_format($shipment->customs_cost, 0, ',', '.') }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Other Costs</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Other Costs') }}</label>
                             <p class="mt-1 text-lg">Rp {{ number_format($shipment->other_costs, 0, ',', '.') }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Total Cost</label>
+                            <label class="block text-sm font-medium text-gray-600">{{ __('Total Cost') }}</label>
                             <p class="mt-1 text-xl font-bold text-scg-red">Rp {{ number_format($shipment->total_cost, 0, ',', '.') }}</p>
                         </div>
                     </div>
@@ -284,22 +284,22 @@
             {{-- Actions --}}
             <div class="flex justify-between">
                 <a href="{{ route('shipments.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded transition">
-                    Back to List
+                    {{ __('Back to List') }}
                 </a>
                 
                 <div class="space-x-4">
                     @can('update', $shipment)
                         <a href="{{ route('shipments.edit', $shipment) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition">
-                            Edit Shipment
+                            {{ __('Edit Shipment') }}
                         </a>
                     @endcan
                     
                     @can('delete', $shipment)
-                        <form action="{{ route('shipments.destroy', $shipment) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this shipment?');">
+                        <form action="{{ route('shipments.destroy', $shipment) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Are you sure you want to delete this shipment?') }}');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded transition">
-                                Delete
+                                {{ __('Delete') }}
                             </button>
                         </form>
                     @endcan

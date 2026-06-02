@@ -33,36 +33,36 @@
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
-                            Back to Shipment Details
+                            {{ __('Back to Shipment Details') }}
                         </a>
                     </div>
 
                     {{-- Read-Only Shipment Info --}}
                     <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
-                        <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-3">Shipment Information (Read-Only)</h3>
+                        <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-3">{{ __('Shipment Information (Read-Only)') }}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                             <div>
-                                <span class="text-gray-600 dark:text-gray-400">Customer:</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('Customer') }}:</span>
                                 <span class="font-semibold text-gray-900 dark:text-white ml-2">{{ $shipment->customer->name }}</span>
                             </div>
                             <div>
-                                <span class="text-gray-600 dark:text-gray-400">Supplier:</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('Supplier') }}:</span>
                                 <span class="font-semibold text-gray-900 dark:text-white ml-2">{{ $shipment->supplier->name }}</span>
                             </div>
                             <div>
-                                <span class="text-gray-600 dark:text-gray-400">Type:</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('Type') }}:</span>
                                 <span class="font-semibold text-gray-900 dark:text-white ml-2">{{ $shipment->type }}</span>
                             </div>
                             <div>
-                                <span class="text-gray-600 dark:text-gray-400">Customer PO:</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('Customer PO') }}:</span>
                                 <span class="font-semibold text-gray-900 dark:text-white ml-2">{{ $shipment->customer_po ?? 'N/A' }}</span>
                             </div>
                             <div>
-                                <span class="text-gray-600 dark:text-gray-400">SCG PO:</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('SCG PO') }}:</span>
                                 <span class="font-semibold text-gray-900 dark:text-white ml-2">{{ $shipment->scg_po ?? 'N/A' }}</span>
                             </div>
                             <div>
-                                <span class="text-gray-600 dark:text-gray-400">Booking Number:</span>
+                                <span class="text-gray-600 dark:text-gray-400">{{ __('Booking Number') }}:</span>
                                 <span class="font-semibold text-gray-900 dark:text-white ml-2">{{ $shipment->booking_number ?? 'N/A' }}</span>
                             </div>
                         </div>
@@ -74,51 +74,51 @@
 
                         {{-- Status Update --}}
                         <div class="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">
-                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">Status & Tracking</h3>
+                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">{{ __('Status & Tracking') }}</h3>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="status" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                        Status
+                                        {{ __('Status') }}
                                     </label>
                                     <select name="status" id="status"
                                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-                                        <option value="Pending" {{ old('status', $shipment->status) == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="In Transit" {{ old('status', $shipment->status) == 'In Transit' ? 'selected' : '' }}>In Transit</option>
-                                        <option value="Delivered" {{ old('status', $shipment->status) == 'Delivered' ? 'selected' : '' }}>Delivered</option>
-                                        <option value="Cancelled" {{ old('status', $shipment->status) == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                        <option value="Pending" {{ old('status', $shipment->status) == 'Pending' ? 'selected' : '' }}>{{ __('Pending') }}</option>
+                                        <option value="In Transit" {{ old('status', $shipment->status) == 'In Transit' ? 'selected' : '' }}>{{ __('In Transit') }}</option>
+                                        <option value="Delivered" {{ old('status', $shipment->status) == 'Delivered' ? 'selected' : '' }}>{{ __('Delivered') }}</option>
+                                        <option value="Cancelled" {{ old('status', $shipment->status) == 'Cancelled' ? 'selected' : '' }}>{{ __('Cancelled') }}</option>
                                     </select>
                                 </div>
-
+ 
                                 <div>
                                     <label for="ata_port" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                        ATA Port (Actual Time Arrival at Port)
+                                        {{ __('ATA Port') }} ({{ __('Actual Time Arrival at Port') }})
                                     </label>
                                     <input type="date" name="ata_port" id="ata_port"
                                         value="{{ old('ata_port', $shipment->ata_port ? $shipment->ata_port->format('Y-m-d') : '') }}"
                                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                                 </div>
-
+ 
                                 <div>
                                     <label for="ata_customer" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                        ATA Customer (Actual Time Arrival at Customer)
+                                        {{ __('ATA Customer') }} ({{ __('Actual Time Arrival at Customer') }})
                                     </label>
                                     <input type="date" name="ata_customer" id="ata_customer"
                                         value="{{ old('ata_customer', $shipment->ata_customer ? $shipment->ata_customer->format('Y-m-d') : '') }}"
                                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Auto-sets status to "Delivered" when filled</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('Auto-sets status to "Delivered" when filled') }}</p>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Document Numbers --}}
                         <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
-                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">Document Numbers</h3>
+                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">{{ __('Document Numbers') }}</h3>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="delivery_note_number" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                        Delivery Note Number
+                                        {{ __('Delivery Note') }}
                                     </label>
                                     <input type="text" name="delivery_note_number" id="delivery_note_number"
                                         value="{{ old('delivery_note_number', $shipment->delivery_note_number) }}"
@@ -130,10 +130,10 @@
                                         <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
                                     @enderror
                                 </div>
-
+ 
                                 <div>
                                     <label for="supplier_invoice" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                        Supplier Invoice
+                                        {{ __('Supplier Invoce') }}
                                     </label>
                                     <input type="text" name="supplier_invoice" id="supplier_invoice"
                                         value="{{ old('supplier_invoice', $shipment->supplier_invoice) }}"
@@ -146,49 +146,48 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
+                        </div>div>
 
                         {{-- Cost Structure --}}
-                        <div class="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 rounded-lg p-4 mb-6">
-                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">Cost Details</h3>
+                        <div class="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 rounded-lg p-4 mb-                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">{{ __('Cost Details') }}</h3>
                             
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <label for="shipping_cost" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                        Shipping Cost
+                                        {{ __('Shipping Cost') }}
                                     </label>
                                     <input type="number" step="0.01" name="shipping_cost" id="shipping_cost"
                                         value="{{ old('shipping_cost', $shipment->shipping_cost) }}"
                                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                                 </div>
-
+ 
                                 <div>
                                     <label for="customs_cost" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                        Customs Cost
+                                        {{ __('Customs Cost') }}
                                     </label>
                                     <input type="number" step="0.01" name="customs_cost" id="customs_cost"
                                         value="{{ old('customs_cost', $shipment->customs_cost) }}"
                                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                                 </div>
-
+ 
                                 <div>
                                     <label for="other_costs" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                        Other Costs
+                                        {{ __('Other Costs') }}
                                     </label>
                                     <input type="number" step="0.01" name="other_costs" id="other_costs"
                                         value="{{ old('other_costs', $shipment->other_costs) }}"
                                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                                 </div>
                             </div>
-                        </div>
+                        </div>div>
 
                         {{-- Form Actions --}}
                         <div class="flex justify-end space-x-4 pt-4">
                             <a href="{{ route('shipments.show', $shipment) }}" class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-bold py-2 px-6 rounded transition">
-                                Cancel
+                                {{ __('Cancel') }}
                             </a>
                             <button type="submit" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded transition">
-                                Update Monitoring Data
+                                {{ __('Update Monitoring Data') }}
                             </button>
                         </div>
                     </form>

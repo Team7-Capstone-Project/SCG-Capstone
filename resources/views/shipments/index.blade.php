@@ -85,7 +85,7 @@
                     </form>
                     <div id="loadingIndicator" class="hidden mt-4 text-center">
                         <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-scg-red"></div>
-                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Loading shipments...</span>
+                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Loading shipments...') }}</span>
                     </div>
                 </div>
             </div>
@@ -198,7 +198,7 @@
                             {{ $shipments->links() }}
                         </div>
                     @else
-                        <p class="text-gray-500 text-center py-8">No shipments found. Try adjusting your filters or create a new shipment.</p>
+                        <p class="text-gray-500 text-center py-8">{{ __('No shipments found. Try adjusting your filters or create a new shipment.') }}</p>
                     @endif
                 </div>
             </div>

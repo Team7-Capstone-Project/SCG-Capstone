@@ -245,9 +245,9 @@
                                                                         ];
                                                                         $style = $statusStyles[$shipment->status] ?? 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600';
                                                                     @endphp
-                                     <span
+                                                                    <span
                                                                         class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border {{ $style }}">
-                                                                        {{ $shipment->status }}
+                                                                        {{ __($shipment->status) }}
                                                                     </span>
                                                                 </td>
                                                                 <td class="px-6 py-4 whitespace-nowrap">

@@ -37,7 +37,7 @@
                                     <div class="flex-1">
                                         <div class="flex justify-between items-center mb-1">
                                             <span class="text-xs font-bold uppercase tracking-wider {{ $activity->action == 'created' ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400' }}">
-                                                {{ str_replace('_', ' ', $activity->action) }}
+                                                {{ __(str_replace('_', ' ', $activity->action)) }}
                                             </span>
                                             <span class="text-xs text-gray-500 dark:text-gray-400">
                                                 {{ $activity->created_at->format('d M Y H:i') }}

@@ -166,12 +166,12 @@ class Shipment extends Model
         }
 
         if ($days > 0) {
-            return $days . ' day' . ($days > 1 ? 's' : '') . ' late';
+            return $days . ' ' . ($days > 1 ? __('days late') : __('day late'));
         } elseif ($days < 0) {
             $earlyDays = abs($days);
-            return $earlyDays . ' day' . ($earlyDays > 1 ? 's' : '') . ' early';
+            return $earlyDays . ' ' . ($earlyDays > 1 ? __('days early') : __('day early'));
         } else {
-            return 'On schedule';
+            return __('On schedule');
         }
     }
 
