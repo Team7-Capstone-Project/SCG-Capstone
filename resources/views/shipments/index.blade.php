@@ -26,12 +26,23 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-[95%] mx-auto sm:px-6 lg:px-8">
 
             {{-- Success Message --}}
             @if(session('success'))
                 <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            {{-- Error Message --}}
+            @if($errors->any())
+                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                    <ul class="list-disc list-inside text-sm">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
@@ -101,16 +112,16 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('No.') }}</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Customer PO') }}</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Customer') }}</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Supplier') }}</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Status') }}</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('ETD Port') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('ETA Port') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Customer Receiving Schedule') }}</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('OTD') }}</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Actions') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-scg-gray-dark dark:text-gray-200 uppercase tracking-wider">{{ __('Status') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach($shipments as $shipment)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200 animate-fade-in-up" style="animation-delay: {{ $loop->index * 50 }}ms">
+                                        <tr onclick="window.location='{{ route('shipments.show', $shipment) }}'" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200 animate-fade-in-up cursor-pointer" style="animation-delay: {{ $loop->index * 50 }}ms">
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                                 {{ ($shipments->currentPage() - 1) * $shipments->perPage() + $loop->iteration }}
                                             </td>
@@ -121,23 +132,13 @@
                                                 {{ $shipment->customer->name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $shipment->supplier->name }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                @php
-                                                    $statusColors = [
-                                                        'Pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-                                                        'In Transit' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-                                                        'Delivered' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-                                                        'Cancelled' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-                                                    ];
-                                                @endphp
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
-                                                    {{ __($shipment->status) }}
-                                                </span>
+                                                {{ $shipment->etd_port?->format('d M Y') ?? 'N/A' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $shipment->etd_port?->format('d M Y') ?? 'N/A' }}
+                                                {{ $shipment->eta_port?->format('d M Y') ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                {{ $shipment->customer_receiving_schedule?->format('d M Y') ?? 'N/A' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @if($shipment->isDelivered())
@@ -181,17 +182,36 @@
                                                     <span class="text-gray-400 text-xs">{{ __('Pending') }}</span>
                                                 @endif
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                                <a href="{{ route('shipments.show', $shipment) }}" class="text-scg-red dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">{{ __('View') }}</a>
-                                                @can('update', $shipment)
-                                                    <a href="{{ route('shipments.edit', $shipment) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">{{ __('Edit') }}</a>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @php
+                                                    $statusColors = [
+                                                        'Pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                                                        'In Transit' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+                                                        'Delivered' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                                                        'Cancelled' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+                                                    ];
+                                                @endphp
+                                                @can('updateStatus', $shipment)
+                                                    <form action="{{ route('shipments.update-status', $shipment) }}" method="POST" class="inline" onclick="event.stopPropagation()">
+                                                        @csrf
+                                                        <select name="status" onchange="this.form.submit()" class="rounded-full text-xs font-semibold py-0.5 pl-2.5 pr-8 border {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800' }} focus:outline-none focus:ring-1 focus:ring-scg-red cursor-pointer">
+                                                            <option value="Pending" {{ $shipment->status == 'Pending' ? 'selected' : '' }}>{{ __('Pending') }}</option>
+                                                            <option value="In Transit" {{ $shipment->status == 'In Transit' ? 'selected' : '' }}>{{ __('In Transit') }}</option>
+                                                            <option value="Delivered" {{ $shipment->status == 'Delivered' ? 'selected' : '' }}>{{ __('Delivered') }}</option>
+                                                            <option value="Cancelled" {{ $shipment->status == 'Cancelled' ? 'selected' : '' }}>{{ __('Cancelled') }}</option>
+                                                        </select>
+                                                    </form>
+                                                @else
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+                                                        {{ __($shipment->status) }}
+                                                    </span>
                                                 @endcan
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>
+                        </div></div>
 
                         {{-- Pagination --}}
                         <div class="mt-4">

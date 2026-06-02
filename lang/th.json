@@ -154,5 +154,6 @@
     "No shipments found. Try adjusting your filters or create a new shipment.": "ไม่พบข้อมูลการจัดส่ง ลองปรับตัวกรองหรือสร้างการจัดส่งใหม่",
     "created": "สร้างแล้ว",
     "updated status": "อัปเดตสถานะแล้ว",
-    "deleted": "ลบแล้ว"
+    "deleted": "ลบแล้ว",
+    "Customer Receiving Schedule": "กำหนดเวลาการรับสินค้าของลูกค้า"
 }

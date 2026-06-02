@@ -154,5 +154,6 @@
     "No shipments found. Try adjusting your filters or create a new shipment.": "Tidak ada pengiriman yang ditemukan. Coba sesuaikan filter Anda atau buat pengiriman baru.",
     "created": "dibuat",
     "updated status": "status diperbarui",
-    "deleted": "dihapus"
+    "deleted": "dihapus",
+    "Customer Receiving Schedule": "Jadwal Penerimaan Pelanggan"
 }
