@@ -42,17 +42,20 @@
                                     Type <span class="text-red-500">*</span>
                                 </label>
                                 <select name="type" id="type" required
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('type') border-red-500 @enderror">
                                     <option value="Import" {{ old('type', $shipment->type) == 'Import' ? 'selected' : '' }}>Import</option>
                                     <option value="Export" {{ old('type', $shipment->type) == 'Export' ? 'selected' : '' }}>Export</option>
                                 </select>
+                                @error('type')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label for="customer_id" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
                                     Customer <span class="text-red-500">*</span>
                                 </label>
                                 <select name="customer_id" id="customer_id" required
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('customer_id') border-red-500 @enderror">
                                     <option value="">Select Customer</option>
                                     @foreach($customers as $customer)
                                         <option value="{{ $customer->id }}" {{ old('customer_id', $shipment->customer_id) == $customer->id ? 'selected' : '' }}>
@@ -60,6 +63,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('customer_id')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -67,7 +73,7 @@
                                     Supplier <span class="text-red-500">*</span>
                                 </label>
                                 <select name="supplier_id" id="supplier_id" required
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('supplier_id') border-red-500 @enderror">
                                     <option value="">Select Supplier</option>
                                     @foreach($suppliers as $supplier)
                                         <option value="{{ $supplier->id }}" {{ old('supplier_id', $shipment->supplier_id) == $supplier->id ? 'selected' : '' }}>
@@ -75,6 +81,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('supplier_id')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -85,7 +94,13 @@
                                     Customer PO
                                 </label>
                                 <input type="text" name="customer_po" id="customer_po" value="{{ old('customer_po', $shipment->customer_po) }}"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                    placeholder="e.g. PO-12345/ABC"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('customer_po') border-red-500 @enderror">
+                                @error('customer_po')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                                 <p id="customer_po_warning" class="text-yellow-600 text-sm mt-1 hidden">⚠️ This PO number may already exist</p>
                             </div>
 
@@ -94,7 +109,13 @@
                                     SCG PO
                                 </label>
                                 <input type="text" name="scg_po" id="scg_po" value="{{ old('scg_po', $shipment->scg_po) }}"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                    placeholder="e.g. SCGPO-98765"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('scg_po') border-red-500 @enderror">
+                                @error('scg_po')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                                 <p id="scg_po_warning" class="text-yellow-600 text-sm mt-1 hidden">⚠️ This PO number may already exist</p>
                             </div>
 
@@ -103,7 +124,13 @@
                                     Booking Number
                                 </label>
                                 <input type="text" name="booking_number" id="booking_number" value="{{ old('booking_number', $shipment->booking_number) }}"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                    placeholder="e.g. BKG-1010"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('booking_number') border-red-500 @enderror">
+                                @error('booking_number')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -117,12 +144,15 @@
                                         Status <span class="text-red-500">*</span>
                                     </label>
                                     <select name="status" id="status" required
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('status') border-red-500 @enderror">
                                         <option value="Pending" {{ old('status', $shipment->status) == 'Pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="In Transit" {{ old('status', $shipment->status) == 'In Transit' ? 'selected' : '' }}>In Transit</option>
                                         <option value="Delivered" {{ old('status', $shipment->status) == 'Delivered' ? 'selected' : '' }}>Delivered</option>
                                         <option value="Cancelled" {{ old('status', $shipment->status) == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                                     </select>
+                                    @error('status')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -131,7 +161,10 @@
                                     </label>
                                     <input type="date" name="etd_port" id="etd_port"
                                         value="{{ old('etd_port', $shipment->etd_port ? $shipment->etd_port->format('Y-m-d') : '') }}" required
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('etd_port') border-red-500 @enderror">
+                                    @error('etd_port')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -140,8 +173,11 @@
                                     </label>
                                     <input type="date" name="eta_port" id="eta_port"
                                         value="{{ old('eta_port', $shipment->eta_port ? $shipment->eta_port->format('Y-m-d') : '') }}"
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('eta_port') border-red-500 @enderror">
                                     <p id="eta_error" class="text-red-500 text-sm mt-1 hidden">❌ ETA must be after or equal to ETD</p>
+                                    @error('eta_port')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -150,7 +186,10 @@
                                     </label>
                                     <input type="date" name="ata_port" id="ata_port"
                                         value="{{ old('ata_port', $shipment->ata_port ? $shipment->ata_port->format('Y-m-d') : '') }}"
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('ata_port') border-red-500 @enderror">
+                                    @error('ata_port')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -159,8 +198,11 @@
                                     </label>
                                     <input type="date" name="customer_receiving_schedule" id="customer_receiving_schedule"
                                         value="{{ old('customer_receiving_schedule', $shipment->customer_receiving_schedule ? $shipment->customer_receiving_schedule->format('Y-m-d') : '') }}" required
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('customer_receiving_schedule') border-red-500 @enderror">
                                     <p id="schedule_error" class="text-red-500 text-sm mt-1 hidden">❌ Schedule must be after or equal to ETA</p>
+                                    @error('customer_receiving_schedule')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -169,20 +211,28 @@
                                     </label>
                                     <input type="date" name="ata_customer" id="ata_customer"
                                         value="{{ old('ata_customer', $shipment->ata_customer ? $shipment->ata_customer->format('Y-m-d') : '') }}"
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('ata_customer') border-red-500 @enderror">
+                                    @error('ata_customer')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
 
                         {{-- Additional Document Numbers --}}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                             <div>
-                                <label for="delivery_note_number" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
-                                    Delivery Note Number
+                                <label for="scg_so" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
+                                    SCG SO
                                 </label>
-                                <input type="text" name="delivery_note_number" id="delivery_note_number"
-                                    value="{{ old('delivery_note_number', $shipment->delivery_note_number) }}"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                <input type="text" name="scg_so" id="scg_so" value="{{ old('scg_so', $shipment->scg_so) }}"
+                                    pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                    placeholder="e.g. SO-11223"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('scg_so') border-red-500 @enderror">
+                                @error('scg_so')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -191,7 +241,28 @@
                                 </label>
                                 <input type="text" name="supplier_invoice" id="supplier_invoice"
                                     value="{{ old('supplier_invoice', $shipment->supplier_invoice) }}"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                    placeholder="e.g. INV-999"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('supplier_invoice') border-red-500 @enderror">
+                                @error('supplier_invoice')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="delivery_note_number" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
+                                    Delivery Note Number
+                                </label>
+                                <input type="text" name="delivery_note_number" id="delivery_note_number"
+                                    value="{{ old('delivery_note_number', $shipment->delivery_note_number) }}"
+                                    pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                    placeholder="e.g. DN-8888"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('delivery_note_number') border-red-500 @enderror">
+                                @error('delivery_note_number')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 

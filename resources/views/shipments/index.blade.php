@@ -70,6 +70,8 @@
                                 <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>{{ __('Oldest First') }}</option>
                                 <option value="month_asc" {{ request('sort') == 'month_asc' ? 'selected' : '' }}>{{ __('Month (Earliest)') }}</option>
                                 <option value="month_desc" {{ request('sort') == 'month_desc' ? 'selected' : '' }}>{{ __('Month (Latest)') }}</option>
+                                <option value="deadline_asc" {{ request('sort') == 'deadline_asc' ? 'selected' : '' }}>{{ __('Deadline (Earliest)') }}</option>
+                                <option value="deadline_desc" {{ request('sort') == 'deadline_desc' ? 'selected' : '' }}>{{ __('Deadline (Latest)') }}</option>
                             </select>
                         </div>
                         <div class="flex items-end space-x-2">

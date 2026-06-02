@@ -122,7 +122,13 @@
                                     </label>
                                     <input type="text" name="delivery_note_number" id="delivery_note_number"
                                         value="{{ old('delivery_note_number', $shipment->delivery_note_number) }}"
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
+                                        title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                        placeholder="e.g. DN-8888"
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('delivery_note_number') border-red-500 @enderror">
+                                    @error('delivery_note_number')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -131,7 +137,13 @@
                                     </label>
                                     <input type="text" name="supplier_invoice" id="supplier_invoice"
                                         value="{{ old('supplier_invoice', $shipment->supplier_invoice) }}"
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
+                                        title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                        placeholder="e.g. INV-999"
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('supplier_invoice') border-red-500 @enderror">
+                                    @error('supplier_invoice')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

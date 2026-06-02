@@ -76,6 +76,12 @@ class ShipmentController extends Controller
                 case 'month_desc':
                     $query->orderBy('etd_port', 'desc');
                     break;
+                case 'deadline_asc':
+                    $query->orderBy('customer_receiving_schedule', 'asc');
+                    break;
+                case 'deadline_desc':
+                    $query->orderBy('customer_receiving_schedule', 'desc');
+                    break;
                 case 'newest':
                 default:
                     $query->latest();
@@ -142,17 +148,30 @@ class ShipmentController extends Controller
             'customer_id' => 'required|exists:customers,id',
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
-            // Document numbers - must be unique globally
-            'customer_po' => 'nullable|string|max:255|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
-            'scg_po' => 'nullable|string|max:255|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
-            'scg_so' => 'nullable|string|max:255|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
-            'booking_number' => 'nullable|string|max:255|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
-            'delivery_note_number' => 'nullable|string|max:255|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:255|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
+            // Document numbers - must be unique globally, and contain valid format
+            'customer_po' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
             'etd_port' => 'required|date',
             'eta_port' => 'nullable|date|after_or_equal:etd_port',
-            'ata_port' => 'nullable|date',
-            'customer_receiving_schedule' => 'required|date|after_or_equal:eta_port',
+            'ata_port' => 'nullable|date|after_or_equal:etd_port',
+            'customer_receiving_schedule' => [
+                'required',
+                'date',
+                'after_or_equal:etd_port',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->filled('eta_port')) {
+                        $eta = strtotime($request->eta_port);
+                        $schedule = strtotime($value);
+                        if ($schedule < $eta) {
+                            $fail('The Customer Receiving Schedule must be after or equal to ETA Port.');
+                        }
+                    }
+                }
+            ],
             'shipping_cost' => 'nullable|numeric|min:0',
             'customs_cost' => 'nullable|numeric|min:0',
             'other_costs' => 'nullable|numeric|min:0',
@@ -166,7 +185,7 @@ class ShipmentController extends Controller
             'supplier_id.required' => 'Supplier is required',
             'etd_port.required' => 'ETD Port date is required',
             'customer_receiving_schedule.required' => 'Customer receiving schedule is required',
-            'customer_receiving_schedule.after_or_equal' => 'Customer receiving schedule must be after or equal to ETA Port',
+            'customer_receiving_schedule.after_or_equal' => 'Customer receiving schedule must be after or equal to ETD Port',
             // Unique validation error messages
             'customer_po.unique' => 'Customer PO already exists in the system',
             'scg_po.unique' => 'SCG PO already exists in the system',
@@ -174,6 +193,13 @@ class ShipmentController extends Controller
             'booking_number.unique' => 'Booking Number already exists in the system',
             'delivery_note_number.unique' => 'Delivery Note Number already exists in the system',
             'supplier_invoice.unique' => 'Supplier Invoice already exists in the system',
+            // Format validation error messages
+            'customer_po.regex' => 'Customer PO can only contain letters, numbers, spaces, and - / _ .',
+            'scg_po.regex' => 'SCG PO can only contain letters, numbers, spaces, and - / _ .',
+            'scg_so.regex' => 'SCG SO can only contain letters, numbers, spaces, and - / _ .',
+            'booking_number.regex' => 'Booking Number can only contain letters, numbers, spaces, and - / _ .',
+            'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, spaces, and - / _ .',
+            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, spaces, and - / _ .',
         ]);
 
         DB::beginTransaction();
@@ -281,18 +307,48 @@ class ShipmentController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
             // Document numbers - must be unique globally (ignore current shipment)
-            'customer_po' => 'nullable|string|max:255|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
-            'scg_po' => 'nullable|string|max:255|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
-            'scg_so' => 'nullable|string|max:255|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
-            'booking_number' => 'nullable|string|max:255|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'delivery_note_number' => 'nullable|string|max:255|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:255|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
+            'customer_po' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
             'status' => 'required|in:Pending,In Transit,Delivered,Cancelled',
             'etd_port' => 'required|date',
             'eta_port' => 'nullable|date|after_or_equal:etd_port',
-            'ata_port' => 'nullable|date',
-            'customer_receiving_schedule' => 'required|date',
-            'ata_customer' => 'nullable|date',
+            'ata_port' => 'nullable|date|after_or_equal:etd_port',
+            'customer_receiving_schedule' => [
+                'required',
+                'date',
+                'after_or_equal:etd_port',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->filled('eta_port')) {
+                        $eta = strtotime($request->eta_port);
+                        $schedule = strtotime($value);
+                        if ($schedule < $eta) {
+                            $fail('The Customer Receiving Schedule must be after or equal to ETA Port.');
+                        }
+                    }
+                }
+            ],
+            'ata_customer' => [
+                'nullable',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    $ataCustomer = strtotime($value);
+                    if ($request->filled('ata_port')) {
+                        $ataPort = strtotime($request->ata_port);
+                        if ($ataCustomer < $ataPort) {
+                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).');
+                        }
+                    } elseif ($request->filled('etd_port')) {
+                        $etd = strtotime($request->etd_port);
+                        if ($ataCustomer < $etd) {
+                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Departure from Port (ETD Port).');
+                        }
+                    }
+                }
+            ],
             'shipping_cost' => 'nullable|numeric|min:0',
             'customs_cost' => 'nullable|numeric|min:0',
             'other_costs' => 'nullable|numeric|min:0',
@@ -301,6 +357,26 @@ class ShipmentController extends Controller
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
             'products.*.unit_price' => 'required|numeric|min:0',
+        ], [
+            'customer_id.required' => 'Customer is required',
+            'supplier_id.required' => 'Supplier is required',
+            'etd_port.required' => 'ETD Port date is required',
+            'customer_receiving_schedule.required' => 'Customer receiving schedule is required',
+            'customer_receiving_schedule.after_or_equal' => 'Customer receiving schedule must be after or equal to ETD Port',
+            // Unique messages
+            'customer_po.unique' => 'Customer PO already exists in the system',
+            'scg_po.unique' => 'SCG PO already exists in the system',
+            'scg_so.unique' => 'SCG SO already exists in the system',
+            'booking_number.unique' => 'Booking Number already exists in the system',
+            'delivery_note_number.unique' => 'Delivery Note Number already exists in the system',
+            'supplier_invoice.unique' => 'Supplier Invoice already exists in the system',
+            // Regex messages
+            'customer_po.regex' => 'Customer PO can only contain letters, numbers, spaces, and - / _ .',
+            'scg_po.regex' => 'SCG PO can only contain letters, numbers, spaces, and - / _ .',
+            'scg_so.regex' => 'SCG SO can only contain letters, numbers, spaces, and - / _ .',
+            'booking_number.regex' => 'Booking Number can only contain letters, numbers, spaces, and - / _ .',
+            'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, spaces, and - / _ .',
+            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, spaces, and - / _ .',
         ]);
 
         DB::beginTransaction();
@@ -358,13 +434,44 @@ class ShipmentController extends Controller
 
         $validated = $request->validate([
             'status' => 'nullable|in:Pending,In Transit,Delivered,Cancelled',
-            'ata_port' => 'nullable|date',
-            'ata_customer' => 'nullable|date',
-            'delivery_note_number' => 'nullable|string|max:255',
-            'supplier_invoice' => 'nullable|string|max:255',
+            'ata_port' => [
+                'nullable',
+                'date',
+                function ($attribute, $value, $fail) use ($shipment) {
+                    if ($shipment->etd_port && strtotime($value) < strtotime($shipment->etd_port)) {
+                        $fail('The Actual Time Arrival at Port (ATA Port) must be after or equal to Departure from Port (ETD Port).');
+                    }
+                }
+            ],
+            'ata_customer' => [
+                'nullable',
+                'date',
+                function ($attribute, $value, $fail) use ($request, $shipment) {
+                    $ataCustomer = strtotime($value);
+                    if ($request->filled('ata_port')) {
+                        $ataPort = strtotime($request->ata_port);
+                        if ($ataCustomer < $ataPort) {
+                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).');
+                        }
+                    } elseif ($shipment->ata_port) {
+                        if ($ataCustomer < strtotime($shipment->ata_port)) {
+                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Actual Time Arrival at Port (ATA Port).');
+                        }
+                    } elseif ($shipment->etd_port) {
+                        if ($ataCustomer < strtotime($shipment->etd_port)) {
+                            $fail('The Actual Time Arrival at Customer (ATA Customer) must be after or equal to Departure from Port (ETD Port).');
+                        }
+                    }
+                }
+            ],
+            'delivery_note_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/',
+            'supplier_invoice' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/',
             'shipping_cost' => 'nullable|numeric|min:0',
             'customs_cost' => 'nullable|numeric|min:0',
             'other_costs' => 'nullable|numeric|min:0',
+        ], [
+            'delivery_note_number.regex' => 'Delivery Note Number can only contain letters, numbers, spaces, and - / _ .',
+            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, spaces, and - / _ .',
         ]);
 
         DB::beginTransaction();
