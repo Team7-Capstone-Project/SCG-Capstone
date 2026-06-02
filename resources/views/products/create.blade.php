@@ -91,30 +91,40 @@
                                     {{-- SKU --}}
                                     <div class="space-y-2">
                                         <label for="sku" class="text-xs font-bold text-gray-500 uppercase tracking-wider">Product SKU <span class="text-red-500">*</span></label>
-                                        <div class="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900 focus-within:ring-2 focus-within:ring-scg-red/20 focus-within:border-scg-red transition-all">
+                                        <div class="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900 focus-within:ring-2 focus-within:ring-scg-red/20 focus-within:border-scg-red transition-all @error('sku') border-red-500 @enderror">
                                             <div class="pl-4 text-gray-400">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                                 </svg>
                                             </div>
                                             <input type="text" name="sku" id="sku" value="{{ old('sku') }}" required
+                                                pattern="^[a-zA-Z0-9\-_]+$"
+                                                title="Only letters, numbers, dashes, and underscores are allowed."
                                                 class="w-full border-none focus:ring-0 py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400"
                                                 placeholder="e.g. PRD-001">
                                         </div>
+                                        @error('sku')
+                                            <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                        @enderror
                                     </div>
                                     {{-- Name --}}
                                     <div class="space-y-2">
                                         <label for="name" class="text-xs font-bold text-gray-500 uppercase tracking-wider">Product Name <span class="text-red-500">*</span></label>
-                                        <div class="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900 focus-within:ring-2 focus-within:ring-scg-red/20 focus-within:border-scg-red transition-all">
+                                        <div class="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900 focus-within:ring-2 focus-within:ring-scg-red/20 focus-within:border-scg-red transition-all @error('name') border-red-500 @enderror">
                                             <div class="pl-4 text-gray-400">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                 </svg>
                                             </div>
                                             <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                                                pattern="^[a-zA-Z0-9\s\.,&'\-\(\)\/\+]+$"
+                                                title="Letters, numbers, spaces, and . , & ' - ( ) / + are allowed."
                                                 class="w-full border-none focus:ring-0 py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400"
                                                 placeholder="Enter product name">
                                         </div>
+                                        @error('name')
+                                            <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -122,8 +132,11 @@
                                 <div class="space-y-2">
                                     <label for="description" class="text-xs font-bold text-gray-500 uppercase tracking-wider">Detailed Description</label>
                                     <textarea name="description" id="description" rows="5"
-                                        class="w-full border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:ring-2 focus:ring-scg-red/20 focus:border-scg-red transition-all p-4 text-gray-900 dark:text-white placeholder:text-gray-400 resize-none"
+                                        class="w-full border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:ring-2 focus:ring-scg-red/20 focus:border-scg-red transition-all p-4 text-gray-900 dark:text-white placeholder:text-gray-400 resize-none @error('description') border-red-500 @enderror"
                                         placeholder="Tell customers about the product features, specifications, and benefits...">{{ old('description') }}</textarea>
+                                    @error('description')
+                                        <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -143,7 +156,7 @@
                                     {{-- Price --}}
                                     <div class="space-y-2">
                                         <label for="unit_price" class="text-xs font-bold text-gray-500 uppercase tracking-wider">Base Price <span class="text-red-500">*</span></label>
-                                        <div class="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900 focus-within:ring-2 focus-within:ring-scg-red/20 focus-within:border-scg-red transition-all">
+                                        <div class="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900 focus-within:ring-2 focus-within:ring-scg-red/20 focus-within:border-scg-red transition-all @error('unit_price') border-red-500 @enderror">
                                             <div class="px-4 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 font-bold text-scg-red">
                                                 Rp
                                             </div>
@@ -151,13 +164,16 @@
                                                 class="w-full border-none focus:ring-0 py-3 px-4 text-gray-900 dark:text-white font-bold"
                                                 placeholder="0.00">
                                         </div>
+                                        @error('unit_price')
+                                            <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                        @enderror
                                     </div>
                                     {{-- Supplier --}}
                                     <div class="space-y-2">
                                         <label for="supplier_id" class="text-xs font-bold text-gray-500 uppercase tracking-wider">Supplier</label>
                                         <div class="relative">
                                             <select name="supplier_id" id="supplier_id"
-                                                class="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-scg-red/20 focus:border-scg-red transition-all appearance-none">
+                                                class="w-full pl-4 pr-10 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-scg-red/20 focus:border-scg-red transition-all appearance-none @error('supplier_id') border-red-500 @enderror">
                                                 <option value="">No Supplier (Internal)</option>
                                                 @foreach($suppliers as $supplier)
                                                     <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
@@ -169,6 +185,9 @@
                                                 </svg>
                                             </div>
                                         </div>
+                                        @error('supplier_id')
+                                            <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>

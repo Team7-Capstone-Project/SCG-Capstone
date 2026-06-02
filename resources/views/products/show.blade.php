@@ -98,7 +98,7 @@
 
                             @can('delete', $product)
                                 <form action="{{ route('products.destroy', $product) }}" method="POST"
-                                    onsubmit="return confirm('{{ __('Are you sure?') }}')">
+                                    onsubmit="return confirm('{{ __('Are you sure you want to delete this product? This is a fatal action and will affect all associated shipments.') }}')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"

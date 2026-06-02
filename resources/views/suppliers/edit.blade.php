@@ -40,7 +40,12 @@
                                     Supplier <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="name" id="name" value="{{ old('name', $supplier->name) }}" required
-                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    pattern="^[a-zA-Z0-9\s\.,&'\-\(\)]+$"
+                                    title="Letters, numbers, spaces, and . , & ' - ( ) are allowed."
+                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('name') border-red-500 @enderror">
+                                @error('name')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div class="md:col-span-2">
@@ -48,7 +53,10 @@
                                     Address
                                 </label>
                                 <textarea name="address" id="address" rows="3"
-                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">{{ old('address', $supplier->address) }}</textarea>
+                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('address') border-red-500 @enderror">{{ old('address', $supplier->address) }}</textarea>
+                                @error('address')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -56,16 +64,26 @@
                                     Country
                                 </label>
                                 <input type="text" name="country" id="country" value="{{ old('country', $supplier->country) }}"
-                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    pattern="^[a-zA-Z\s\.\-\(\)]+$"
+                                    title="Only letters, spaces, dots, dashes, and parentheses are allowed."
+                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('country') border-red-500 @enderror">
+                                @error('country')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
                                 <label for="contact_person" class="block text-sm font-medium text-scg-gray-dark mb-2">
-                                    Name
+                                    Contact Person Name
                                 </label>
                                 <input type="text" name="contact_person" id="contact_person" 
                                     value="{{ old('contact_person', $supplier->contact_person) }}"
-                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    pattern="^[a-zA-Z\s\.'\-]+$"
+                                    title="Only letters, spaces, dots, quotes, and dashes are allowed."
+                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('contact_person') border-red-500 @enderror">
+                                @error('contact_person')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -74,7 +92,13 @@
                                 </label>
                                 <input type="text" name="phone" id="phone" 
                                     value="{{ old('phone', $supplier->phone) }}"
-                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    maxlength="15"
+                                    pattern="^[0-9\s+\(\)]+$"
+                                    title="Only numbers, spaces, plus signs, and parentheses are allowed."
+                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('phone') border-red-500 @enderror">
+                                @error('phone')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -83,7 +107,10 @@
                                 </label>
                                 <input type="email" name="email" id="email" 
                                     value="{{ old('email', $supplier->email) }}"
-                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('email') border-red-500 @enderror">
+                                @error('email')
+                                    <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 

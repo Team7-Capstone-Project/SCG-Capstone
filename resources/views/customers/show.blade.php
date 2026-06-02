@@ -38,10 +38,19 @@
 
                     <div class="mt-6 flex space-x-4">
                         <a href="{{ route('customers.edit', $customer) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Edit
+                            {{ __('Edit') }}
                         </a>
+                        @can('delete', $customer)
+                            <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Are you sure you want to delete this customer? This is a fatal action and will delete all associated shipments.') }}');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                    {{ __('Delete') }}
+                                </button>
+                            </form>
+                        @endcan
                         <a href="{{ route('customers.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
-                            Back to List
+                            {{ __('Back to List') }}
                         </a>
                     </div>
                 </div>

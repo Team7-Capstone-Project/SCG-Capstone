@@ -95,5 +95,8 @@
     "SKU": "SKU",
     "Category": "Kategori",
     "Unit": "Unit",
-    "Price": "Harga"
+    "Price": "Harga",
+    "Are you sure you want to delete this customer? This is a fatal action and will delete all associated shipments.": "Apakah Anda yakin ingin menghapus pelanggan ini? Ini adalah tindakan fatal dan akan menghapus semua pengiriman terkait.",
+    "Are you sure you want to delete this supplier? This is a fatal action and will delete all associated shipments.": "Apakah Anda yakin ingin menghapus pemasok ini? Ini adalah tindakan fatal dan akan menghapus semua pengiriman terkait.",
+    "Are you sure you want to delete this product? This is a fatal action and will affect all associated shipments.": "Apakah Anda yakin ingin menghapus produk ini? Ini adalah tindakan fatal dan akan mempengaruhi semua pengiriman terkait."
 }

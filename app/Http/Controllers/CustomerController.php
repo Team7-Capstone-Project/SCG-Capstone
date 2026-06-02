@@ -28,12 +28,17 @@ class CustomerController extends Controller
         $this->authorize('create', Customer::class);
         
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)]+$/',
             'address' => 'nullable|string',
-            'contact_person' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:20',
+            'contact_person' => 'nullable|string|max:255|regex:/^[a-zA-Z\s\.\'\-]+$/',
+            'phone' => 'nullable|string|max:15|regex:/^[0-9+\s\(\)]+$/',
             'email' => 'nullable|email|max:255',
-            'country' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
+        ], [
+            'name.regex' => 'Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, and parentheses.',
+            'contact_person.regex' => 'Contact Person can only contain letters, spaces, dots, quotes, and dashes.',
+            'phone.regex' => 'Phone can only contain numbers, spaces, plus signs, and parentheses.',
+            'country.regex' => 'Country can only contain letters, spaces, dots, dashes, and parentheses.',
         ]);
 
         Customer::create($validated);
@@ -81,12 +86,17 @@ class CustomerController extends Controller
         $this->authorize('update', $customer);
         
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)]+$/',
             'address' => 'nullable|string',
-            'contact_person' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:20',
+            'contact_person' => 'nullable|string|max:255|regex:/^[a-zA-Z\s\.\'\-]+$/',
+            'phone' => 'nullable|string|max:15|regex:/^[0-9+\s\(\)]+$/',
             'email' => 'nullable|email|max:255',
-            'country' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
+        ], [
+            'name.regex' => 'Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, and parentheses.',
+            'contact_person.regex' => 'Contact Person can only contain letters, spaces, dots, quotes, and dashes.',
+            'phone.regex' => 'Phone can only contain numbers, spaces, plus signs, and parentheses.',
+            'country.regex' => 'Country can only contain letters, spaces, dots, dashes, and parentheses.',
         ]);
 
         $customer->update($validated);

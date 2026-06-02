@@ -30,12 +30,15 @@ class ProductController extends Controller
         $this->authorize('create', Product::class);
         
         $validated = $request->validate([
-            'sku' => 'required|string|max:255|unique:products,sku',
-            'name' => 'required|string|max:255',
+            'sku' => 'required|string|max:255|regex:/^[a-zA-Z0-9\-_]+$/|unique:products,sku',
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/\+]+$/',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'unit_price' => 'required|numeric|min:0',
             'supplier_id' => 'nullable|exists:suppliers,id',
+        ], [
+            'sku.regex' => 'SKU can only contain letters, numbers, dashes, and underscores.',
+            'name.regex' => 'Product Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, slashes, pluses, and parentheses.',
         ]);
 
         if ($request->hasFile('image')) {
@@ -88,12 +91,15 @@ class ProductController extends Controller
         $this->authorize('update', $product);
         
         $validated = $request->validate([
-            'sku' => 'required|string|max:255|unique:products,sku,' . $product->id,
-            'name' => 'required|string|max:255',
+            'sku' => 'required|string|max:255|regex:/^[a-zA-Z0-9\-_]+$/|unique:products,sku,' . $product->id,
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/\+]+$/',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'unit_price' => 'required|numeric|min:0',
             'supplier_id' => 'nullable|exists:suppliers,id',
+        ], [
+            'sku.regex' => 'SKU can only contain letters, numbers, dashes, and underscores.',
+            'name.regex' => 'Product Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, slashes, pluses, and parentheses.',
         ]);
 
         if ($request->hasFile('image')) {
