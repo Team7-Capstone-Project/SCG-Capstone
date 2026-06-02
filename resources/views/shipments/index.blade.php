@@ -77,12 +77,12 @@
                         <div>
                             <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">{{ __('Sort By') }}</label>
                             <select name="sort" id="sortFilter" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
-                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('Newest First') }}</option>
-                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>{{ __('Oldest First') }}</option>
-                                <option value="month_asc" {{ request('sort') == 'month_asc' ? 'selected' : '' }}>{{ __('Month (Earliest)') }}</option>
-                                <option value="month_desc" {{ request('sort') == 'month_desc' ? 'selected' : '' }}>{{ __('Month (Latest)') }}</option>
-                                <option value="deadline_asc" {{ request('sort') == 'deadline_asc' ? 'selected' : '' }}>{{ __('Deadline (Earliest)') }}</option>
-                                <option value="deadline_desc" {{ request('sort') == 'deadline_desc' ? 'selected' : '' }}>{{ __('Deadline (Latest)') }}</option>
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('Date Created (Newest)') }}</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>{{ __('Date Created (Oldest)') }}</option>
+                                <option value="month_asc" {{ request('sort') == 'month_asc' ? 'selected' : '' }}>{{ __('Departure/ETD (Earliest)') }}</option>
+                                <option value="month_desc" {{ request('sort') == 'month_desc' ? 'selected' : '' }}>{{ __('Departure/ETD (Latest)') }}</option>
+                                <option value="deadline_asc" {{ request('sort') == 'deadline_asc' ? 'selected' : '' }}>{{ __('Receiving Schedule (Earliest)') }}</option>
+                                <option value="deadline_desc" {{ request('sort') == 'deadline_desc' ? 'selected' : '' }}>{{ __('Receiving Schedule (Latest)') }}</option>
                             </select>
                         </div>
                         <div class="flex items-end space-x-2">
@@ -103,7 +103,7 @@
 
             {{-- Shipments Table --}}
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg transition-colors duration-300">
-                <div class="p-6">
+                <div class="p-6" id="shipmentsTableContainer">
                     @if($shipments->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -211,14 +211,42 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div></div>
-
+                        </div>
+ 
                         {{-- Pagination --}}
                         <div class="mt-4">
                             {{ $shipments->links() }}
                         </div>
                     @else
-                        <p class="text-gray-500 text-center py-8">{{ __('No shipments found. Try adjusting your filters or create a new shipment.') }}</p>
+                        <div class="flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in">
+                            <!-- Beautiful Animated SVG Icon with gradient -->
+                            <div class="relative mb-6">
+                                <div class="absolute inset-0 bg-gradient-to-tr from-scg-red/20 to-red-500/10 rounded-full blur-xl opacity-60 dark:opacity-40 animate-pulse"></div>
+                                <div class="relative bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 flex items-center justify-center transition-colors duration-300">
+                                    <svg class="w-12 h-12 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <!-- Title -->
+                            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">
+                                {{ __('No Matching Shipments') }}
+                            </h3>
+                            
+                            <!-- Description -->
+                            <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mb-6">
+                                {{ __('We couldn\'t find any shipments matching your search, filter, or sorting criteria. Try resetting them to see all shipments.') }}
+                            </p>
+                            
+                            <!-- Action Button -->
+                            <button type="button" onclick="document.getElementById('resetFilters').click()" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-scg-red to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2"></path>
+                                </svg>
+                                {{ __('Reset Filters') }}
+                            </button>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -234,8 +262,7 @@
             const sortFilter = document.getElementById('sortFilter');
             const resetButton = document.getElementById('resetFilters');
             const loadingIndicator = document.getElementById('loadingIndicator');
-            const tableContainer = document.querySelector('.overflow-x-auto');
-            const paginationContainer = document.querySelector('.mt-4');
+            const shipmentsTableContainer = document.getElementById('shipmentsTableContainer');
 
             let debounceTimer;
             const debounceDelay = 500; // 500ms delay
@@ -280,31 +307,13 @@
                     })
                     .then(response => response.text())
                     .then(html => {
-                        // Parse the response and update the table
+                        // Parse the response and update the container
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
-                        const newTable = doc.querySelector('table');
-                        const newPagination = doc.querySelector('.pagination');
-                        const noResults = doc.querySelector('.text-gray-500');
+                        const newContent = doc.getElementById('shipmentsTableContainer');
 
-                        // Update the table content
-                        if (tableContainer) {
-                            if (newTable) {
-                                tableContainer.innerHTML = '';
-                                tableContainer.appendChild(newTable);
-                            } else if (noResults) {
-                                tableContainer.innerHTML = '';
-                                tableContainer.appendChild(noResults);
-                            }
-                        }
-
-                        // Update pagination
-                        if (paginationContainer) {
-                            if (newPagination) {
-                                paginationContainer.innerHTML = newPagination.innerHTML;
-                            } else if (noResults) {
-                                paginationContainer.innerHTML = '';
-                            }
+                        if (shipmentsTableContainer && newContent) {
+                            shipmentsTableContainer.innerHTML = newContent.innerHTML;
                         }
                     })
                     .catch(error => {

@@ -155,5 +155,14 @@
     "created": "dibuat",
     "updated status": "status diperbarui",
     "deleted": "dihapus",
-    "Customer Receiving Schedule": "Jadwal Penerimaan Pelanggan"
+    "Customer Receiving Schedule": "Jadwal Penerimaan Pelanggan",
+    "No Matching Shipments": "Tidak Ada Pengiriman yang Cocok",
+    "We couldn't find any shipments matching your search, filter, or sorting criteria. Try resetting them to see all shipments.": "Kami tidak dapat menemukan pengiriman yang cocok dengan kriteria pencarian, filter, atau pengurutan Anda. Coba atur ulang untuk melihat semua pengiriman.",
+    "Reset Filters": "Atur Ulang Filter",
+    "Date Created (Newest)": "Tanggal Dibuat (Terbaru)",
+    "Date Created (Oldest)": "Tanggal Dibuat (Terlama)",
+    "Departure/ETD (Earliest)": "Keberangkatan/ETD (Paling Awal)",
+    "Departure/ETD (Latest)": "Keberangkatan/ETD (Paling Akhir)",
+    "Receiving Schedule (Earliest)": "Jadwal Penerimaan (Paling Awal)",
+    "Receiving Schedule (Latest)": "Jadwal Penerimaan (Paling Akhir)"
 }

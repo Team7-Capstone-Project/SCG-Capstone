@@ -155,5 +155,14 @@
     "created": "สร้างแล้ว",
     "updated status": "อัปเดตสถานะแล้ว",
     "deleted": "ลบแล้ว",
-    "Customer Receiving Schedule": "กำหนดเวลาการรับสินค้าของลูกค้า"
+    "Customer Receiving Schedule": "กำหนดเวลาการรับสินค้าของลูกค้า",
+    "No Matching Shipments": "ไม่พบข้อมูลการจัดส่งที่ตรงกัน",
+    "We couldn't find any shipments matching your search, filter, or sorting criteria. Try resetting them to see all shipments.": "ไม่พบข้อมูลการจัดส่งที่ตรงกับเงื่อนไขการค้นหา ตัวกรอง หรือการจัดเรียงของคุณ ลองรีเซ็ตเพื่อดูการจัดส่งทั้งหมด",
+    "Reset Filters": "รีเซ็ตตัวกรอง",
+    "Date Created (Newest)": "วันที่สร้าง (ใหม่สุด)",
+    "Date Created (Oldest)": "วันที่สร้าง (เก่าสุด)",
+    "Departure/ETD (Earliest)": "วันออกจากท่าเรือ/ETD (เร็วสุด)",
+    "Departure/ETD (Latest)": "วันออกจากท่าเรือ/ETD (ล่าสุด)",
+    "Receiving Schedule (Earliest)": "กำหนดเวลาการรับสินค้า (เร็วสุด)",
+    "Receiving Schedule (Latest)": "กำหนดเวลาการรับสินค้า (ล่าสุด)"
 }
