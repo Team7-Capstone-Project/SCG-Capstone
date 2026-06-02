@@ -211,12 +211,12 @@
                                         <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Supplier') }}</th>
                                         <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Status') }}</th>
                                         <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('ETD Port') }}</th>
-                                        <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Actions') }}</th>
+                                        <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('OTD') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="shipments-table-body" class="bg-transparent divide-y divide-slate-100 dark:divide-slate-800/50">
                                     @foreach($recentShipments as $shipment)
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition duration-150">
+                                        <tr onclick="window.location='{{ route('shipments.show', $shipment) }}'" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition duration-150 cursor-pointer">
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                                                     {{ $shipment->customer_po ?? 'N/A' }}
@@ -259,10 +259,17 @@
                                                         'Cancelled' => 'bg-slate-400',
                                                     ];
                                                 @endphp
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border {{ $statusClasses[$shipment->status] ?? 'bg-slate-50 text-slate-600 border-slate-200' }}">
-                                                    <span class="h-1.5 w-1.5 rounded-full {{ $dotClasses[$shipment->status] ?? 'bg-slate-400' }}"></span>
-                                                    {{ __($shipment->status) }}
-                                                </span>
+                                                <div class="flex flex-col gap-1">
+                                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border {{ $statusClasses[$shipment->status] ?? 'bg-slate-50 text-slate-600 border-slate-200' }}">
+                                                        <span class="h-1.5 w-1.5 rounded-full {{ $dotClasses[$shipment->status] ?? 'bg-slate-400' }}"></span>
+                                                        {{ __($shipment->status) }}
+                                                    </span>
+                                                    @if($shipment->notes)
+                                                        <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 max-w-[150px] truncate" title="{{ $shipment->notes }}">
+                                                            📝 {{ $shipment->notes }}
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
@@ -272,10 +279,47 @@
                                                     <span class="text-xs font-semibold">{{ $shipment->etd_port?->format('d M Y') ?? 'N/A' }}</span>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('shipments.show', $shipment) }}" class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 hover:shadow-md transition-all duration-150">
-                                                    {{ __('View') }}
-                                                </a>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @if($shipment->isDelivered())
+                                                    @php
+                                                        $daysDiff = $shipment->getDaysDifference();
+                                                        $daysText = $shipment->getDaysDifferenceText();
+                                                    @endphp
+
+                                                    @if($shipment->isOnTime())
+                                                        <div class="flex flex-col">
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 justify-center">
+                                                                ✓ {{ __('Ideal') }}
+                                                            </span>
+                                                        </div>
+                                                    @elseif($shipment->isEarly())
+                                                        <div class="flex flex-col">
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200 justify-center">
+                                                                ✓ {{ __('Early') }}
+                                                            </span>
+                                                            @if($daysDiff !== null)
+                                                                <span class="text-xs text-amber-600 dark:text-amber-400 mt-1 pl-1">
+                                                                     {{ abs($daysDiff) }} {{ __('days early') }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    @elseif($shipment->isLate())
+                                                        <div class="flex flex-col">
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 justify-center">
+                                                                ✗ {{ __('Late') }}
+                                                            </span>
+                                                            @if($daysDiff !== null)
+                                                                <span class="text-xs text-red-600 dark:text-red-400 mt-1 font-medium pl-1">
+                                                                    {{ abs($daysDiff) }} {{ __('days late') }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    @else
+                                                        <span class="text-slate-400 text-xs">-</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-slate-400 text-xs">{{ __('Pending') }}</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

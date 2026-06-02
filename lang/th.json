@@ -164,5 +164,6 @@
     "Departure/ETD (Earliest)": "วันออกจากท่าเรือ/ETD (เร็วสุด)",
     "Departure/ETD (Latest)": "วันออกจากท่าเรือ/ETD (ล่าสุด)",
     "Receiving Schedule (Earliest)": "กำหนดเวลาการรับสินค้า (เร็วสุด)",
-    "Receiving Schedule (Latest)": "กำหนดเวลาการรับสินค้า (ล่าสุด)"
+    "Receiving Schedule (Latest)": "กำหนดเวลาการรับสินค้า (ล่าสุด)",
+    "Location/Note...": "สถานที่/บันทึก..."
 }

@@ -146,10 +146,11 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>div>
+                        </div>
 
                         {{-- Cost Structure --}}
-                        <div class="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 rounded-lg p-4 mb-                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">{{ __('Cost Details') }}</h3>
+                        <div class="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 rounded-lg p-4 mb-6">
+                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">{{ __('Cost Details') }}</h3>
                             
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
@@ -179,7 +180,20 @@
                                         class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
                                 </div>
                             </div>
-                        </div>div>
+                        </div>
+
+                        {{-- Notes / Tracking Remarks --}}
+                        <div class="bg-blue-50 dark:bg-slate-700/30 border border-blue-200 dark:border-slate-700 rounded-lg p-4 mb-6">
+                            <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200 mb-4">{{ __('Notes / Tracking Remarks') }}</h3>
+                            <div>
+                                <label for="notes" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
+                                    {{ __('Notes') }}
+                                </label>
+                                <textarea name="notes" id="notes" rows="3"
+                                    placeholder="e.g. Karawang (Package in regional hub)"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">{{ old('notes', $shipment->notes) }}</textarea>
+                            </div>
+                        </div>
 
                         {{-- Form Actions --}}
                         <div class="flex justify-end space-x-4 pt-4">

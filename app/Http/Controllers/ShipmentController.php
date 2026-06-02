@@ -534,6 +534,7 @@ class ShipmentController extends Controller
             'shipping_cost' => 'nullable|numeric|min:0',
             'customs_cost' => 'nullable|numeric|min:0',
             'other_costs' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string',
         ], [
             'delivery_note_number.regex' => 'Delivery Note Number can only contain letters, numbers, spaces, and - / _ .',
             'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, spaces, and - / _ .',
@@ -558,6 +559,11 @@ class ShipmentController extends Controller
             // Update status if provided and ata_customer is not set
             if (!empty($validated['status']) && empty($validated['ata_customer'])) {
                 $shipment->status = $validated['status'];
+            }
+
+            // Update notes if provided (either text or cleared/empty)
+            if (array_key_exists('notes', $validated)) {
+                $shipment->notes = $validated['notes'];
             }
 
             // Update document numbers
