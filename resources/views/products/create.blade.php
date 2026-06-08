@@ -200,7 +200,7 @@
                                 Discard
                             </a>
                             <button type="submit" 
-                                class="px-10 py-3 bg-scg-red text-white font-bold rounded-xl shadow-lg shadow-red-500/30 hover:bg-red-700 hover:-translate-y-0.5 transition-all">
+                                class="px-10 py-3 bg-scg-red dark:bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/30 dark:shadow-red-950/30 hover:bg-red-700 dark:hover:bg-red-500 hover:-translate-y-0.5 transition-all">
                                 Save Product
                             </button>
                         </div>

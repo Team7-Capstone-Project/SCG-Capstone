@@ -5,7 +5,7 @@
                 {{ __('Suppliers Management') }}
             </h2>
             @can('create', App\Models\Supplier::class)
-                <a href="{{ route('suppliers.create') }}" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition">
+                <a href="{{ route('suppliers.create') }}" class="bg-scg-red dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-bold py-2 px-4 rounded transition shadow-sm">
                     + {{ __('Create Supplier') }}
                 </a>
             @endcan

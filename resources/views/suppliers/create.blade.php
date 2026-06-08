@@ -102,10 +102,10 @@
                         </div>
 
                         <div class="flex justify-end space-x-4">
-                            <a href="{{ route('suppliers.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded transition">
+                            <a href="{{ route('suppliers.index') }}" class="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-6 rounded transition shadow-sm">
                                 Cancel
                             </a>
-                            <button type="submit" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded transition">
+                            <button type="submit" class="bg-scg-red dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-bold py-2 px-6 rounded transition shadow-sm">
                                 Create Supplier
                             </button>
                         </div>

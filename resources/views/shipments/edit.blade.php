@@ -300,7 +300,7 @@
                         <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200">Products</h3>
-                                <button type="button" onclick="addProductRow()" class="bg-scg-red hover:bg-red-800 text-white font-bold py-1 px-4 rounded transition text-sm">
+                                <button type="button" onclick="addProductRow()" class="bg-scg-red dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-bold py-1 px-4 rounded transition text-sm shadow-sm">
                                     + Add Product
                                 </button>
                             </div>
@@ -352,12 +352,11 @@
                                 class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">{{ old('notes', $shipment->notes) }}</textarea>
                         </div>
 
-                        {{-- Form Actions --}}
                         <div class="flex justify-end space-x-4 pt-4">
-                            <a href="{{ route('shipments.index') }}" class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-bold py-2 px-6 rounded transition">
+                            <a href="{{ route('shipments.index') }}" class="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-6 rounded transition shadow-sm">
                                 {{ __('Cancel') }}
                             </a>
-                            <button type="submit" class="bg-scg-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded transition">
+                            <button type="submit" class="bg-scg-red dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-bold py-2 px-6 rounded transition shadow-sm">
                                 {{ __('Update Shipment') }}
                             </button>
                         </div>

@@ -9,7 +9,7 @@
             </div>
             @can('create', App\Models\Product::class)
                 <a href="{{ route('products.create') }}" 
-                   class="inline-flex items-center gap-2 bg-[#A6192E] hover:bg-[#8B1527] text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-all duration-200">
+                   class="inline-flex items-center gap-2 bg-[#A6192E] dark:bg-red-600 hover:bg-[#8B1527] dark:hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-all duration-200">
                     <span class="text-xl leading-none">+</span>
                     <span class="text-base">{{ __('Add Product') }}</span>
                 </a>
@@ -111,7 +111,7 @@
                     <p class="text-gray-500 dark:text-gray-400 mb-6">{{ __('Get started by creating your first product.') }}</p>
                     @can('create', App\Models\Product::class)
                         <a href="{{ route('products.create') }}" 
-                           class="inline-flex items-center gap-2 bg-[#A6192E] hover:bg-[#8B1527] text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-all duration-200">
+                           class="inline-flex items-center gap-2 bg-[#A6192E] dark:bg-red-600 hover:bg-[#8B1527] dark:hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-all duration-200">
                             <span class="text-xl leading-none">+</span>
                             <span class="text-base">{{ __('Create First Product') }}</span>
                         </a>

@@ -168,11 +168,11 @@
                                             class="block border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm py-1 px-2 text-xs focus:outline-none focus:ring-[#A6192E] focus:border-[#A6192E]">
                                     </div>
                                     <div class="flex gap-2">
-                                        <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-bold rounded-md text-white bg-[#A6192E] hover:bg-[#8a1426] focus:outline-none">
+                                        <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-bold rounded-md text-white bg-[#A6192E] dark:bg-red-600 hover:bg-[#8a1426] dark:hover:bg-red-500 focus:outline-none shadow-sm">
                                             {{ __('Filter') }}
                                         </button>
                                         @if(request('start_date') || request('end_date') || request('quick_filter'))
-                                            <a href="{{ route('products.show', $product) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-bold rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                            <a href="{{ route('products.show', $product) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md shadow-sm">
                                                 {{ __('Reset') }}
                                             </a>
                                         @endif
