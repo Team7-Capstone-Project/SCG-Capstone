@@ -7,7 +7,7 @@
             <div class="flex space-x-2">
                 {{-- Export Excel: Available for all roles who can view shipments --}}
                 @can('viewAny', App\Models\Shipment::class)
-                    <a id="exportButton" href="{{ route('shipments.export', request()->query()) }}" download class="bg-green-600 dark:bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white font-bold py-2 px-4 rounded transition shadow-md flex items-center">
+                    <a id="exportButton" href="{{ route('shipments.export', request()->query()) }}" download class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-600 dark:to-emerald-600 hover:from-green-700 hover:to-emerald-700 dark:hover:from-green-500 dark:hover:to-emerald-500 text-white font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-md shadow-green-600/10 hover:shadow-lg hover:shadow-green-600/20 transform hover:-translate-y-0.5 text-sm">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
@@ -17,7 +17,7 @@
                 
                 {{-- Create Shipment: Only for PIC Sales --}}
                 @can('create', App\Models\Shipment::class)
-                    <a href="{{ route('shipments.create') }}" class="bg-scg-red dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-bold py-2 px-4 rounded transition shadow-md">
+                    <a href="{{ route('shipments.create') }}" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
                         + {{ __('Create Shipment') }}
                     </a>
                 @endcan
@@ -86,10 +86,10 @@
                             </select>
                         </div>
                         <div class="flex items-end space-x-2">
-                            <button type="button" id="resetFilters" class="w-1/2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-650 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded transition shadow-sm">
+                            <button type="button" id="resetFilters" class="w-1/2 inline-flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-sm">
                                 {{ __('Reset') }}
                             </button>
-                            <button type="submit" class="w-1/2 bg-scg-red dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-bold py-2 px-4 rounded transition shadow-sm">
+                            <button type="submit" class="w-1/2 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
                                 {{ __('Apply') }}
                             </button>
                         </div>

@@ -199,11 +199,11 @@
                         {{-- Form Actions --}}
                         <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-800">
                             <a href="{{ route('products.index') }}" 
-                                class="px-8 py-3 rounded-xl text-gray-500 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+                                class="inline-flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-sm">
                                 Cancel
                             </a>
                             <button type="submit" 
-                                class="px-10 py-3 bg-scg-red dark:bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/30 dark:shadow-red-950/30 hover:bg-red-700 dark:hover:bg-red-500 hover:-translate-y-0.5 transition-all">
+                                class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
                                 Update Product
                             </button>
                         </div>

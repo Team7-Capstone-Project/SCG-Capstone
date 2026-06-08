@@ -300,7 +300,7 @@
                         <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-sm font-semibold text-scg-gray-dark dark:text-gray-200">Products</h3>
-                                <button type="button" onclick="addProductRow()" class="bg-scg-red dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-bold py-1 px-4 rounded transition text-sm shadow-sm">
+                                <button type="button" onclick="addProductRow()" class="inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-1.5 px-4 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
                                     + Add Product
                                 </button>
                             </div>
@@ -353,10 +353,10 @@
                         </div>
 
                         <div class="flex justify-end space-x-4 pt-4">
-                            <a href="{{ route('shipments.index') }}" class="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-6 rounded transition shadow-sm">
+                            <a href="{{ route('shipments.index') }}" class="inline-flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-sm">
                                 {{ __('Cancel') }}
                             </a>
-                            <button type="submit" class="bg-scg-red dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-bold py-2 px-6 rounded transition shadow-sm">
+                            <button type="submit" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
                                 {{ __('Update Shipment') }}
                             </button>
                         </div>

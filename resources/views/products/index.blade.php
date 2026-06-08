@@ -9,9 +9,9 @@
             </div>
             @can('create', App\Models\Product::class)
                 <a href="{{ route('products.create') }}" 
-                   class="inline-flex items-center gap-2 bg-[#A6192E] dark:bg-red-600 hover:bg-[#8B1527] dark:hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-all duration-200">
-                    <span class="text-xl leading-none">+</span>
-                    <span class="text-base">{{ __('Add Product') }}</span>
+                   class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
+                    <span class="text-lg leading-none">+</span>
+                    <span>{{ __('Add Product') }}</span>
                 </a>
             @endcan
         </div>
@@ -111,9 +111,9 @@
                     <p class="text-gray-500 dark:text-gray-400 mb-6">{{ __('Get started by creating your first product.') }}</p>
                     @can('create', App\Models\Product::class)
                         <a href="{{ route('products.create') }}" 
-                           class="inline-flex items-center gap-2 bg-[#A6192E] dark:bg-red-600 hover:bg-[#8B1527] dark:hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-all duration-200">
-                            <span class="text-xl leading-none">+</span>
-                            <span class="text-base">{{ __('Create First Product') }}</span>
+                           class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
+                            <span class="text-lg leading-none">+</span>
+                            <span>{{ __('Create First Product') }}</span>
                         </a>
                     @endcan
                 </div>
