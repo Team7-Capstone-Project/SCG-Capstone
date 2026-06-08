@@ -49,7 +49,7 @@
             {{-- Filters --}}
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6 transition-colors duration-300">
                 <div class="p-6">
-                    <form id="filterForm" method="GET" action="{{ route('shipments.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <form id="filterForm" method="GET" action="{{ route('shipments.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">{{ __('Search') }}</label>
                             <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
@@ -72,6 +72,17 @@
                                 <option value="">{{ __('All Types') }}</option>
                                 <option value="Import" {{ request('type') == 'Import' ? 'selected' : '' }}>{{ __('Import') }}</option>
                                 <option value="Export" {{ request('type') == 'Export' ? 'selected' : '' }}>{{ __('Export') }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">{{ __('Month') }}</label>
+                            <select name="month" id="monthFilter" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                <option value="">{{ __('All Time') }}</option>
+                                @foreach($availableMonths as $m)
+                                    <option value="{{ $m['value'] }}" {{ request('month') == $m['value'] ? 'selected' : '' }}>
+                                        {{ $m['label'] }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
@@ -271,6 +282,7 @@
             const searchInput = document.getElementById('searchInput');
             const statusFilter = document.getElementById('statusFilter');
             const typeFilter = document.getElementById('typeFilter');
+            const monthFilter = document.getElementById('monthFilter');
             const sortFilter = document.getElementById('sortFilter');
             const resetButton = document.getElementById('resetFilters');
             const loadingIndicator = document.getElementById('loadingIndicator');
@@ -348,6 +360,7 @@
             // Filter changes
             statusFilter.addEventListener('change', submitForm);
             if(typeFilter) typeFilter.addEventListener('change', submitForm);
+            if(monthFilter) monthFilter.addEventListener('change', submitForm);
             sortFilter.addEventListener('change', submitForm);
 
             // Reset filters button
@@ -357,6 +370,7 @@
                 searchInput.value = '';
                 statusFilter.selectedIndex = 0;
                 if(typeFilter) typeFilter.selectedIndex = 0;
+                if(monthFilter) monthFilter.selectedIndex = 0;
                 sortFilter.selectedIndex = 0;
 
                 // Submit the form

@@ -46,6 +46,14 @@ class ShipmentController extends Controller
             $query->onTime();
         }
 
+        if ($request->filled('month')) {
+            $month = $request->month;
+            if (preg_match('/^\d{4}-\d{2}$/', $month)) {
+                list($year, $monthNum) = explode('-', $month);
+                $query->whereYear('etd_port', $year)->whereMonth('etd_port', $monthNum);
+            }
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -102,9 +110,22 @@ class ShipmentController extends Controller
         $query = $this->getFilteredQuery($request);
         $shipments = $query->paginate(15)->withQueryString();
         $customers = Customer::orderBy('name')->get();
-        $customers = Customer::orderBy('name')->get();
 
-        return view('shipments.index', compact('shipments', 'customers'));
+        // Get available months dynamically from DB (etd_port)
+        $availableMonths = Shipment::select(DB::raw("DATE_FORMAT(etd_port, '%Y-%m') as month_val"))
+            ->groupBy('month_val')
+            ->orderBy('month_val', 'desc')
+            ->pluck('month_val')
+            ->map(function ($value) {
+                $carbonDate = \Carbon\Carbon::createFromFormat('Y-m', $value);
+                return [
+                    'value' => $value,
+                    'label' => $carbonDate->translatedFormat('F Y'),
+                ];
+            })
+            ->toArray();
+
+        return view('shipments.index', compact('shipments', 'customers', 'availableMonths'));
     }
 
     /**

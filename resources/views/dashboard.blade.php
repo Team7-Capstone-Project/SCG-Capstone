@@ -17,14 +17,27 @@
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ __('Supply Chain Management Dashboard') }}</p>
             </div>
-            @can('create', App\Models\Shipment::class)
-                <a href="{{ route('shipments.create') }}" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    <span>{{ __('Create Shipment') }}</span>
-                </a>
-            @endcan
+            <div class="flex flex-wrap items-center gap-3">
+                <form action="{{ route('dashboard') }}" method="GET" class="inline-flex items-center">
+                    <select name="month" onchange="this.form.submit()" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm cursor-pointer transition-all duration-200">
+                        <option value="">{{ __('All Time') }}</option>
+                        @foreach($availableMonths as $m)
+                            <option value="{{ $m['value'] }}" {{ request('month') == $m['value'] ? 'selected' : '' }}>
+                                {{ $m['label'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                @can('create', App\Models\Shipment::class)
+                    <a href="{{ route('shipments.create') }}" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>{{ __('Create Shipment') }}</span>
+                    </a>
+                @endcan
+            </div>
         </div>
     </x-slot>
 
@@ -45,7 +58,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
 
                 {{-- Total Shipments --}}
-                <a href="{{ route('shipments.index') }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 dark:hover:shadow-blue-500/10 hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-100">
+                <a href="{{ route('shipments.index', array_filter(['month' => request('month')])) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 dark:hover:shadow-blue-500/10 hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-100">
                     <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div>
                         <div class="flex items-start justify-between">
@@ -65,35 +78,36 @@
                     </div>
                 </a>
 
-                {{-- Delivered Shipments --}}
-                <a href="{{ route('shipments.index', ['status' => 'Delivered']) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 dark:hover:shadow-emerald-500/10 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-200">
-                    <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {{-- In Transit / Ongoing Shipments --}}
+                <a href="{{ route('shipments.index', array_filter(['status' => 'In Transit', 'month' => request('month')])) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 dark:hover:shadow-blue-500/10 hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-200">
+                    <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div>
                         <div class="flex items-start justify-between">
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Delivered') }}</p>
-                                <p class="text-4xl font-extrabold text-slate-800 dark:text-white mt-3 tracking-tight">{{ $deliveredShipments }}</p>
+                                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('In Transit') }}</p>
+                                <p class="text-4xl font-extrabold text-slate-800 dark:text-white mt-3 tracking-tight">{{ $inTransitShipments }}</p>
                             </div>
-                            <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl p-3.5 shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3">
+                            <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 text-blue-600 dark:text-blue-400 rounded-xl p-3.5 shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10M13 16h6l1.5-3H13v3z"></path>
                                 </svg>
                             </div>
                         </div>
                     </div>
                     <div class="mt-4 flex flex-col gap-1.5">
                         <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 dark:text-slate-500">
-                            <span class="tracking-wide uppercase">{{ __('Completion') }}</span>
-                            <span class="text-emerald-600 dark:text-emerald-400 font-semibold">{{ $totalShipments > 0 ? round(($deliveredShipments / $totalShipments) * 100) : 0 }}%</span>
+                            <span class="tracking-wide uppercase">{{ __('Active Ratio') }}</span>
+                            <span class="text-blue-600 dark:text-blue-400 font-semibold">{{ $totalShipments > 0 ? round(($inTransitShipments / $totalShipments) * 100) : 0 }}%</span>
                         </div>
                         <div class="w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full" style="width: {{ $totalShipments > 0 ? ($deliveredShipments / $totalShipments) * 100 : 0 }}%"></div>
+                            <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full" style="width: {{ $totalShipments > 0 ? ($inTransitShipments / $totalShipments) * 100 : 0 }}%"></div>
                         </div>
                     </div>
                 </a>
 
                 {{-- Late Shipments --}}
-                <a href="{{ route('shipments.index', ['late' => 1]) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-rose-500/5 dark:hover:shadow-rose-500/10 hover:border-rose-500/30 dark:hover:border-rose-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-300">
+                <a href="{{ route('shipments.index', array_filter(['late' => 1, 'month' => request('month')])) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-rose-500/5 dark:hover:shadow-rose-500/10 hover:border-rose-500/30 dark:hover:border-rose-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-300">
                     <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-500 to-red-600 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div>
                         <div class="flex items-start justify-between">
@@ -120,7 +134,7 @@
                 </a>
 
                 {{-- Early Shipments --}}
-                <a href="{{ route('shipments.index', ['early' => 1]) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 dark:hover:shadow-amber-500/10 hover:border-amber-500/30 dark:hover:border-amber-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-350">
+                <a href="{{ route('shipments.index', array_filter(['early' => 1, 'month' => request('month')])) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 dark:hover:shadow-amber-500/10 hover:border-amber-500/30 dark:hover:border-amber-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-350">
                     <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 to-orange-600 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div>
                         <div class="flex items-start justify-between">
@@ -147,7 +161,7 @@
                 </a>
 
                 {{-- On-Time Shipments --}}
-                <a href="{{ route('shipments.index', ['on_time' => 1]) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 dark:hover:shadow-emerald-500/10 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-400">
+                <a href="{{ route('shipments.index', array_filter(['on_time' => 1, 'month' => request('month')])) }}" class="group relative flex flex-col justify-between bg-white/70 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 dark:hover:shadow-emerald-500/10 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden animate-fade-in-up delay-400">
                     <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div>
                         <div class="flex items-start justify-between">

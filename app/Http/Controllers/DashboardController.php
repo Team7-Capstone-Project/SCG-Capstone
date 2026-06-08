@@ -12,31 +12,55 @@ class DashboardController extends Controller
     /**
      * Display SCM Dashboard with OTD Metrics (FR-R-01)
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Total Shipments
-        $totalShipments = Shipment::count();
+        // Get available months dynamically from DB (etd_port)
+        $availableMonths = Shipment::select(DB::raw("DATE_FORMAT(etd_port, '%Y-%m') as month_val"))
+            ->groupBy('month_val')
+            ->orderBy('month_val', 'desc')
+            ->pluck('month_val')
+            ->map(function ($value) {
+                $carbonDate = \Carbon\Carbon::createFromFormat('Y-m', $value);
+                return [
+                    'value' => $value,
+                    'label' => $carbonDate->translatedFormat('F Y'),
+                ];
+            })
+            ->toArray();
 
-        // Delivered Shipments
-        $deliveredShipments = Shipment::delivered()->count();
+        $selectedMonth = $request->query('month');
+        $shipmentsQuery = Shipment::query();
+
+        if ($selectedMonth && preg_match('/^\d{4}-\d{2}$/', $selectedMonth)) {
+            list($year, $monthNum) = explode('-', $selectedMonth);
+            $shipmentsQuery->whereYear('etd_port', $year)->whereMonth('etd_port', $monthNum);
+        }
+
+        // Total Shipments
+        $totalShipments = (clone $shipmentsQuery)->count();
+
+        // Delivered Shipments (needed for OTD Rate)
+        $deliveredShipments = (clone $shipmentsQuery)->delivered()->count();
+
+        // In Transit Shipments (Replaces Delivered card on the UI)
+        $inTransitShipments = (clone $shipmentsQuery)->inTransit()->count();
 
         // Late Shipments (Delivered but ata_customer > customer_receiving_schedule)
-        $lateShipments = Shipment::late()->count();
+        $lateShipments = (clone $shipmentsQuery)->late()->count();
 
         // On-Time Shipments (Delivered and ata_customer == customer_receiving_schedule)
-        $onTimeShipments = Shipment::onTime()->count();
+        $onTimeShipments = (clone $shipmentsQuery)->onTime()->count();
 
         // Early Shipments (Delivered and ata_customer < customer_receiving_schedule)
-        $earlyShipments = Shipment::early()->count();
+        $earlyShipments = (clone $shipmentsQuery)->early()->count();
 
         // Calculate On-Time Delivery Rate
-        // OTD Rate = ((On-Time Shipments + Early Shipments) / Total Delivered Shipments) * 100
         $otdRate = $deliveredShipments > 0 
             ? round((($onTimeShipments + $earlyShipments) / $deliveredShipments) * 100, 1) 
             : 0;
 
         // Recent Shipments (last 10)
-        $recentShipments = Shipment::with(['customer', 'supplier', 'createdBy'])
+        $recentShipments = (clone $shipmentsQuery)->with(['customer', 'supplier', 'createdBy'])
             ->latest()
             ->limit(10)
             ->get();
@@ -45,7 +69,7 @@ class DashboardController extends Controller
         $monthlyData = $this->getMonthlyTrendData();
 
         // Shipments by Status
-        $shipmentsByStatus = Shipment::select('status', DB::raw('count(*) as count'))
+        $shipmentsByStatus = (clone $shipmentsQuery)->select('status', DB::raw('count(*) as count'))
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
@@ -53,13 +77,15 @@ class DashboardController extends Controller
         return view('dashboard', compact(
             'totalShipments',
             'deliveredShipments',
+            'inTransitShipments',
             'lateShipments',
             'earlyShipments',
             'onTimeShipments',
             'otdRate',
             'recentShipments',
             'monthlyData',
-            'shipmentsByStatus'
+            'shipmentsByStatus',
+            'availableMonths'
         ));
     }
 
