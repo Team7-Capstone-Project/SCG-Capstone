@@ -8,8 +8,23 @@
 
         <div class="space-y-2">
             <h2 class="text-2xl font-bold text-[#212529] dark:text-white text-center">Create an Account</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Join SCG SCM Dashboard today</p>
         </div>
+
+        @if(session('success'))
+            <div x-data="{ show: true }" x-show="show" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="bg-emerald-50 dark:bg-emerald-950/20 border-l-4 border-emerald-500 text-emerald-700 dark:text-emerald-300 p-4 mb-4 flex items-center justify-between rounded shadow-sm" role="alert">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm font-semibold">{{ session('success') }}</span>
+                </div>
+                <button type="button" @click="show = false" class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-200 transition-colors duration-150 focus:outline-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        @endif
 
         @if($errors->any())
             <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4">
