@@ -3,11 +3,27 @@
 @section('title', 'Create Account')
 
 @section('content')
-    <form method="POST" action="{{ route('register') }}" class="space-y-6">
+    <form id="register-form" method="POST" action="{{ route('register') }}" class="space-y-6">
         @csrf
 
         <div class="space-y-2">
             <h2 class="text-2xl font-bold text-[#212529] dark:text-white text-center">Create an Account</h2>
+        </div>
+
+        <!-- Dynamic Success Alert (AJAX) -->
+        <div id="dynamic-success-alert" class="hidden bg-emerald-50 dark:bg-emerald-950/20 border-l-4 border-emerald-500 text-emerald-700 dark:text-emerald-300 p-4 mb-4 flex items-center justify-between rounded shadow-sm" role="alert">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span id="dynamic-success-message" class="text-sm font-semibold"></span>
+            </div>
+        </div>
+
+        <!-- Dynamic Error Alert (AJAX) -->
+        <div id="dynamic-error-alert" class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+            <div class="font-medium">Whoops! Something went wrong.</div>
+            <ul id="dynamic-error-list" class="list-disc list-inside text-sm mt-1"></ul>
         </div>
 
         @if(session('success'))
@@ -125,4 +141,86 @@
             </a>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('register-form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    // Hide static alerts (PHP sessions)
+                    const staticSuccess = document.querySelector('[role="alert"]:not(#dynamic-success-alert)');
+                    if (staticSuccess) staticSuccess.style.display = 'none';
+
+                    const staticErrors = document.querySelector('.bg-red-50:not(#dynamic-error-alert)');
+                    if (staticErrors) staticErrors.style.display = 'none';
+
+                    const dynamicSuccess = document.getElementById('dynamic-success-alert');
+                    const dynamicErrors = document.getElementById('dynamic-error-alert');
+                    const dynamicErrorList = document.getElementById('dynamic-error-list');
+
+                    dynamicSuccess.classList.add('hidden');
+                    dynamicErrors.classList.add('hidden');
+                    dynamicErrorList.innerHTML = '';
+
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = 'Processing...';
+                    }
+
+                    const formData = new FormData(form);
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok || response.status === 422) {
+                            return response.json();
+                        }
+                        throw new Error('Something went wrong. Please try again.');
+                    })
+                    .then(data => {
+                        if (data.errors) {
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.textContent = 'Create Account';
+                            }
+                            dynamicErrors.classList.remove('hidden');
+                            Object.keys(data.errors).forEach(key => {
+                                data.errors[key].forEach(err => {
+                                    const li = document.createElement('li');
+                                    li.textContent = err;
+                                    dynamicErrorList.appendChild(li);
+                                });
+                            });
+                        } else if (data.success) {
+                            document.getElementById('dynamic-success-message').textContent = data.message + ' Redirecting...';
+                            dynamicSuccess.classList.remove('hidden');
+                            
+                            // Redirect immediately while showing the message
+                            window.location.href = data.redirect || '/dashboard';
+                        }
+                    })
+                    .catch(error => {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Create Account';
+                        }
+                        dynamicErrors.classList.remove('hidden');
+                        const li = document.createElement('li');
+                        li.textContent = error.message;
+                        dynamicErrorList.appendChild(li);
+                    });
+                });
+            }
+        });
+    </script>
 @endsection

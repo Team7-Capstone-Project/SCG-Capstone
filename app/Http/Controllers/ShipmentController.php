@@ -111,8 +111,11 @@ class ShipmentController extends Controller
         $shipments = $query->paginate(15)->withQueryString();
         $customers = Customer::orderBy('name')->get();
 
-        // Get available months dynamically from DB (etd_port)
-        $availableMonths = Shipment::select(DB::raw("DATE_FORMAT(etd_port, '%Y-%m') as month_val"))
+        $dateExpression = DB::getDriverName() === 'sqlite'
+            ? "strftime('%Y-%m', etd_port) as month_val"
+            : "DATE_FORMAT(etd_port, '%Y-%m') as month_val";
+
+        $availableMonths = Shipment::select(DB::raw($dateExpression))
             ->groupBy('month_val')
             ->orderBy('month_val', 'desc')
             ->pluck('month_val')

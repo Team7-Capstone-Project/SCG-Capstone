@@ -138,7 +138,7 @@
                     <div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center">
                             <span class="w-2.5 h-2.5 rounded-full bg-blue-500 mr-2"></span>
-                            {{ __('Related Shipments') }} ({{ count($shipments) }})
+                            {{ __('Shipment History') }} ({{ count($shipments) }})
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ __('List of shipments processed for this customer') }}</p>
                     </div>
