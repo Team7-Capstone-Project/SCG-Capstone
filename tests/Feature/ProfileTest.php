@@ -29,7 +29,7 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => 'Test User',
-                'email' => 'test@example.com',
+                'email' => 'test@scg.com',
             ]);
 
         $response
@@ -39,7 +39,7 @@ class ProfileTest extends TestCase
         $user->refresh();
 
         $this->assertSame('Test User', $user->name);
-        $this->assertSame('test@example.com', $user->email);
+        $this->assertSame('test@scg.com', $user->email);
         $this->assertNull($user->email_verified_at);
     }
 
@@ -95,5 +95,46 @@ class ProfileTest extends TestCase
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_profile_update_validation_limits(): void
+    {
+        $user = User::factory()->create();
+
+        // 1. Name too short (min:3)
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'Ab',
+                'email' => 'valid@scg.com',
+            ]);
+        $response->assertSessionHasErrors(['name']);
+
+        // 2. Name too long (max:50)
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => str_repeat('A', 51),
+                'email' => 'valid@scg.com',
+            ]);
+        $response->assertSessionHasErrors(['name']);
+
+        // 3. Name containing numbers/symbols
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'John Doe 123',
+                'email' => 'valid@scg.com',
+            ]);
+        $response->assertSessionHasErrors(['name']);
+
+        // 4. Email not ending with @scg.com
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'John Doe',
+                'email' => 'john.doe@gmail.com',
+            ]);
+        $response->assertSessionHasErrors(['email']);
     }
 }
