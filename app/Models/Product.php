@@ -32,7 +32,10 @@ class Product extends Model
     public function getImageUrlAttribute(): string
     {
         if ($this->image) {
-            return asset('storage/' . $this->image);
+            if (str_starts_with($this->image, 'products/')) {
+                return asset('storage/' . $this->image);
+            }
+            return asset($this->image);
         }
 
         // Return a data URI SVG placeholder with the product's initials
