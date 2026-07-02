@@ -255,5 +255,104 @@ class EntityValidationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('คุณแน่ใจหรือไม่ว่าต้องการลบผลิตภัณฑ์นี้? การดำเนินการนี้เป็นเรื่องร้ายแรงและจะส่งผลกระทบต่อการจัดส่งทั้งหมดที่เกี่ยวข้อง', false);
     }
+
+    public function test_entity_validation_min_length_rules()
+    {
+        $this->actingAs($this->salesUser);
+
+        // Name too short (min:3)
+        $response = $this->post(route('customers.store'), [
+            'name' => 'Ab',
+        ]);
+        $response->assertSessionHasErrors(['name']);
+
+        // Phone too short (min:8)
+        $response = $this->post(route('customers.store'), [
+            'name' => 'Valid Customer',
+            'phone' => '123',
+        ]);
+        $response->assertSessionHasErrors(['phone']);
+
+        // Country too short (min:2)
+        $response = $this->post(route('customers.store'), [
+            'name' => 'Valid Customer',
+            'country' => 'A',
+        ]);
+        $response->assertSessionHasErrors(['country']);
+    }
+
+    public function test_entity_validation_rejects_html_xss_payloads()
+    {
+        $this->actingAs($this->salesUser);
+
+        // Address with script tags
+        $response = $this->post(route('customers.store'), [
+            'name' => 'Valid Customer',
+            'address' => '<script>alert("hack")</script>',
+        ]);
+        $response->assertSessionHasErrors(['address']);
+
+        // Description with script tags
+        $response = $this->post(route('products.store'), [
+            'sku' => 'PROD-101',
+            'name' => 'Valid Product Name',
+            'unit_price' => 100,
+            'description' => '<p>Some text</p><iframe src="dangerous.html"></iframe>',
+        ]);
+        $response->assertSessionHasErrors(['description']);
+    }
+
+    public function test_product_validation_rejects_price_overflow()
+    {
+        $this->actingAs($this->salesUser);
+
+        // Price exceeds decimal limit (max:999999999999.99)
+        $response = $this->post(route('products.store'), [
+            'sku' => 'PROD-102',
+            'name' => 'Valid Product Name',
+            'unit_price' => 1000000000000, // 1 trillion
+        ]);
+        $response->assertSessionHasErrors(['unit_price']);
+    }
+
+    public function test_user_registration_max_length_rule()
+    {
+        // User registration name too long (max:50)
+        $response = $this->post(route('register'), [
+            'name' => str_repeat('A', 51),
+            'email' => 'test@scg.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+        $response->assertSessionHasErrors(['name']);
+    }
+
+    public function test_entity_validation_max_length_rules()
+    {
+        $this->actingAs($this->salesUser);
+
+        // Product SKU too long (max:30)
+        $response = $this->post(route('products.store'), [
+            'sku' => str_repeat('A', 31),
+            'name' => 'Valid Name',
+            'unit_price' => 100,
+        ]);
+        $response->assertSessionHasErrors(['sku']);
+
+        // Product Name too long (max:100)
+        $response = $this->post(route('products.store'), [
+            'sku' => 'PROD-103',
+            'name' => str_repeat('A', 101),
+            'unit_price' => 100,
+        ]);
+        $response->assertSessionHasErrors(['name']);
+
+        // Customer Country too long (max:60)
+        $response = $this->post(route('customers.store'), [
+            'name' => 'Valid Customer',
+            'country' => str_repeat('A', 61),
+        ]);
+        $response->assertSessionHasErrors(['country']);
+    }
 }
 

@@ -173,37 +173,82 @@ class ShipmentController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
             // Document numbers - must be unique globally, and contain valid format
-            'customer_po' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
-            'scg_po' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
-            'scg_so' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
-            'booking_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
-            'delivery_note_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
-            'etd_port' => 'required|date',
-            'eta_port' => 'nullable|date|after_or_equal:etd_port',
-            'ata_port' => 'nullable|date|after_or_equal:etd_port',
-            'customer_receiving_schedule' => [
-                'required',
+            'customer_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
+            'etd_port' => 'required|date|after_or_equal:2020-01-01|before_or_equal:2035-12-31',
+            'eta_port' => [
+                'nullable',
                 'date',
                 'after_or_equal:etd_port',
+                'before_or_equal:2035-12-31',
                 function ($attribute, $value, $fail) use ($request) {
-                    if ($request->filled('eta_port')) {
-                        $eta = strtotime($request->eta_port);
-                        $schedule = strtotime($value);
-                        if ($schedule < $eta) {
-                            $fail('The Customer Receiving Schedule must be after or equal to ETA Port.');
+                    if ($request->filled('etd_port')) {
+                        $etd = strtotime($request->etd_port);
+                        $eta = strtotime($value);
+                        if ($eta > $etd + (365 * 24 * 60 * 60)) {
+                            $fail(__('The ETA Port must be at most 1 year (365 days) after ETD Port.'));
                         }
                     }
                 }
             ],
-            'shipping_cost' => 'nullable|numeric|min:0',
-            'customs_cost' => 'nullable|numeric|min:0',
-            'other_costs' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string',
+            'ata_port' => [
+                'nullable',
+                'date',
+                'after_or_equal:etd_port',
+                'before_or_equal:2035-12-31',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->filled('etd_port')) {
+                        $etd = strtotime($request->etd_port);
+                        $ata = strtotime($value);
+                        if ($ata > $etd + (365 * 24 * 60 * 60)) {
+                            $fail(__('The ATA Port must be at most 1 year (365 days) after ETD Port.'));
+                        }
+                    }
+                }
+            ],
+            'customer_receiving_schedule' => [
+                'required',
+                'date',
+                'after_or_equal:etd_port',
+                'before_or_equal:2035-12-31',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->filled('etd_port')) {
+                        $etd = strtotime($request->etd_port);
+                        $schedule = strtotime($value);
+                        if ($schedule > $etd + (365 * 24 * 60 * 60)) {
+                            $fail(__('The Customer Receiving Schedule must be at most 1 year (365 days) after ETD Port.'));
+                        }
+                    }
+                    if ($request->filled('eta_port')) {
+                        $eta = strtotime($request->eta_port);
+                        $schedule = strtotime($value);
+                        if ($schedule < $eta) {
+                            $fail(__('The Customer Receiving Schedule must be after or equal to ETA Port.'));
+                        }
+                    }
+                }
+            ],
+            'shipping_cost' => 'nullable|numeric|min:0|max:999999999999.99',
+            'customs_cost' => 'nullable|numeric|min:0|max:999999999999.99',
+            'other_costs' => 'nullable|numeric|min:0|max:999999999999.99',
+            'notes' => [
+                'nullable',
+                'string',
+                'max:2000',
+                function ($attribute, $value, $fail) {
+                    if ($value !== strip_tags($value)) {
+                        $fail(__('The notes must not contain HTML or script tags.'));
+                    }
+                }
+            ],
             'products' => 'nullable|array',
             'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-            'products.*.unit_price' => 'required|numeric|min:0',
+            'products.*.quantity' => 'required|integer|min:1|max:10000000',
+            'products.*.unit_price' => 'required|numeric|min:0|max:999999999999.99',
         ], [
             'customer_id.required' => 'Customer is required',
             'supplier_id.required' => 'Supplier is required',
@@ -331,19 +376,34 @@ class ShipmentController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
             // Document numbers - must be unique globally (ignore current shipment)
-            'customer_po' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
-            'scg_po' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
-            'scg_so' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
-            'booking_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'delivery_note_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
+            'customer_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
             'status' => 'required|in:Pending,In Transit,Delivered,Cancelled',
-            'etd_port' => 'required|date',
-            'eta_port' => 'nullable|date|after_or_equal:etd_port',
+            'etd_port' => 'required|date|after_or_equal:2020-01-01|before_or_equal:2035-12-31',
+            'eta_port' => [
+                'nullable',
+                'date',
+                'after_or_equal:etd_port',
+                'before_or_equal:2035-12-31',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->filled('etd_port')) {
+                        $etd = strtotime($request->etd_port);
+                        $eta = strtotime($value);
+                        if ($eta > $etd + (365 * 24 * 60 * 60)) {
+                            $fail(__('The ETA Port must be at most 1 year (365 days) after ETD Port.'));
+                        }
+                    }
+                }
+            ],
             'ata_port' => [
                 'required_if:status,Delivered',
                 'nullable',
                 'date',
+                'before_or_equal:2035-12-31',
                 function ($attribute, $value, $fail) use ($request) {
                     $status = $request->status;
                     if (in_array($status, ['Pending', 'Cancelled']) && !empty($value)) {
@@ -352,8 +412,14 @@ class ShipmentController extends Controller
                     }
                     if (!empty($value)) {
                         $ataPort = strtotime($value);
-                        if ($request->filled('etd_port') && $ataPort < strtotime($request->etd_port)) {
-                            $fail(__('The Actual Time Arrival at Port (ATA Port) must be after or equal to Departure from Port (ETD Port).'));
+                        if ($request->filled('etd_port')) {
+                            $etd = strtotime($request->etd_port);
+                            if ($ataPort < $etd) {
+                                $fail(__('The Actual Time Arrival at Port (ATA Port) must be after or equal to Departure from Port (ETD Port).'));
+                            }
+                            if ($ataPort > $etd + (365 * 24 * 60 * 60)) {
+                                $fail(__('The ATA Port must be at most 1 year (365 days) after ETD Port.'));
+                            }
                         }
                     }
                 }
@@ -362,7 +428,15 @@ class ShipmentController extends Controller
                 'required',
                 'date',
                 'after_or_equal:etd_port',
+                'before_or_equal:2035-12-31',
                 function ($attribute, $value, $fail) use ($request) {
+                    if ($request->filled('etd_port')) {
+                        $etd = strtotime($request->etd_port);
+                        $schedule = strtotime($value);
+                        if ($schedule > $etd + (365 * 24 * 60 * 60)) {
+                            $fail(__('The Customer Receiving Schedule must be at most 1 year (365 days) after ETD Port.'));
+                        }
+                    }
                     if ($request->filled('eta_port')) {
                         $eta = strtotime($request->eta_port);
                         $schedule = strtotime($value);
@@ -376,6 +450,7 @@ class ShipmentController extends Controller
                 'required_if:status,Delivered',
                 'nullable',
                 'date',
+                'before_or_equal:2035-12-31',
                 function ($attribute, $value, $fail) use ($request) {
                     $status = $request->status;
                     if (in_array($status, ['Pending', 'In Transit', 'Cancelled']) && !empty($value)) {
@@ -384,6 +459,13 @@ class ShipmentController extends Controller
                     }
                     if (!empty($value)) {
                         $ataCustomer = strtotime($value);
+                        if ($request->filled('etd_port')) {
+                            $etd = strtotime($request->etd_port);
+                            if ($ataCustomer > $etd + (365 * 24 * 60 * 60)) {
+                                    $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be at most 1 year (365 days) after ETD Port.'));
+                                    return;
+                            }
+                        }
                         if ($request->filled('ata_port')) {
                             $ataPort = strtotime($request->ata_port);
                             if ($ataCustomer < $ataPort) {
@@ -398,14 +480,23 @@ class ShipmentController extends Controller
                     }
                 }
             ],
-            'shipping_cost' => 'nullable|numeric|min:0',
-            'customs_cost' => 'nullable|numeric|min:0',
-            'other_costs' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string',
+            'shipping_cost' => 'nullable|numeric|min:0|max:999999999999.99',
+            'customs_cost' => 'nullable|numeric|min:0|max:999999999999.99',
+            'other_costs' => 'nullable|numeric|min:0|max:999999999999.99',
+            'notes' => [
+                'nullable',
+                'string',
+                'max:2000',
+                function ($attribute, $value, $fail) {
+                    if ($value !== strip_tags($value)) {
+                        $fail(__('The notes must not contain HTML or script tags.'));
+                    }
+                }
+            ],
             'products' => 'nullable|array',
             'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-            'products.*.unit_price' => 'required|numeric|min:0',
+            'products.*.quantity' => 'required|integer|min:1|max:10000000',
+            'products.*.unit_price' => 'required|numeric|min:0|max:999999999999.99',
         ], [
             'customer_id.required' => 'Customer is required',
             'supplier_id.required' => 'Supplier is required',
@@ -480,7 +571,6 @@ class ShipmentController extends Controller
     public function updateStatus(Request $request, Shipment $shipment)
     {
         $this->authorize('updateStatus', $shipment);
-
         $validated = $request->validate([
             'status' => 'nullable|in:Pending,In Transit,Delivered,Cancelled',
             'ata_port' => [
@@ -488,6 +578,7 @@ class ShipmentController extends Controller
                 'required_with:ata_customer',
                 'nullable',
                 'date',
+                'before_or_equal:2035-12-31',
                 function ($attribute, $value, $fail) use ($request, $shipment) {
                     $targetStatus = $request->input('status') ?: $shipment->status;
                     if ($request->filled('ata_customer')) {
@@ -501,9 +592,16 @@ class ShipmentController extends Controller
 
                     if (!empty($value)) {
                         $ataPort = strtotime($value);
-                        if ($shipment->etd_port && $ataPort < strtotime($shipment->etd_port)) {
-                            $fail(__('The Actual Time Arrival at Port (ATA Port) must be after or equal to Departure from Port (ETD Port).'));
-                            return;
+                        if ($shipment->etd_port) {
+                            $etd = strtotime($shipment->etd_port);
+                            if ($ataPort < $etd) {
+                                $fail(__('The Actual Time Arrival at Port (ATA Port) must be after or equal to Departure from Port (ETD Port).'));
+                                return;
+                            }
+                            if ($ataPort > $etd + (365 * 24 * 60 * 60)) {
+                                $fail(__('The ATA Port must be at most 1 year (365 days) after ETD Port.'));
+                                return;
+                            }
                         }
 
                         // Check against ata_customer
@@ -523,6 +621,7 @@ class ShipmentController extends Controller
                 'required_if:status,Delivered',
                 'nullable',
                 'date',
+                'before_or_equal:2035-12-31',
                 function ($attribute, $value, $fail) use ($request, $shipment) {
                     $targetStatus = $request->input('status') ?: $shipment->status;
                     if (!empty($value)) {
@@ -536,6 +635,13 @@ class ShipmentController extends Controller
 
                     if (!empty($value)) {
                         $ataCustomer = strtotime($value);
+                        if ($shipment->etd_port) {
+                            $etd = strtotime($shipment->etd_port);
+                            if ($ataCustomer > $etd + (365 * 24 * 60 * 60)) {
+                                $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be at most 1 year (365 days) after ETD Port.'));
+                                return;
+                            }
+                        }
                         if ($request->filled('ata_port')) {
                             $ataPort = strtotime($request->ata_port);
                             if ($ataCustomer < $ataPort) {
@@ -553,15 +659,26 @@ class ShipmentController extends Controller
                     }
                 }
             ],
-            'delivery_note_number' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/',
-            'supplier_invoice' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/',
-            'shipping_cost' => 'nullable|numeric|min:0',
-            'customs_cost' => 'nullable|numeric|min:0',
-            'other_costs' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string',
+            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
+            'shipping_cost' => 'nullable|numeric|min:0|max:999999999999.99',
+            'customs_cost' => 'nullable|numeric|min:0|max:999999999999.99',
+            'other_costs' => 'nullable|numeric|min:0|max:999999999999.99',
+            'notes' => [
+                'nullable',
+                'string',
+                'max:2000',
+                function ($attribute, $value, $fail) {
+                    if ($value !== strip_tags($value)) {
+                        $fail(__('The notes must not contain HTML or script tags.'));
+                    }
+                }
+            ],
         ], [
             'delivery_note_number.regex' => 'Delivery Note Number can only contain letters, numbers, spaces, and - / _ .',
             'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, spaces, and - / _ .',
+            'delivery_note_number.unique' => 'Delivery Note Number already exists in the system',
+            'supplier_invoice.unique' => 'Supplier Invoice already exists in the system',
         ]);
 
         DB::beginTransaction();

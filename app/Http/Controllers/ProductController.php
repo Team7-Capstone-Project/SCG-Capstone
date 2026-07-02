@@ -30,11 +30,20 @@ class ProductController extends Controller
         $this->authorize('create', Product::class);
         
         $validated = $request->validate([
-            'sku' => 'required|string|max:255|regex:/^[a-zA-Z0-9\-_]+$/|unique:products,sku',
-            'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/\+]+$/',
-            'description' => 'nullable|string',
+            'sku' => 'required|string|min:3|max:30|regex:/^[a-zA-Z0-9\-_]+$/|unique:products,sku',
+            'name' => 'required|string|min:3|max:100|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/\+]+$/',
+            'description' => [
+                'nullable',
+                'string',
+                'max:1000',
+                function ($attribute, $value, $fail) {
+                    if ($value !== strip_tags($value)) {
+                        $fail(__('The description must not contain HTML or script tags.'));
+                    }
+                }
+            ],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'unit_price' => 'required|numeric|min:0',
+            'unit_price' => 'required|numeric|min:0|max:999999999999.99',
             'supplier_id' => 'nullable|exists:suppliers,id',
         ], [
             'sku.regex' => 'SKU can only contain letters, numbers, dashes, and underscores.',
@@ -91,11 +100,20 @@ class ProductController extends Controller
         $this->authorize('update', $product);
         
         $validated = $request->validate([
-            'sku' => 'required|string|max:255|regex:/^[a-zA-Z0-9\-_]+$/|unique:products,sku,' . $product->id,
-            'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/\+]+$/',
-            'description' => 'nullable|string',
+            'sku' => 'required|string|min:3|max:30|regex:/^[a-zA-Z0-9\-_]+$/|unique:products,sku,' . $product->id,
+            'name' => 'required|string|min:3|max:100|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/\+]+$/',
+            'description' => [
+                'nullable',
+                'string',
+                'max:1000',
+                function ($attribute, $value, $fail) {
+                    if ($value !== strip_tags($value)) {
+                        $fail(__('The description must not contain HTML or script tags.'));
+                    }
+                }
+            ],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'unit_price' => 'required|numeric|min:0',
+            'unit_price' => 'required|numeric|min:0|max:999999999999.99',
             'supplier_id' => 'nullable|exists:suppliers,id',
         ], [
             'sku.regex' => 'SKU can only contain letters, numbers, dashes, and underscores.',

@@ -279,4 +279,126 @@ class ShipmentValidationTest extends TestCase
 
         $response->assertSessionHasErrors(['ata_port', 'ata_customer']);
     }
+
+    public function test_shipment_validation_date_range_limits()
+    {
+        $this->actingAs($this->salesUser);
+
+        // etd_port before 2020
+        $response = $this->post(route('shipments.store'), [
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'type' => 'Import',
+            'etd_port' => '2019-12-31',
+            'customer_receiving_schedule' => '2020-01-05',
+        ]);
+        $response->assertSessionHasErrors(['etd_port']);
+
+        // eta_port more than 365 days after etd_port
+        $response = $this->post(route('shipments.store'), [
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'type' => 'Import',
+            'etd_port' => '2026-06-01',
+            'eta_port' => '2027-06-03', // 367 days
+            'customer_receiving_schedule' => '2026-06-10',
+        ]);
+        $response->assertSessionHasErrors(['eta_port']);
+
+        // customer_receiving_schedule more than 365 days after etd_port
+        $response = $this->post(route('shipments.store'), [
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'type' => 'Import',
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2027-06-05', // 369 days
+        ]);
+        $response->assertSessionHasErrors(['customer_receiving_schedule']);
+    }
+
+    public function test_shipment_validation_costs_and_notes_overflow()
+    {
+        $this->actingAs($this->salesUser);
+
+        // shipping_cost too large (over 999,999,999,999.99)
+        $response = $this->post(route('shipments.store'), [
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'type' => 'Import',
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2026-06-10',
+            'shipping_cost' => 1000000000000,
+        ]);
+        $response->assertSessionHasErrors(['shipping_cost']);
+
+        // notes contains html tags
+        $response = $this->post(route('shipments.store'), [
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'type' => 'Import',
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2026-06-10',
+            'notes' => '<div>malicious payload</div>',
+        ]);
+        $response->assertSessionHasErrors(['notes']);
+    }
+
+    public function test_shipment_update_status_enforces_document_uniqueness()
+    {
+        $this->actingAs($this->adminUser);
+
+        // Create first shipment with a delivery note number
+        $shipment1 = Shipment::create([
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2026-06-10',
+            'delivery_note_number' => 'DELNOTE-777',
+        ]);
+
+        // Create second shipment
+        $shipment2 = Shipment::create([
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2026-06-10',
+        ]);
+
+        // Admin updates second shipment status and inputs the duplicate delivery note
+        $response = $this->post(route('shipments.update-status', $shipment2), [
+            'status' => 'In Transit',
+            'delivery_note_number' => 'DELNOTE-777', // duplicate!
+        ]);
+
+        $response->assertSessionHasErrors(['delivery_note_number']);
+    }
+
+    public function test_shipment_validation_document_number_max_limits()
+    {
+        $this->actingAs($this->salesUser);
+
+        // customer_po exceeds max:50 characters
+        $response = $this->post(route('shipments.store'), [
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'type' => 'Import',
+            'customer_po' => str_repeat('A', 51),
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2026-06-10',
+        ]);
+        $response->assertSessionHasErrors(['customer_po']);
+
+        // booking_number exceeds max:50 characters
+        $response = $this->post(route('shipments.store'), [
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'type' => 'Import',
+            'booking_number' => str_repeat('A', 51),
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2026-06-10',
+        ]);
+        $response->assertSessionHasErrors(['booking_number']);
+    }
 }

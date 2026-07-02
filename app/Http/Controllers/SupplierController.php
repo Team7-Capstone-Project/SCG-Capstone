@@ -27,12 +27,21 @@ class SupplierController extends Controller
         $this->authorize('create', Supplier::class);
         
         $validated = $request->validate([
-            'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)]+$/',
-            'address' => 'nullable|string',
-            'contact_person' => 'nullable|string|max:255|regex:/^[a-zA-Z\s\.\'\-]+$/',
-            'phone' => 'nullable|string|max:15|regex:/^[0-9+\s\(\)]+$/',
+            'name' => 'required|string|min:3|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)]+$/',
+            'address' => [
+                'nullable',
+                'string',
+                'max:1000',
+                function ($attribute, $value, $fail) {
+                    if ($value !== strip_tags($value)) {
+                        $fail(__('The address must not contain HTML or script tags.'));
+                    }
+                }
+            ],
+            'contact_person' => 'nullable|string|min:2|max:100|regex:/^[a-zA-Z\s\.\'\-]+$/',
+            'phone' => 'nullable|string|min:8|max:15|regex:/^[0-9+\s\(\)]+$/',
             'email' => 'nullable|email|max:255',
-            'country' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
+            'country' => 'nullable|string|min:2|max:60|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
         ], [
             'name.regex' => 'Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, and parentheses.',
             'contact_person.regex' => 'Contact Person can only contain letters, spaces, dots, quotes, and dashes.',
@@ -85,12 +94,21 @@ class SupplierController extends Controller
         $this->authorize('update', $supplier);
         
         $validated = $request->validate([
-            'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)]+$/',
-            'address' => 'nullable|string',
-            'contact_person' => 'nullable|string|max:255|regex:/^[a-zA-Z\s\.\'\-]+$/',
-            'phone' => 'nullable|string|max:15|regex:/^[0-9+\s\(\)]+$/',
+            'name' => 'required|string|min:3|max:255|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)]+$/',
+            'address' => [
+                'nullable',
+                'string',
+                'max:1000',
+                function ($attribute, $value, $fail) {
+                    if ($value !== strip_tags($value)) {
+                        $fail(__('The address must not contain HTML or script tags.'));
+                    }
+                }
+            ],
+            'contact_person' => 'nullable|string|min:2|max:100|regex:/^[a-zA-Z\s\.\'\-]+$/',
+            'phone' => 'nullable|string|min:8|max:15|regex:/^[0-9+\s\(\)]+$/',
             'email' => 'nullable|email|max:255',
-            'country' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
+            'country' => 'nullable|string|min:2|max:60|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
         ], [
             'name.regex' => 'Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, and parentheses.',
             'contact_person.regex' => 'Contact Person can only contain letters, spaces, dots, quotes, and dashes.',

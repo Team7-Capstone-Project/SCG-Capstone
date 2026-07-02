@@ -30,7 +30,7 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[a-zA-Z\s]+$/'],
             'email' => [
                 'required',
                 'string',
@@ -43,6 +43,8 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
             'name.regex' => 'The name may only contain letters and spaces.',
+            'name.min' => 'The name must be at least 3 characters.',
+            'name.max' => 'The name must not exceed 50 characters.',
             'email.regex' => 'The email must be a valid official corporate email ending with @scg.com.',
         ]);
 
