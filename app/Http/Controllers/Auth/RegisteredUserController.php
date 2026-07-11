@@ -29,6 +29,10 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'email' => strtolower($request->email),
+        ]);
+
         $request->validate([
             'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[a-zA-Z\s]+$/'],
             'email' => [
@@ -38,20 +42,23 @@ class RegisteredUserController extends Controller
                 'email',
                 'max:255',
                 'unique:'.User::class,
-                'regex:/^[a-zA-Z0-9._%+-]+@scg\.com$/'
+                'regex:/^[a-zA-Z0-9._%+-]+\.(sales|scm)@scg\.com$/'
             ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
             'name.regex' => 'The name may only contain letters and spaces.',
             'name.min' => 'The name must be at least 3 characters.',
             'name.max' => 'The name must not exceed 50 characters.',
-            'email.regex' => 'The email must be a valid official corporate email ending with @scg.com.',
+            'email.regex' => 'The email must be a valid official corporate email ending with .sales@scg.com or .scm@scg.com.',
         ]);
+
+        $role = str_ends_with($request->email, '.scm@scg.com') ? 'admin_scm' : 'pic_sales';
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $role,
         ]);
 
         event(new Registered($user));

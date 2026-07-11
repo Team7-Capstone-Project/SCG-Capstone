@@ -29,7 +29,7 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => 'Test User',
-                'email' => 'test@scg.com',
+                'email' => 'test.sales@scg.com',
             ]);
 
         $response
@@ -39,7 +39,7 @@ class ProfileTest extends TestCase
         $user->refresh();
 
         $this->assertSame('Test User', $user->name);
-        $this->assertSame('test@scg.com', $user->email);
+        $this->assertSame('test.sales@scg.com', $user->email);
         $this->assertNull($user->email_verified_at);
     }
 
@@ -106,7 +106,7 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => 'Ab',
-                'email' => 'valid@scg.com',
+                'email' => 'valid.sales@scg.com',
             ]);
         $response->assertSessionHasErrors(['name']);
 
@@ -115,7 +115,7 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => str_repeat('A', 51),
-                'email' => 'valid@scg.com',
+                'email' => 'valid.sales@scg.com',
             ]);
         $response->assertSessionHasErrors(['name']);
 
@@ -124,7 +124,7 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => 'John Doe 123',
-                'email' => 'valid@scg.com',
+                'email' => 'valid.sales@scg.com',
             ]);
         $response->assertSessionHasErrors(['name']);
 
@@ -134,6 +134,15 @@ class ProfileTest extends TestCase
             ->patch('/profile', [
                 'name' => 'John Doe',
                 'email' => 'john.doe@gmail.com',
+            ]);
+        $response->assertSessionHasErrors(['email']);
+
+        // 5. Email ending with @scg.com but without .sales or .scm
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'John Doe',
+                'email' => 'john.doe@scg.com',
             ]);
         $response->assertSessionHasErrors(['email']);
     }

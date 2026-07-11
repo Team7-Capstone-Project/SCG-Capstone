@@ -320,7 +320,7 @@ class EntityValidationTest extends TestCase
         // User registration name too long (max:50)
         $response = $this->post(route('register'), [
             'name' => str_repeat('A', 51),
-            'email' => 'test@scg.com',
+            'email' => 'test.sales@scg.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
