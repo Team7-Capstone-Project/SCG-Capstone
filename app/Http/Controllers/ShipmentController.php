@@ -572,7 +572,7 @@ class ShipmentController extends Controller
     {
         $this->authorize('updateStatus', $shipment);
         $validated = $request->validate([
-            'status' => 'nullable|in:Pending,In Transit,Delivered,Cancelled',
+            'status' => 'required|in:Pending,In Transit,Delivered,Cancelled',
             'ata_port' => [
                 'required_if:status,Delivered',
                 'required_with:ata_customer',

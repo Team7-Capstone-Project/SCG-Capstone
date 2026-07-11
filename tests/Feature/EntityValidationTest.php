@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Customer;
 use App\Models\Supplier;
 use App\Models\Product;
+use App\Models\Shipment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -34,6 +35,15 @@ class EntityValidationTest extends TestCase
             'phone' => '+123456',
             'email' => 'supplier@example.com',
             'country' => 'United States',
+        ]);
+
+        $this->customer = Customer::create([
+            'name' => 'Valid Customer',
+            'address' => '123 Customer St',
+            'contact_person' => 'Customer Contact',
+            'phone' => '+6212345',
+            'email' => 'customer@example.com',
+            'country' => 'Indonesia',
         ]);
     }
 
@@ -353,6 +363,612 @@ class EntityValidationTest extends TestCase
             'country' => str_repeat('A', 61),
         ]);
         $response->assertSessionHasErrors(['country']);
+    }
+
+    /**
+     * SRS.CST.001 - SRC.CST.001.001
+     * Cek penambahan data Customer dengan data valid
+     */
+    public function test_case_src_cst_001_001_add_customer_valid()
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->post(route('customers.store'), [
+            'name' => 'Valid Customer Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Jane Doe',
+            'phone' => '+62812345678',
+            'email' => 'customer@example.com',
+            'country' => 'Indonesia',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('customers', [
+            'name' => 'Valid Customer Name',
+        ]);
+    }
+
+    /**
+     * SRS.CST.001 - SRC.CST.001.002
+     * Cek penambahan data Customer dengan field wajib kosong
+     */
+    public function test_case_src_cst_001_002_add_customer_missing_required()
+    {
+        $this->actingAs($this->salesUser);
+
+        // Name is required but empty
+        $response = $this->post(route('customers.store'), [
+            'name' => '',
+            'address' => 'Valid Address',
+        ]);
+
+        $response->assertSessionHasErrors(['name']);
+    }
+
+    /**
+     * SRS.CST.001 - SRC.CST.001.003
+     * Cek penambahan data Customer dengan format email tidak valid
+     */
+    public function test_case_src_cst_001_003_add_customer_invalid_email()
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->post(route('customers.store'), [
+            'name' => 'Valid Customer Name',
+            'email' => 'invalid-email-format',
+        ]);
+
+        $response->assertSessionHasErrors(['email']);
+    }
+
+    /**
+     * SRS.CST.001 - SRC.CST.001.004
+     * Cek perubahan data Customer
+     */
+    public function test_case_src_cst_001_004_update_customer()
+    {
+        $customer = Customer::create([
+            'name' => 'Original Customer Name',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->put(route('customers.update', $customer), [
+            'name' => 'Updated Customer Name',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('customers', [
+            'id' => $customer->id,
+            'name' => 'Updated Customer Name',
+        ]);
+    }
+
+    /**
+     * SRS.CST.001 - SRC.CST.001.005
+     * Cek penghapusan data Customer
+     */
+    public function test_case_src_cst_001_005_delete_customer()
+    {
+        $customer = Customer::create([
+            'name' => 'Customer to Delete',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->delete(route('customers.destroy', $customer));
+
+        $response->assertRedirect(route('customers.index'));
+        $this->assertSoftDeleted('customers', [
+            'id' => $customer->id,
+        ]);
+    }
+
+    /**
+     * SRS.CST.001 - SRC.CST.001.007
+     * Cek tampilan daftar data Customer
+     */
+    public function test_case_src_cst_001_007_view_customer_list()
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('customers.index'));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('customers');
+    }
+
+    /**
+     * SRS.CST.001 - SRC.CST.001.008
+     * Cek tampilan detail data Customer
+     */
+    public function test_case_src_cst_001_008_view_customer_detail()
+    {
+        $customer = Customer::create([
+            'name' => 'Customer Details Test',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('customers.show', $customer));
+
+        $response->assertStatus(200);
+        $response->assertSee('Customer Details Test');
+    }
+
+    /**
+     * SRS.SUP.001 - SRC.SUP.001.001
+     * Cek penambahan data Supplier dengan data valid
+     */
+    public function test_case_src_sup_001_001_add_supplier_valid()
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->post(route('suppliers.store'), [
+            'name' => 'Valid Supplier Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Supplier Contact',
+            'phone' => '+62812345678',
+            'email' => 'supplier@example.com',
+            'country' => 'Indonesia',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('suppliers', [
+            'name' => 'Valid Supplier Name',
+        ]);
+    }
+
+    /**
+     * SRS.SUP.001 - SRC.SUP.001.002
+     * Cek penambahan data Supplier dengan field wajib kosong
+     */
+    public function test_case_src_sup_001_002_add_supplier_missing_required()
+    {
+        $this->actingAs($this->salesUser);
+
+        // Name is required but empty
+        $response = $this->post(route('suppliers.store'), [
+            'name' => '',
+            'address' => 'Valid Address',
+        ]);
+
+        $response->assertSessionHasErrors(['name']);
+    }
+
+    /**
+     * SRS.SUP.001 - SRC.SUP.001.003
+     * Cek penambahan data Supplier dengan format email tidak valid
+     */
+    public function test_case_src_sup_001_003_add_supplier_invalid_email()
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->post(route('suppliers.store'), [
+            'name' => 'Valid Supplier Name',
+            'email' => 'invalid-email-format',
+        ]);
+
+        $response->assertSessionHasErrors(['email']);
+    }
+
+    /**
+     * SRS.SUP.001 - SRC.SUP.001.004
+     * Cek perubahan data Supplier
+     */
+    public function test_case_src_sup_001_004_update_supplier()
+    {
+        $supplier = Supplier::create([
+            'name' => 'Original Supplier Name',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->put(route('suppliers.update', $supplier), [
+            'name' => 'Updated Supplier Name',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('suppliers', [
+            'id' => $supplier->id,
+            'name' => 'Updated Supplier Name',
+        ]);
+    }
+
+    /**
+     * SRS.SUP.001 - SRC.SUP.001.005
+     * Cek penghapusan data Supplier
+     */
+    public function test_case_src_sup_001_005_delete_supplier()
+    {
+        $supplier = Supplier::create([
+            'name' => 'Supplier to Delete',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->delete(route('suppliers.destroy', $supplier));
+
+        $response->assertRedirect(route('suppliers.index'));
+        $this->assertSoftDeleted('suppliers', [
+            'id' => $supplier->id,
+        ]);
+    }
+
+    /**
+     * SRS.SUP.001 - SRC.SUP.001.007
+     * Cek tampilan daftar data Supplier
+     */
+    public function test_case_src_sup_001_007_view_supplier_list()
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('suppliers.index'));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('suppliers');
+    }
+
+    /**
+     * SRS.SUP.001 - SRC.SUP.001.008
+     * Cek tampilan detail data Supplier
+     */
+    public function test_case_src_sup_001_008_view_supplier_detail()
+    {
+        $supplier = Supplier::create([
+            'name' => 'Supplier Details Test',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('suppliers.show', $supplier));
+
+        $response->assertStatus(200);
+        $response->assertSee('Supplier Details Test');
+    }
+
+    /**
+     * SRS.PRD.001 - SRC.PRD.001.001
+     * Cek penambahan data Product dengan data valid
+     */
+    public function test_case_src_prd_001_001_add_product_valid()
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->post(route('products.store'), [
+            'sku' => 'PROD-NEW-99',
+            'name' => 'Valid Product Name',
+            'description' => 'Valid Description',
+            'unit_price' => 150000,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('products', [
+            'sku' => 'PROD-NEW-99',
+            'name' => 'Valid Product Name',
+        ]);
+    }
+
+    /**
+     * SRS.PRD.001 - SRC.PRD.001.002
+     * Cek penambahan data Product dengan field wajib kosong
+     */
+    public function test_case_src_prd_001_002_add_product_missing_required()
+    {
+        $this->actingAs($this->salesUser);
+
+        // sku, name, unit_price are required
+        $response = $this->post(route('products.store'), [
+            'sku' => '',
+            'name' => '',
+            'unit_price' => '',
+        ]);
+
+        $response->assertSessionHasErrors(['sku', 'name', 'unit_price']);
+    }
+
+    /**
+     * SRS.PRD.001 - SRC.PRD.001.003
+     * Cek penambahan data Product dengan kode Product yang sudah terdaftar
+     */
+    public function test_case_src_prd_001_003_add_product_duplicate_sku()
+    {
+        // Precreate product with SKU
+        Product::create([
+            'sku' => 'PROD-DUPE-11',
+            'name' => 'Original Product',
+            'unit_price' => 100,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->post(route('products.store'), [
+            'sku' => 'PROD-DUPE-11', // duplicate!
+            'name' => 'Duplicate SKU Product',
+            'unit_price' => 200,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $response->assertSessionHasErrors(['sku']);
+    }
+
+    /**
+     * SRS.PRD.001 - SRC.PRD.001.004
+     * Cek perubahan data Product
+     */
+    public function test_case_src_prd_001_004_update_product()
+    {
+        $product = Product::create([
+            'sku' => 'PROD-ORIG',
+            'name' => 'Original Name',
+            'unit_price' => 100,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->put(route('products.update', $product), [
+            'sku' => 'PROD-ORIG', // same SKU is allowed on update
+            'name' => 'Updated Name',
+            'unit_price' => 250,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'name' => 'Updated Name',
+            'unit_price' => 250.00,
+        ]);
+    }
+
+    /**
+     * SRS.PRD.001 - SRC.PRD.001.005
+     * Cek penghapusan data Product
+     */
+    public function test_case_src_prd_001_005_delete_product()
+    {
+        $product = Product::create([
+            'sku' => 'PROD-DEL',
+            'name' => 'Product to Delete',
+            'unit_price' => 100,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->delete(route('products.destroy', $product));
+
+        $response->assertRedirect(route('products.index'));
+        $this->assertSoftDeleted('products', [
+            'id' => $product->id,
+        ]);
+    }
+
+    /**
+     * SRS.PRD.001 - SRC.PRD.001.007
+     * Cek tampilan daftar data Product
+     */
+    public function test_case_src_prd_001_007_view_product_list()
+    {
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('products.index'));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('products');
+    }
+
+    /**
+     * SRS.PRD.001 - SRC.PRD.001.008
+     * Cek tampilan detail data Product
+     */
+    public function test_case_src_prd_001_008_view_product_detail()
+    {
+        $product = Product::create([
+            'sku' => 'PROD-VIEW',
+            'name' => 'Product Details Test',
+            'unit_price' => 100,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('products.show', $product));
+
+        $response->assertStatus(200);
+        $response->assertSee('Product Details Test');
+    }
+
+    /**
+     * SRS.HSC.001 - SRC.HSC.001.001
+     * Menampilkan riwayat Shipment berdasarkan Customer dengan rentang waktu yang memiliki data
+     */
+    public function test_case_src_hsc_001_001_customer_history_with_data()
+    {
+        $shipment = Shipment::create([
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'etd_port' => '2026-06-05',
+            'customer_receiving_schedule' => '2026-06-15',
+            'customer_po' => 'PO-CUST-HIST-1',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('customers.show', [
+            'customer' => $this->customer->id,
+            'quick_filter' => 'custom',
+            'start_date' => '2026-06-01',
+            'end_date' => '2026-06-10',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('PO-CUST-HIST-1');
+    }
+
+    /**
+     * SRS.HSC.001 - SRC.HSC.001.002
+     * Menampilkan riwayat Shipment berdasarkan Customer dengan rentang waktu yang tidak memiliki data
+     */
+    public function test_case_src_hsc_001_002_customer_history_empty()
+    {
+        $shipment = Shipment::create([
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'etd_port' => '2026-06-05',
+            'customer_receiving_schedule' => '2026-06-15',
+            'customer_po' => 'PO-CUST-HIST-2',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('customers.show', [
+            'customer' => $this->customer->id,
+            'quick_filter' => 'custom',
+            'start_date' => '2026-07-01',
+            'end_date' => '2026-07-10',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertDontSee('PO-CUST-HIST-2');
+    }
+
+    /**
+     * SRS.HSS.001 - SRC.HSS.001.001
+     * Menampilkan riwayat Shipment berdasarkan Supplier dengan rentang waktu yang memiliki data
+     */
+    public function test_case_src_hss_001_001_supplier_history_with_data()
+    {
+        $shipment = Shipment::create([
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'etd_port' => '2026-06-05',
+            'customer_receiving_schedule' => '2026-06-15',
+            'customer_po' => 'PO-SUPP-HIST-1',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('suppliers.show', [
+            'supplier' => $this->supplier->id,
+            'quick_filter' => 'custom',
+            'start_date' => '2026-06-01',
+            'end_date' => '2026-06-10',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('PO-SUPP-HIST-1');
+    }
+
+    /**
+     * SRS.HSS.001 - SRC.HSS.001.002
+     * Menampilkan riwayat Shipment berdasarkan Supplier dengan rentang waktu yang tidak memiliki data
+     */
+    public function test_case_src_hss_001_002_supplier_history_empty()
+    {
+        $shipment = Shipment::create([
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'etd_port' => '2026-06-05',
+            'customer_receiving_schedule' => '2026-06-15',
+            'customer_po' => 'PO-SUPP-HIST-2',
+        ]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('suppliers.show', [
+            'supplier' => $this->supplier->id,
+            'quick_filter' => 'custom',
+            'start_date' => '2026-07-01',
+            'end_date' => '2026-07-10',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertDontSee('PO-SUPP-HIST-2');
+    }
+
+    /**
+     * SRS.HSP.001 - SRC.HSP.001.001
+     * Menampilkan riwayat Shipment berdasarkan Product dengan rentang waktu yang memiliki data
+     */
+    public function test_case_src_hsp_001_001_product_history_with_data()
+    {
+        $product = Product::create([
+            'sku' => 'PROD-HIST-1',
+            'name' => 'Product History 1',
+            'unit_price' => 100,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $shipment = Shipment::create([
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'etd_port' => '2026-06-05',
+            'customer_receiving_schedule' => '2026-06-15',
+            'customer_po' => 'PO-PROD-HIST-1',
+            'delivery_note_number' => 'DN-PROD-HIST-1',
+        ]);
+
+        // Attach product to shipment via pivot table
+        $shipment->products()->attach($product->id, ['quantity' => 10, 'unit_price' => 100]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('products.show', [
+            'product' => $product->id,
+            'quick_filter' => 'custom',
+            'start_date' => '2026-06-01',
+            'end_date' => '2026-06-10',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('DN-PROD-HIST-1');
+    }
+
+    /**
+     * SRS.HSP.001 - SRC.HSP.001.002
+     * Menampilkan riwayat Shipment berdasarkan Product dengan rentang waktu yang tidak memiliki data
+     */
+    public function test_case_src_hsp_001_002_product_history_empty()
+    {
+        $product = Product::create([
+            'sku' => 'PROD-HIST-2',
+            'name' => 'Product History 2',
+            'unit_price' => 100,
+            'supplier_id' => $this->supplier->id,
+        ]);
+
+        $shipment = Shipment::create([
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'etd_port' => '2026-06-05',
+            'customer_receiving_schedule' => '2026-06-15',
+            'customer_po' => 'PO-PROD-HIST-2',
+            'delivery_note_number' => 'DN-PROD-HIST-2',
+        ]);
+
+        $shipment->products()->attach($product->id, ['quantity' => 10, 'unit_price' => 100]);
+
+        $this->actingAs($this->salesUser);
+
+        $response = $this->get(route('products.show', [
+            'product' => $product->id,
+            'quick_filter' => 'custom',
+            'start_date' => '2026-07-01',
+            'end_date' => '2026-07-10',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertDontSee('DN-PROD-HIST-2');
     }
 }
 
