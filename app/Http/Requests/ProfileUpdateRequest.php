@@ -34,7 +34,7 @@ class ProfileUpdateRequest extends FormRequest
                 'string',
                 'lowercase',
                 'email',
-                'max:255',
+                'max:100',
                 Rule::unique(User::class)->ignore($this->user()->id),
                 'regex:/^[a-zA-Z0-9._%+-]+\.(sales|scm)@scg\.com$/'
             ],

@@ -40,7 +40,7 @@ class SupplierController extends Controller
             ],
             'contact_person' => 'required|string|min:3|max:100|regex:/^[a-zA-Z\s\.\'\-]+$/',
             'phone' => 'nullable|string|regex:/^\+?[1-9]\d{7,14}$/',
-            'email' => app()->environment('testing') ? 'nullable|email:rfc|max:255' : 'nullable|email:rfc,dns|max:255',
+            'email' => app()->environment('testing') ? 'nullable|email:rfc|max:100' : 'nullable|email:rfc,dns|max:100',
             'country' => 'nullable|string|min:2|max:60|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
         ], [
             'name.regex' => 'Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, slashes, and parentheses.',
@@ -107,7 +107,7 @@ class SupplierController extends Controller
             ],
             'contact_person' => 'required|string|min:3|max:100|regex:/^[a-zA-Z\s\.\'\-]+$/',
             'phone' => 'nullable|string|regex:/^\+?[1-9]\d{7,14}$/',
-            'email' => app()->environment('testing') ? 'nullable|email:rfc|max:255' : 'nullable|email:rfc,dns|max:255',
+            'email' => app()->environment('testing') ? 'nullable|email:rfc|max:100' : 'nullable|email:rfc,dns|max:100',
             'country' => 'nullable|string|min:2|max:60|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
         ], [
             'name.regex' => 'Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, slashes, and parentheses.',

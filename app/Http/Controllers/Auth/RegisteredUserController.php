@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
                 'string',
                 'lowercase',
                 'email',
-                'max:255',
+                'max:100',
                 'unique:'.User::class,
                 'regex:/^[a-zA-Z0-9._%+-]+\.(sales|scm)@scg\.com$/'
             ],
