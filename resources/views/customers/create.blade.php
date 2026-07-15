@@ -30,9 +30,9 @@
                                     Customer <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                    maxlength="100"
-                                    pattern="^[a-zA-Z\s]+$"
-                                    title="Only letters and spaces are allowed."
+                                    maxlength="150"
+                                    pattern="^[a-zA-Z0-9\s\.,&'\-\(\)\/]+$"
+                                    title="Letters, numbers, spaces, and . , & ' - ( ) / are allowed."
                                     class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('name') border-red-500 @enderror">
                                 @error('name')
                                     <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
@@ -44,7 +44,7 @@
                                     Address <span class="text-red-500">*</span>
                                 </label>
                                 <textarea name="address" id="address" rows="3" required
-                                    maxlength="100"
+                                    maxlength="500"
                                     class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('address') border-red-500 @enderror">{{ old('address') }}</textarea>
                                 @error('address')
                                     <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
@@ -57,8 +57,8 @@
                                 </label>
                                 <input type="text" name="contact_person" id="contact_person" value="{{ old('contact_person') }}" required
                                     maxlength="100"
-                                    pattern="^[a-zA-Z\s]+$"
-                                    title="Only letters and spaces are allowed."
+                                    pattern="^[a-zA-Z\s\.'\-]+$"
+                                    title="Only letters, spaces, dots, quotes, and dashes are allowed."
                                     class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('contact_person') border-red-500 @enderror">
                                 @error('contact_person')
                                     <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
@@ -70,9 +70,9 @@
                                     Phone
                                 </label>
                                 <input type="text" name="phone" id="phone" value="{{ old('phone') }}"
-                                    maxlength="15"
-                                    pattern="^[0-9\s+\(\)]+$"
-                                    title="Only numbers, spaces, plus signs, and parentheses are allowed."
+                                    maxlength="16"
+                                    pattern="^\+?[1-9]\d{7,14}$"
+                                    title="Phone number must follow E.164 international format (e.g. +62812345678)."
                                     class="w-full rounded-md border-gray-300 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('phone') border-red-500 @enderror">
                                 @error('phone')
                                     <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>

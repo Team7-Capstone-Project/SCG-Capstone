@@ -32,7 +32,7 @@ class EntityValidationTest extends TestCase
             'name' => 'Valid Supplier',
             'address' => '123 Supplier St',
             'contact_person' => 'Supplier Contact',
-            'phone' => '+123456',
+            'phone' => '+12345678',
             'email' => 'supplier@example.com',
             'country' => 'United States',
         ]);
@@ -41,7 +41,7 @@ class EntityValidationTest extends TestCase
             'name' => 'Valid Customer',
             'address' => '123 Customer St',
             'contact_person' => 'Customer Contact',
-            'phone' => '+6212345',
+            'phone' => '+62812345678',
             'email' => 'customer@example.com',
             'country' => 'Indonesia',
         ]);
@@ -90,7 +90,7 @@ class EntityValidationTest extends TestCase
             'name' => 'Valid Customer Name',
             'address' => 'Valid Address',
             'contact_person' => 'Valid Contact',
-            'phone' => '+628123456789012', // 16 characters
+            'phone' => '+6281234567890123', // 17 characters (16 digits)
         ]);
         $response->assertSessionHasErrors(['phone']);
     }
@@ -103,7 +103,7 @@ class EntityValidationTest extends TestCase
             'name' => 'Customer Company Name',
             'address' => 'Customer Address One Two Three',
             'contact_person' => 'Jane Doe',
-            'phone' => '+62 (21) 12345', // exactly 15 chars, containing plus, spaces, parentheses
+            'phone' => '+622112345', // valid E.164
             'email' => 'jane@example.com',
             'country' => 'U.S.A. (America)',
         ]);
@@ -111,7 +111,7 @@ class EntityValidationTest extends TestCase
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('customers', [
             'name' => 'Customer Company Name',
-            'phone' => '+62 (21) 12345',
+            'phone' => '+622112345',
         ]);
     }
 

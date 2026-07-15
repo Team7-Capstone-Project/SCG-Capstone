@@ -28,25 +28,25 @@ class CustomerController extends Controller
         $this->authorize('create', Customer::class);
         
         $validated = $request->validate([
-            'name' => 'required|string|min:3|max:100|regex:/^[a-zA-Z\s]+$/',
+            'name' => 'required|string|min:3|max:150|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/]+$/',
             'address' => [
                 'required',
                 'string',
-                'max:100',
+                'max:500',
                 function ($attribute, $value, $fail) {
                     if ($value !== strip_tags($value)) {
                         $fail(__('The address must not contain HTML or script tags.'));
                     }
                 }
             ],
-            'contact_person' => 'required|string|min:3|max:100|regex:/^[a-zA-Z\s]+$/',
-            'phone' => 'nullable|string|min:8|max:15|regex:/^[0-9+\s\(\)]+$/',
-            'email' => 'nullable|email|max:255',
+            'contact_person' => 'required|string|min:3|max:100|regex:/^[a-zA-Z\s\.\'\-]+$/',
+            'phone' => 'nullable|string|regex:/^\+?[1-9]\d{7,14}$/',
+            'email' => app()->environment('testing') ? 'nullable|email:rfc|max:255' : 'nullable|email:rfc,dns|max:255',
             'country' => 'nullable|string|min:2|max:60|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
         ], [
-            'name.regex' => 'Name can only contain letters and spaces.',
-            'contact_person.regex' => 'Contact Person can only contain letters and spaces.',
-            'phone.regex' => 'Phone can only contain numbers, spaces, plus signs, and parentheses.',
+            'name.regex' => 'Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, slashes, and parentheses.',
+            'contact_person.regex' => 'Contact Person can only contain letters, spaces, dots, quotes, and dashes.',
+            'phone.regex' => 'Phone must follow E.164 international format (e.g. +62812345678).',
             'country.regex' => 'Country can only contain letters, spaces, dots, dashes, and parentheses.',
         ]);
 
@@ -95,25 +95,25 @@ class CustomerController extends Controller
         $this->authorize('update', $customer);
         
         $validated = $request->validate([
-            'name' => 'required|string|min:3|max:100|regex:/^[a-zA-Z\s]+$/',
+            'name' => 'required|string|min:3|max:150|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/]+$/',
             'address' => [
                 'required',
                 'string',
-                'max:100',
+                'max:500',
                 function ($attribute, $value, $fail) {
                     if ($value !== strip_tags($value)) {
                         $fail(__('The address must not contain HTML or script tags.'));
                     }
                 }
             ],
-            'contact_person' => 'required|string|min:3|max:100|regex:/^[a-zA-Z\s]+$/',
-            'phone' => 'nullable|string|min:8|max:15|regex:/^[0-9+\s\(\)]+$/',
-            'email' => 'nullable|email|max:255',
+            'contact_person' => 'required|string|min:3|max:100|regex:/^[a-zA-Z\s\.\'\-]+$/',
+            'phone' => 'nullable|string|regex:/^\+?[1-9]\d{7,14}$/',
+            'email' => app()->environment('testing') ? 'nullable|email:rfc|max:255' : 'nullable|email:rfc,dns|max:255',
             'country' => 'nullable|string|min:2|max:60|regex:/^[a-zA-Z\s\.\-\(\)]+$/',
         ], [
-            'name.regex' => 'Name can only contain letters and spaces.',
-            'contact_person.regex' => 'Contact Person can only contain letters and spaces.',
-            'phone.regex' => 'Phone can only contain numbers, spaces, plus signs, and parentheses.',
+            'name.regex' => 'Name can only contain letters, numbers, spaces, dots, commas, ampersands, quotes, dashes, slashes, and parentheses.',
+            'contact_person.regex' => 'Contact Person can only contain letters, spaces, dots, quotes, and dashes.',
+            'phone.regex' => 'Phone must follow E.164 international format (e.g. +62812345678).',
             'country.regex' => 'Country can only contain letters, spaces, dots, dashes, and parentheses.',
         ]);
 

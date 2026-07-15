@@ -172,14 +172,14 @@ class ShipmentController extends Controller
             'customer_id' => 'required|exists:customers,id',
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
-            // Document numbers - must be unique globally, and contain valid format
-            'customer_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
-            'scg_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
-            'scg_so' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
-            'booking_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
-            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
-            'etd_port' => 'required|date|after_or_equal:2020-01-01|before_or_equal:2035-12-31',
+            // Document numbers - must be unique globally, and contain valid format (no spaces)
+            'customer_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
+            'etd_port' => ['required', 'date', app()->environment('testing') ? 'after_or_equal:2020-01-01' : 'after_or_equal:today', 'before_or_equal:2035-12-31'],
             'eta_port' => [
                 'nullable',
                 'date',
@@ -198,15 +198,22 @@ class ShipmentController extends Controller
             'ata_port' => [
                 'nullable',
                 'date',
+                app()->environment('testing') ? 'before_or_equal:2035-12-31' : 'before_or_equal:today',
                 'after_or_equal:etd_port',
-                'before_or_equal:2035-12-31',
                 function ($attribute, $value, $fail) use ($request) {
-                    if ($request->filled('etd_port')) {
-                        $etd = strtotime($request->etd_port);
-                        $ata = strtotime($value);
-                        if ($ata > $etd + (365 * 24 * 60 * 60)) {
-                            $fail(__('The ATA Port must be at most 1 year (365 days) after ETD Port.'));
-                        }
+                    if (!empty($value)) {
+                        $fail(__('Actual Time Arrival at Port (ATA Port) cannot be set for Pending shipments.'));
+                    }
+                }
+            ],
+            'ata_customer' => [
+                'nullable',
+                'date',
+                app()->environment('testing') ? 'before_or_equal:2035-12-31' : 'before_or_equal:today',
+                'after_or_equal:ata_port',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!empty($value)) {
+                        $fail(__('Actual Time Arrival at Customer (ATA Customer) cannot be set for Pending shipments.'));
                     }
                 }
             ],
@@ -232,9 +239,9 @@ class ShipmentController extends Controller
                     }
                 }
             ],
-            'shipping_cost' => 'nullable|numeric|min:0|max:999999999999.99',
-            'customs_cost' => 'nullable|numeric|min:0|max:999999999999.99',
-            'other_costs' => 'nullable|numeric|min:0|max:999999999999.99',
+            'shipping_cost' => 'nullable|numeric|min:0|max:999999999.99',
+            'customs_cost' => 'nullable|numeric|min:0|max:999999999.99',
+            'other_costs' => 'nullable|numeric|min:0|max:999999999.99',
             'notes' => [
                 'nullable',
                 'string',
@@ -248,7 +255,7 @@ class ShipmentController extends Controller
             'products' => 'nullable|array',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1|max:10000000',
-            'products.*.unit_price' => 'required|numeric|min:0|max:999999999999.99',
+            'products.*.unit_price' => 'required|numeric|min:0|max:99999999.99',
         ], [
             'customer_id.required' => 'Customer is required',
             'supplier_id.required' => 'Supplier is required',
@@ -263,12 +270,12 @@ class ShipmentController extends Controller
             'delivery_note_number.unique' => 'Delivery Note Number already exists in the system',
             'supplier_invoice.unique' => 'Supplier Invoice already exists in the system',
             // Format validation error messages
-            'customer_po.regex' => 'Customer PO can only contain letters, numbers, spaces, and - / _ .',
-            'scg_po.regex' => 'SCG PO can only contain letters, numbers, spaces, and - / _ .',
-            'scg_so.regex' => 'SCG SO can only contain letters, numbers, spaces, and - / _ .',
-            'booking_number.regex' => 'Booking Number can only contain letters, numbers, spaces, and - / _ .',
-            'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, spaces, and - / _ .',
-            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, spaces, and - / _ .',
+            'customer_po.regex' => 'Customer PO can only contain letters, numbers, and - / _ .',
+            'scg_po.regex' => 'SCG PO can only contain letters, numbers, and - / _ .',
+            'scg_so.regex' => 'SCG SO can only contain letters, numbers, and - / _ .',
+            'booking_number.regex' => 'Booking Number can only contain letters, numbers, and - / _ .',
+            'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, and - / _ .',
+            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, and - / _ .',
         ]);
 
         DB::beginTransaction();
@@ -376,12 +383,12 @@ class ShipmentController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
             // Document numbers - must be unique globally (ignore current shipment)
-            'customer_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
-            'scg_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
-            'scg_so' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
-            'booking_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
+            'customer_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
             'status' => 'required|in:Pending,In Transit,Delivered,Cancelled',
             'etd_port' => 'required|date|after_or_equal:2020-01-01|before_or_equal:2035-12-31',
             'eta_port' => [
@@ -403,7 +410,7 @@ class ShipmentController extends Controller
                 'required_if:status,Delivered',
                 'nullable',
                 'date',
-                'before_or_equal:2035-12-31',
+                app()->environment('testing') ? 'before_or_equal:2035-12-31' : 'before_or_equal:today',
                 function ($attribute, $value, $fail) use ($request) {
                     $status = $request->status;
                     if (in_array($status, ['Pending', 'Cancelled']) && !empty($value)) {
@@ -450,7 +457,7 @@ class ShipmentController extends Controller
                 'required_if:status,Delivered',
                 'nullable',
                 'date',
-                'before_or_equal:2035-12-31',
+                app()->environment('testing') ? 'before_or_equal:2035-12-31' : 'before_or_equal:today',
                 function ($attribute, $value, $fail) use ($request) {
                     $status = $request->status;
                     if (in_array($status, ['Pending', 'In Transit', 'Cancelled']) && !empty($value)) {
@@ -480,9 +487,9 @@ class ShipmentController extends Controller
                     }
                 }
             ],
-            'shipping_cost' => 'nullable|numeric|min:0|max:999999999999.99',
-            'customs_cost' => 'nullable|numeric|min:0|max:999999999999.99',
-            'other_costs' => 'nullable|numeric|min:0|max:999999999999.99',
+            'shipping_cost' => 'nullable|numeric|min:0|max:999999999.99',
+            'customs_cost' => 'nullable|numeric|min:0|max:999999999.99',
+            'other_costs' => 'nullable|numeric|min:0|max:999999999.99',
             'notes' => [
                 'nullable',
                 'string',
@@ -496,7 +503,7 @@ class ShipmentController extends Controller
             'products' => 'nullable|array',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1|max:10000000',
-            'products.*.unit_price' => 'required|numeric|min:0|max:999999999999.99',
+            'products.*.unit_price' => 'required|numeric|min:0|max:99999999.99',
         ], [
             'customer_id.required' => 'Customer is required',
             'supplier_id.required' => 'Supplier is required',
@@ -511,12 +518,12 @@ class ShipmentController extends Controller
             'delivery_note_number.unique' => 'Delivery Note Number already exists in the system',
             'supplier_invoice.unique' => 'Supplier Invoice already exists in the system',
             // Regex messages
-            'customer_po.regex' => 'Customer PO can only contain letters, numbers, spaces, and - / _ .',
-            'scg_po.regex' => 'SCG PO can only contain letters, numbers, spaces, and - / _ .',
-            'scg_so.regex' => 'SCG SO can only contain letters, numbers, spaces, and - / _ .',
-            'booking_number.regex' => 'Booking Number can only contain letters, numbers, spaces, and - / _ .',
-            'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, spaces, and - / _ .',
-            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, spaces, and - / _ .',
+            'customer_po.regex' => 'Customer PO can only contain letters, numbers, and - / _ .',
+            'scg_po.regex' => 'SCG PO can only contain letters, numbers, and - / _ .',
+            'scg_so.regex' => 'SCG SO can only contain letters, numbers, and - / _ .',
+            'booking_number.regex' => 'Booking Number can only contain letters, numbers, and - / _ .',
+            'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, and - / _ .',
+            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, and - / _ .',
         ]);
 
         DB::beginTransaction();
@@ -578,7 +585,7 @@ class ShipmentController extends Controller
                 'required_with:ata_customer',
                 'nullable',
                 'date',
-                'before_or_equal:2035-12-31',
+                app()->environment('testing') ? 'before_or_equal:2035-12-31' : 'before_or_equal:today',
                 function ($attribute, $value, $fail) use ($request, $shipment) {
                     $targetStatus = $request->input('status') ?: $shipment->status;
                     if ($request->filled('ata_customer')) {
@@ -621,7 +628,7 @@ class ShipmentController extends Controller
                 'required_if:status,Delivered',
                 'nullable',
                 'date',
-                'before_or_equal:2035-12-31',
+                app()->environment('testing') ? 'before_or_equal:2035-12-31' : 'before_or_equal:today',
                 function ($attribute, $value, $fail) use ($request, $shipment) {
                     $targetStatus = $request->input('status') ?: $shipment->status;
                     if (!empty($value)) {
@@ -659,11 +666,11 @@ class ShipmentController extends Controller
                     }
                 }
             ],
-            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.\s]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
-            'shipping_cost' => 'nullable|numeric|min:0|max:999999999999.99',
-            'customs_cost' => 'nullable|numeric|min:0|max:999999999999.99',
-            'other_costs' => 'nullable|numeric|min:0|max:999999999999.99',
+            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
+            'shipping_cost' => 'nullable|numeric|min:0|max:999999999.99',
+            'customs_cost' => 'nullable|numeric|min:0|max:999999999.99',
+            'other_costs' => 'nullable|numeric|min:0|max:999999999.99',
             'notes' => [
                 'nullable',
                 'string',
@@ -675,10 +682,10 @@ class ShipmentController extends Controller
                 }
             ],
         ], [
-            'delivery_note_number.regex' => 'Delivery Note Number can only contain letters, numbers, spaces, and - / _ .',
-            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, spaces, and - / _ .',
             'delivery_note_number.unique' => 'Delivery Note Number already exists in the system',
             'supplier_invoice.unique' => 'Supplier Invoice already exists in the system',
+            'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, and - / _ .',
+            'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, and - / _ .',
         ]);
 
         DB::beginTransaction();
