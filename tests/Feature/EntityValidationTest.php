@@ -54,12 +54,15 @@ class EntityValidationTest extends TestCase
         // Test rejecting invalid name (emojis / weird characters)
         $response = $this->post(route('customers.store'), [
             'name' => 'Customer 🌟',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
         ]);
         $response->assertSessionHasErrors(['name']);
 
         // Test rejecting invalid contact person (numbers / symbols)
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer Name',
+            'address' => 'Valid Address',
             'contact_person' => 'Person 123',
         ]);
         $response->assertSessionHasErrors(['contact_person']);
@@ -67,6 +70,8 @@ class EntityValidationTest extends TestCase
         // Test rejecting invalid country (numbers / symbols)
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'country' => 'Country #1',
         ]);
         $response->assertSessionHasErrors(['country']);
@@ -74,6 +79,8 @@ class EntityValidationTest extends TestCase
         // Test rejecting phone with dash '-'
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'phone' => '123-456-789',
         ]);
         $response->assertSessionHasErrors(['phone']);
@@ -81,6 +88,8 @@ class EntityValidationTest extends TestCase
         // Test rejecting phone exceeding 15 characters
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'phone' => '+628123456789012', // 16 characters
         ]);
         $response->assertSessionHasErrors(['phone']);
@@ -91,9 +100,9 @@ class EntityValidationTest extends TestCase
         $this->actingAs($this->salesUser);
 
         $response = $this->post(route('customers.store'), [
-            'name' => 'Customer A & B Co., Ltd. (Branch)',
-            'address' => 'Customer Address 123',
-            'contact_person' => 'Jane O\'Connor-Smith.',
+            'name' => 'Customer Company Name',
+            'address' => 'Customer Address One Two Three',
+            'contact_person' => 'Jane Doe',
             'phone' => '+62 (21) 12345', // exactly 15 chars, containing plus, spaces, parentheses
             'email' => 'jane@example.com',
             'country' => 'U.S.A. (America)',
@@ -101,7 +110,7 @@ class EntityValidationTest extends TestCase
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('customers', [
-            'name' => 'Customer A & B Co., Ltd. (Branch)',
+            'name' => 'Customer Company Name',
             'phone' => '+62 (21) 12345',
         ]);
     }
@@ -113,12 +122,15 @@ class EntityValidationTest extends TestCase
         // Test rejecting invalid name
         $response = $this->post(route('suppliers.store'), [
             'name' => 'Supplier @#$',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
         ]);
         $response->assertSessionHasErrors(['name']);
 
         // Test rejecting invalid contact person
         $response = $this->post(route('suppliers.store'), [
             'name' => 'Valid Supplier Name',
+            'address' => 'Valid Address',
             'contact_person' => 'Person 456',
         ]);
         $response->assertSessionHasErrors(['contact_person']);
@@ -126,6 +138,8 @@ class EntityValidationTest extends TestCase
         // Test rejecting phone with dash '-'
         $response = $this->post(route('suppliers.store'), [
             'name' => 'Valid Supplier Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'phone' => '+1-234-567',
         ]);
         $response->assertSessionHasErrors(['phone']);
@@ -133,6 +147,8 @@ class EntityValidationTest extends TestCase
         // Test rejecting phone exceeding 15 characters
         $response = $this->post(route('suppliers.store'), [
             'name' => 'Valid Supplier Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'phone' => '1234567890123456', // 16 characters
         ]);
         $response->assertSessionHasErrors(['phone']);
@@ -143,9 +159,9 @@ class EntityValidationTest extends TestCase
         $this->actingAs($this->salesUser);
 
         $response = $this->post(route('suppliers.store'), [
-            'name' => 'Supplier X & Y Inc. (M)',
-            'address' => 'Supplier Road 99',
-            'contact_person' => 'Mr. John O\'Brien',
+            'name' => 'Supplier Company Name',
+            'address' => 'Supplier Road Ninety Nine',
+            'contact_person' => 'John Doe',
             'phone' => '+62812345678',
             'email' => 'supplier@example.com',
             'country' => 'Indonesia',
@@ -153,7 +169,7 @@ class EntityValidationTest extends TestCase
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('suppliers', [
-            'name' => 'Supplier X & Y Inc. (M)',
+            'name' => 'Supplier Company Name',
             'phone' => '+62812345678',
         ]);
     }
@@ -273,12 +289,16 @@ class EntityValidationTest extends TestCase
         // Name too short (min:3)
         $response = $this->post(route('customers.store'), [
             'name' => 'Ab',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
         ]);
         $response->assertSessionHasErrors(['name']);
 
         // Phone too short (min:8)
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'phone' => '123',
         ]);
         $response->assertSessionHasErrors(['phone']);
@@ -286,6 +306,8 @@ class EntityValidationTest extends TestCase
         // Country too short (min:2)
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'country' => 'A',
         ]);
         $response->assertSessionHasErrors(['country']);
@@ -299,6 +321,7 @@ class EntityValidationTest extends TestCase
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer',
             'address' => '<script>alert("hack")</script>',
+            'contact_person' => 'Valid Contact',
         ]);
         $response->assertSessionHasErrors(['address']);
 
@@ -360,6 +383,8 @@ class EntityValidationTest extends TestCase
         // Customer Country too long (max:60)
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'country' => str_repeat('A', 61),
         ]);
         $response->assertSessionHasErrors(['country']);
@@ -400,6 +425,7 @@ class EntityValidationTest extends TestCase
         $response = $this->post(route('customers.store'), [
             'name' => '',
             'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
         ]);
 
         $response->assertSessionHasErrors(['name']);
@@ -415,6 +441,8 @@ class EntityValidationTest extends TestCase
 
         $response = $this->post(route('customers.store'), [
             'name' => 'Valid Customer Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'email' => 'invalid-email-format',
         ]);
 
@@ -429,12 +457,16 @@ class EntityValidationTest extends TestCase
     {
         $customer = Customer::create([
             'name' => 'Original Customer Name',
+            'address' => 'Original Address',
+            'contact_person' => 'Original Contact',
         ]);
 
         $this->actingAs($this->salesUser);
 
         $response = $this->put(route('customers.update', $customer), [
             'name' => 'Updated Customer Name',
+            'address' => 'Original Address',
+            'contact_person' => 'Original Contact',
         ]);
 
         $response->assertSessionHasNoErrors();
@@ -531,6 +563,7 @@ class EntityValidationTest extends TestCase
         $response = $this->post(route('suppliers.store'), [
             'name' => '',
             'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
         ]);
 
         $response->assertSessionHasErrors(['name']);
@@ -546,6 +579,8 @@ class EntityValidationTest extends TestCase
 
         $response = $this->post(route('suppliers.store'), [
             'name' => 'Valid Supplier Name',
+            'address' => 'Valid Address',
+            'contact_person' => 'Valid Contact',
             'email' => 'invalid-email-format',
         ]);
 
@@ -560,12 +595,16 @@ class EntityValidationTest extends TestCase
     {
         $supplier = Supplier::create([
             'name' => 'Original Supplier Name',
+            'address' => 'Original Address',
+            'contact_person' => 'Original Contact',
         ]);
 
         $this->actingAs($this->salesUser);
 
         $response = $this->put(route('suppliers.update', $supplier), [
             'name' => 'Updated Supplier Name',
+            'address' => 'Original Address',
+            'contact_person' => 'Original Contact',
         ]);
 
         $response->assertSessionHasNoErrors();
