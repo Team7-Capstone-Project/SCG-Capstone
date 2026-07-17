@@ -122,11 +122,9 @@
                         <!-- Step 1: Pending -->
                         <div class="relative z-10 flex flex-col items-center">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 {{ $activeIndex >= 0 ? ($activeIndex > 0 ? 'bg-scg-red border-scg-red text-white' : 'bg-white dark:bg-slate-900 border-scg-red text-scg-red ring-4 ring-red-100 dark:ring-red-950') : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400' }}">
-                                @if($activeIndex > 0)
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                @else
-                                    <span class="font-bold text-sm">1</span>
-                                @endif
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
                             </div>
                             <div class="mt-2 text-center">
                                 <span class="block text-xs font-bold text-slate-800 dark:text-slate-200">{{ __('Pending') }}</span>
@@ -139,11 +137,9 @@
                         <!-- Step 2: In Transit -->
                         <div class="relative z-10 flex flex-col items-center">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 {{ $activeIndex >= 1 ? ($activeIndex > 1 ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white dark:bg-slate-900 border-blue-500 text-blue-500 ring-4 ring-blue-100 dark:ring-blue-950') : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400' }}">
-                                @if($activeIndex > 1)
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                @else
-                                    <span class="font-bold text-sm">2</span>
-                                @endif
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2 17h20l-2 3H4l-2-3zM5 17l1-5h12l1 5M9 12V8h6v4M12 8V4" />
+                                </svg>
                             </div>
                             <div class="mt-2 text-center">
                                 <span class="block text-xs font-bold text-slate-800 dark:text-slate-200">{{ __('In Transit') }}</span>
@@ -156,11 +152,10 @@
                         <!-- Step 3: Delivered -->
                         <div class="relative z-10 flex flex-col items-center">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 {{ $activeIndex >= 2 ? 'bg-green-600 border-green-600 text-white ring-4 ring-green-100 dark:ring-green-950' : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400' }}">
-                                @if($activeIndex >= 2)
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                @else
-                                    <span class="font-bold text-sm">3</span>
-                                @endif
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10h10zm0 0h6l2-3v-3a1 1 0 00-1-1h-7v7z" />
+                                </svg>
                             </div>
                             <div class="mt-2 text-center">
                                 <span class="block text-xs font-bold text-slate-800 dark:text-slate-200">{{ __('Delivered') }}</span>
