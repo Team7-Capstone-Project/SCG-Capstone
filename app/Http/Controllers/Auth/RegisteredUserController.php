@@ -63,16 +63,14 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => __('Registration successful!'),
-                'redirect' => route('dashboard', absolute: false)
+                'redirect' => route('login', absolute: false)
             ]);
         }
 
-        return redirect(route('dashboard', absolute: false))->with('success', __('Registration successful! Welcome to the SCG SCM Dashboard.'));
+        return redirect(route('login', absolute: false))->with('success', __('Registration successful!'));
     }
 }

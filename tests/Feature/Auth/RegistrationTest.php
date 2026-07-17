@@ -25,8 +25,8 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertGuest();
+        $response->assertRedirect(route('login', absolute: false));
 
         $user = \App\Models\User::where('email', 'test.sales@scg.com')->first();
         $this->assertNotNull($user);
@@ -42,8 +42,8 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertGuest();
+        $response->assertRedirect(route('login', absolute: false));
 
         $user = \App\Models\User::where('email', 'test.scm@scg.com')->first();
         $this->assertNotNull($user);
@@ -72,8 +72,8 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertGuest();
+        $response->assertRedirect(route('login', absolute: false));
 
         // The email should be stored in lowercase
         $user = \App\Models\User::where('email', 'test.sales@scg.com')->first();
@@ -94,8 +94,8 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertGuest();
+        $response->assertRedirect(route('login', absolute: false));
     }
 
     /**
@@ -169,7 +169,7 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'pass1234',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertGuest();
+        $response->assertRedirect(route('login', absolute: false));
     }
 }
