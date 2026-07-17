@@ -18,8 +18,8 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ __('Supply Chain Management Dashboard') }}</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-                <form action="{{ route('dashboard') }}" method="GET" class="inline-flex items-center">
-                    <select name="month" onchange="this.form.submit()" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm cursor-pointer transition-all duration-200">
+                <form id="dashboard-filter-form" action="{{ route('dashboard') }}" method="GET" class="inline-flex items-center">
+                    <select id="dashboard-month-select" name="month" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm cursor-pointer transition-all duration-200">
                         <option value="">{{ __('All Time') }}</option>
                         @foreach($availableMonths as $m)
                             <option value="{{ $m['value'] }}" {{ request('month') == $m['value'] ? 'selected' : '' }}>
@@ -41,7 +41,7 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
+    <div id="dashboard-content" class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Success/Error Messages --}}
@@ -365,16 +365,90 @@
 
     @push('scripts')
     <script>
-        document.getElementById('dashboard-search')?.addEventListener('input', function(e) {
-            const query = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#shipments-table-body tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(query)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Search input event delegation (survives AJAX container replacement)
+            document.addEventListener('input', function(e) {
+                if (e.target && e.target.id === 'dashboard-search') {
+                    const query = e.target.value.toLowerCase();
+                    const rows = document.querySelectorAll('#shipments-table-body tr');
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(query)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
                 }
+            });
+
+            // 2. Fetch and update dashboard content via AJAX
+            function fetchDashboard(url) {
+                const contentContainer = document.getElementById('dashboard-content');
+                if (!contentContainer) return;
+
+                // Add a subtle opacity effect for loading indication
+                contentContainer.style.opacity = '0.5';
+
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Replace main content container
+                    const newContainer = doc.getElementById('dashboard-content');
+                    if (newContainer) {
+                        contentContainer.innerHTML = newContainer.innerHTML;
+                    }
+
+                    // Keep month select dropdown in sync with the new state
+                    const newSelect = doc.getElementById('dashboard-month-select');
+                    const currentSelect = document.getElementById('dashboard-month-select');
+                    if (currentSelect && newSelect) {
+                        currentSelect.value = newSelect.value;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating SCM dashboard:', error);
+                })
+                .finally(() => {
+                    contentContainer.style.opacity = '1';
+                });
+            }
+
+            // 3. Intercept month filter form submission
+            const filterForm = document.getElementById('dashboard-filter-form');
+            if (filterForm) {
+                filterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(filterForm);
+                    const params = new URLSearchParams(formData);
+                    const url = new URL(filterForm.action);
+                    url.search = params.toString();
+
+                    // Update URL history and fetch content
+                    history.pushState({}, '', url.toString());
+                    fetchDashboard(url.toString());
+                });
+            }
+
+            // 4. Trigger form submit on select dropdown change
+            const monthSelect = document.getElementById('dashboard-month-select');
+            if (monthSelect && filterForm) {
+                monthSelect.addEventListener('change', function() {
+                    filterForm.dispatchEvent(new Event('submit', { cancelable: true }));
+                });
+            }
+
+            // 5. Handle popstate navigation (Back/Forward browser buttons)
+            window.addEventListener('popstate', function() {
+                fetchDashboard(window.location.href);
             });
         });
     </script>
