@@ -40,13 +40,32 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <!-- Language Switcher -->
+                <!-- Language Switcher Dropdown -->
                 <div class="flex items-center me-4">
-                    <a href="{{ route('lang.switch', 'id') }}" class="{{ app()->getLocale() == 'id' ? 'font-bold text-scg-red' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} text-sm transition-colors duration-200">ID</a>
-                    <span class="mx-1 text-gray-300 dark:text-gray-600">|</span>
-                    <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'font-bold text-scg-red' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} text-sm transition-colors duration-200">EN</a>
-                    <span class="mx-1 text-gray-300 dark:text-gray-600">|</span>
-                    <a href="{{ route('lang.switch', 'th') }}" class="{{ app()->getLocale() == 'th' ? 'font-bold text-scg-red' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} text-sm transition-colors duration-200">TH</a>
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            <button class="inline-flex items-center px-3 py-1.5 border border-slate-200 dark:border-slate-800 text-xs font-bold rounded-xl text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-900 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150 cursor-pointer shadow-sm">
+                                <div class="uppercase">{{ app()->getLocale() }}</div>
+                                <div class="ms-1">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('lang.switch', 'en')">
+                                <span class="{{ app()->getLocale() == 'en' ? 'font-bold text-scg-red' : '' }}">EN (English)</span>
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('lang.switch', 'id')">
+                                <span class="{{ app()->getLocale() == 'id' ? 'font-bold text-scg-red' : '' }}">ID (Bahasa Indonesia)</span>
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('lang.switch', 'th')">
+                                <span class="{{ app()->getLocale() == 'th' ? 'font-bold text-scg-red' : '' }}">TH (ไทย)</span>
+                            </x-dropdown-link>
+                        </x-slot>
+                    </x-dropdown>
                 </div>
 
                 <!-- Dark Mode Toggle -->
