@@ -702,8 +702,8 @@ class ShipmentController extends Controller
                     }
                 }
             ],
-            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
             'shipping_cost' => 'nullable|numeric|min:0|max:999999999.99',
             'customs_cost' => 'nullable|numeric|min:0|max:999999999.99',
             'other_costs' => 'nullable|numeric|min:0|max:999999999.99',

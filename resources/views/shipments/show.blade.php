@@ -527,6 +527,22 @@
                                     <input type="text" name="notes" id="notes" value="{{ $shipment->notes }}" placeholder="e.g. Karawang"
                                         class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 text-sm">
                                 </div>
+
+                                <div>
+                                    <label for="delivery_note_number" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                                        Delivery Note
+                                    </label>
+                                    <input type="text" name="delivery_note_number" id="delivery_note_number" value="{{ old('delivery_note_number', $shipment->delivery_note_number) }}" placeholder="e.g. DN-88888888" minlength="10" maxlength="15"
+                                        class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 text-sm">
+                                </div>
+
+                                <div>
+                                    <label for="supplier_invoice" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                                        Supplier Invoice
+                                    </label>
+                                    <input type="text" name="supplier_invoice" id="supplier_invoice" value="{{ old('supplier_invoice', $shipment->supplier_invoice) }}" placeholder="e.g. INV-99999999" minlength="10" maxlength="15"
+                                        class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 text-sm">
+                                </div>
                                 
                                 <button type="submit" class="w-full bg-gradient-to-r from-scg-red to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-sm">
                                     Update Status
