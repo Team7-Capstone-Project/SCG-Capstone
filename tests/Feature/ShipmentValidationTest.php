@@ -86,7 +86,7 @@ class ShipmentValidationTest extends TestCase
     {
         $this->actingAs($this->salesUser);
 
-        $validPo = 'PO-123/ABC_DEF.G'; // valid alphanumeric, slash, dash, underscore, dot
+        $validPo = 'PO-123/ABC_DEF'; // valid 14 chars (within 10-15 range)
 
         $response = $this->post(route('shipments.store'), [
             'customer_id' => $this->customer->id,
@@ -375,27 +375,38 @@ class ShipmentValidationTest extends TestCase
         $response->assertSessionHasErrors(['delivery_note_number']);
     }
 
-    public function test_shipment_validation_document_number_max_limits()
+    public function test_shipment_validation_document_number_length_limits()
     {
         $this->actingAs($this->salesUser);
 
-        // customer_po exceeds max:50 characters
+        // customer_po less than min:10 characters
         $response = $this->post(route('shipments.store'), [
             'customer_id' => $this->customer->id,
             'supplier_id' => $this->supplier->id,
             'type' => 'Import',
-            'customer_po' => str_repeat('A', 51),
+            'customer_po' => 'PO-123',
             'etd_port' => '2026-06-01',
             'customer_receiving_schedule' => '2026-06-10',
         ]);
         $response->assertSessionHasErrors(['customer_po']);
 
-        // booking_number exceeds max:50 characters
+        // customer_po exceeds max:15 characters
         $response = $this->post(route('shipments.store'), [
             'customer_id' => $this->customer->id,
             'supplier_id' => $this->supplier->id,
             'type' => 'Import',
-            'booking_number' => str_repeat('A', 51),
+            'customer_po' => str_repeat('A', 16),
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2026-06-10',
+        ]);
+        $response->assertSessionHasErrors(['customer_po']);
+
+        // booking_number exceeds max:15 characters
+        $response = $this->post(route('shipments.store'), [
+            'customer_id' => $this->customer->id,
+            'supplier_id' => $this->supplier->id,
+            'type' => 'Import',
+            'booking_number' => str_repeat('A', 16),
             'etd_port' => '2026-06-01',
             'customer_receiving_schedule' => '2026-06-10',
         ]);

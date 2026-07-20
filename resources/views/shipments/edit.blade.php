@@ -94,8 +94,9 @@
                                     Customer PO
                                 </label>
                                 <input type="text" name="customer_po" id="customer_po" value="{{ old('customer_po', $shipment->customer_po) }}"
+                                    minlength="10" maxlength="15"
                                     pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
-                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed (10-15 characters)."
                                     placeholder="e.g. PO-12345/ABC"
                                     class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('customer_po') border-red-500 @enderror">
                                 @error('customer_po')
@@ -109,8 +110,9 @@
                                     SCG PO
                                 </label>
                                 <input type="text" name="scg_po" id="scg_po" value="{{ old('scg_po', $shipment->scg_po) }}"
+                                    minlength="10" maxlength="15"
                                     pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
-                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed (10-15 characters)."
                                     placeholder="e.g. SCGPO-98765"
                                     class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('scg_po') border-red-500 @enderror">
                                 @error('scg_po')
@@ -124,9 +126,10 @@
                                     Booking Number
                                 </label>
                                 <input type="text" name="booking_number" id="booking_number" value="{{ old('booking_number', $shipment->booking_number) }}"
+                                    minlength="10" maxlength="15"
                                     pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
-                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
-                                    placeholder="e.g. BKG-1010"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed (10-15 characters)."
+                                    placeholder="e.g. BKG-1010-01"
                                     class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('booking_number') border-red-500 @enderror">
                                 @error('booking_number')
                                     <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
@@ -226,9 +229,10 @@
                                     SCG SO
                                 </label>
                                 <input type="text" name="scg_so" id="scg_so" value="{{ old('scg_so', $shipment->scg_so) }}"
+                                    minlength="10" maxlength="15"
                                     pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
-                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
-                                    placeholder="e.g. SO-11223"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed (10-15 characters)."
+                                    placeholder="e.g. SO-112233-01"
                                     class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('scg_so') border-red-500 @enderror">
                                 @error('scg_so')
                                     <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
@@ -241,9 +245,10 @@
                                 </label>
                                 <input type="text" name="supplier_invoice" id="supplier_invoice"
                                     value="{{ old('supplier_invoice', $shipment->supplier_invoice) }}"
+                                    minlength="10" maxlength="15"
                                     pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
-                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
-                                    placeholder="e.g. INV-999"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed (10-15 characters)."
+                                    placeholder="e.g. INV-99999-01"
                                     class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('supplier_invoice') border-red-500 @enderror">
                                 @error('supplier_invoice')
                                     <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>
@@ -256,9 +261,10 @@
                                 </label>
                                 <input type="text" name="delivery_note_number" id="delivery_note_number"
                                     value="{{ old('delivery_note_number', $shipment->delivery_note_number) }}"
+                                    minlength="10" maxlength="15"
                                     pattern="^[a-zA-Z0-9\/\-_\.\s]+$"
-                                    title="Only alphanumeric, space, and symbols - / _ . are allowed."
-                                    placeholder="e.g. DN-8888"
+                                    title="Only alphanumeric, space, and symbols - / _ . are allowed (10-15 characters)."
+                                    placeholder="e.g. DN-88888-001"
                                     class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 @error('delivery_note_number') border-red-500 @enderror">
                                 @error('delivery_note_number')
                                     <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>

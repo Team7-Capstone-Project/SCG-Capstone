@@ -173,12 +173,12 @@ class ShipmentController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
             // Document numbers - must be unique globally, and contain valid format (no spaces)
-            'customer_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
-            'scg_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
-            'scg_so' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
-            'booking_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
-            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
+            'customer_po' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,customer_po,NULL,id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_po,NULL,id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_so,NULL,id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,booking_number,NULL,id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,NULL,id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,NULL,id,deleted_at,NULL',
             'etd_port' => ['required', 'date', app()->environment('testing') ? 'after_or_equal:2020-01-01' : 'after_or_equal:today', 'before_or_equal:2035-12-31'],
             'eta_port' => [
                 'nullable',
@@ -276,6 +276,19 @@ class ShipmentController extends Controller
             'booking_number.regex' => 'Booking Number can only contain letters, numbers, and - / _ .',
             'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, and - / _ .',
             'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, and - / _ .',
+            // Length validation error messages
+            'customer_po.min' => 'Customer PO must be at least 10 characters',
+            'customer_po.max' => 'Customer PO may not be greater than 15 characters',
+            'scg_po.min' => 'SCG PO must be at least 10 characters',
+            'scg_po.max' => 'SCG PO may not be greater than 15 characters',
+            'scg_so.min' => 'SCG SO must be at least 10 characters',
+            'scg_so.max' => 'SCG SO may not be greater than 15 characters',
+            'booking_number.min' => 'Booking Number must be at least 10 characters',
+            'booking_number.max' => 'Booking Number may not be greater than 15 characters',
+            'delivery_note_number.min' => 'Delivery Note Number must be at least 10 characters',
+            'delivery_note_number.max' => 'Delivery Note Number may not be greater than 15 characters',
+            'supplier_invoice.min' => 'Supplier Invoice must be at least 10 characters',
+            'supplier_invoice.max' => 'Supplier Invoice may not be greater than 15 characters',
         ]);
 
         DB::beginTransaction();
@@ -383,12 +396,12 @@ class ShipmentController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'type' => 'required|in:Import,Export',
             // Document numbers - must be unique globally (ignore current shipment)
-            'customer_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
-            'scg_po' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
-            'scg_so' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
-            'booking_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'delivery_note_number' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
-            'supplier_invoice' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
+            'customer_po' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,customer_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_po' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_po,' . $shipment->id . ',id,deleted_at,NULL',
+            'scg_so' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,scg_so,' . $shipment->id . ',id,deleted_at,NULL',
+            'booking_number' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,booking_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'delivery_note_number' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,delivery_note_number,' . $shipment->id . ',id,deleted_at,NULL',
+            'supplier_invoice' => 'nullable|string|min:10|max:15|regex:/^[a-zA-Z0-9\/\-_\.]+$/|unique:shipments,supplier_invoice,' . $shipment->id . ',id,deleted_at,NULL',
             'status' => 'required|in:Pending,In Transit,Delivered,Cancelled',
             'etd_port' => 'required|date|after_or_equal:2020-01-01|before_or_equal:2035-12-31',
             'eta_port' => [
@@ -524,6 +537,19 @@ class ShipmentController extends Controller
             'booking_number.regex' => 'Booking Number can only contain letters, numbers, and - / _ .',
             'delivery_note_number.regex' => 'Delivery Note can only contain letters, numbers, and - / _ .',
             'supplier_invoice.regex' => 'Supplier Invoice can only contain letters, numbers, and - / _ .',
+            // Length validation error messages
+            'customer_po.min' => 'Customer PO must be at least 10 characters',
+            'customer_po.max' => 'Customer PO may not be greater than 15 characters',
+            'scg_po.min' => 'SCG PO must be at least 10 characters',
+            'scg_po.max' => 'SCG PO may not be greater than 15 characters',
+            'scg_so.min' => 'SCG SO must be at least 10 characters',
+            'scg_so.max' => 'SCG SO may not be greater than 15 characters',
+            'booking_number.min' => 'Booking Number must be at least 10 characters',
+            'booking_number.max' => 'Booking Number may not be greater than 15 characters',
+            'delivery_note_number.min' => 'Delivery Note Number must be at least 10 characters',
+            'delivery_note_number.max' => 'Delivery Note Number may not be greater than 15 characters',
+            'supplier_invoice.min' => 'Supplier Invoice must be at least 10 characters',
+            'supplier_invoice.max' => 'Supplier Invoice may not be greater than 15 characters',
         ]);
 
         DB::beginTransaction();

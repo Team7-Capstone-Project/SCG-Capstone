@@ -698,7 +698,15 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        foreach ($shipments as $shipmentData) {
+        foreach ($shipments as $index => $shipmentData) {
+            $idx = sprintf('%03d', $index + 1);
+            $shipmentData['customer_po'] = '51-PO2025-' . $idx;
+            $shipmentData['scg_po'] = '42-PO2025-' . $idx;
+            $shipmentData['scg_so'] = '45-SO2025-' . $idx;
+            $shipmentData['supplier_invoice'] = '41-INV2025-' . $idx;
+            $shipmentData['delivery_note_number'] = '45-DN2025-' . $idx;
+            $shipmentData['booking_number'] = 'BKG-2025-' . $idx;
+
             $products = $shipmentData['products'];
             unset($shipmentData['products']);
 
