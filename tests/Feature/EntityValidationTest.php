@@ -255,6 +255,23 @@ class EntityValidationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Are you sure you want to delete this product? This is a fatal action and will affect all associated shipments.');
 
+        $shipment = Shipment::create([
+            'customer_id' => $customer->id,
+            'supplier_id' => $this->supplier->id,
+            'created_by_user_id' => $this->salesUser->id,
+            'customer_po' => 'PO-TEST-CONFIRM',
+            'scg_po' => 'SCG-TEST-CONFIRM',
+            'scg_so' => 'SO-TEST-CONFIRM',
+            'booking_number' => 'BKG-TEST-CONFIRM',
+            'status' => 'Pending',
+            'etd_port' => '2026-06-01',
+            'customer_receiving_schedule' => '2026-06-10',
+        ]);
+
+        $response = $this->get(route('shipments.show', $shipment));
+        $response->assertStatus(200);
+        $response->assertSee('Are you sure you want to delete this shipment? This is a fatal action and will affect all associated shipments.');
+
         // 2. Indonesian Locale
         $response = $this->withSession(['locale' => 'id'])->get(route('customers.show', $customer));
         $response->assertStatus(200);
@@ -268,10 +285,18 @@ class EntityValidationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Apakah Anda yakin ingin menghapus produk ini? Ini adalah tindakan fatal dan akan mempengaruhi semua pengiriman terkait.');
 
+        $response = $this->withSession(['locale' => 'id'])->get(route('shipments.show', $shipment));
+        $response->assertStatus(200);
+        $response->assertSee('Apakah Anda yakin ingin menghapus pengiriman ini? Ini adalah tindakan fatal dan akan mempengaruhi semua pengiriman terkait.');
+
         // 3. Thai Locale
         $response = $this->withSession(['locale' => 'th'])->get(route('customers.show', $customer));
         $response->assertStatus(200);
         $response->assertSee('คุณแน่ใจหรือไม่ว่าต้องการลบลูกค้ารายนี้? การดำเนินการนี้เป็นเรื่องร้ายแรงและจะลบการจัดส่งทั้งหมดที่เกี่ยวข้อง', false);
+
+        $response = $this->withSession(['locale' => 'th'])->get(route('shipments.show', $shipment));
+        $response->assertStatus(200);
+        $response->assertSee('คุณแน่ใจหรือไม่ว่าต้องการลบการจัดส่งนี้? นี่เป็นการกระทำที่สำคัญและจะส่งผลกระทบต่อการจัดส่งที่เกี่ยวข้องทั้งหมด', false);
 
         $response = $this->withSession(['locale' => 'th'])->get(route('suppliers.show', $this->supplier));
         $response->assertStatus(200);

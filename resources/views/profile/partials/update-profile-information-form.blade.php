@@ -13,6 +13,20 @@
         @csrf
     </form>
 
+    @if (session('status') === 'profile-updated')
+        <div class="mb-4 p-4 text-sm text-emerald-800 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-3 shadow-sm animate-fade-in-down" role="alert">
+            <div class="p-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <div>
+                <span class="font-bold block">{{ __('Profile Updated Successfully!') }}</span>
+                <span class="text-xs text-emerald-700 dark:text-emerald-400">{{ __('Your profile information and email address have been saved.') }}</span>
+            </div>
+        </div>
+    @endif
+
     <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
@@ -55,9 +69,12 @@
                     x-data="{ show: true }"
                     x-show="show"
                     x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
+                    x-init="setTimeout(() => show = false, 5000)"
+                    class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800/50"
+                >
+                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    {{ __('Saved successfully!') }}
+                </p>
             @endif
         </div>
     </form>

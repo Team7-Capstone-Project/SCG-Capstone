@@ -80,6 +80,7 @@
     "Update Status": "อัปเดตสถานะ",
     "Delete Shipment": "ลบการจัดส่ง",
     "Are you sure you want to delete this shipment?": "คุณแน่ใจหรือไม่ว่าต้องการลบการจัดส่งนี้?",
+    "Are you sure you want to delete this shipment? This is a fatal action and will affect all associated shipments.": "คุณแน่ใจหรือไม่ว่าต้องการลบการจัดส่งนี้? นี่เป็นการกระทำที่สำคัญและจะส่งผลกระทบต่อการจัดส่งที่เกี่ยวข้องทั้งหมด",
     "Customers Management": "การจัดการลูกค้า",
     "Create Customer": "สร้างลูกค้า",
     "Customer Name": "ชื่อลูกค้า",

@@ -255,7 +255,7 @@ class ShipmentController extends Controller
             'products' => 'nullable|array',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1|max:10000000',
-            'products.*.unit_price' => 'required|numeric|min:0|max:99999999.99',
+            'products.*.unit_price' => 'required|numeric|min:0|max:999999999999.99',
         ], [
             'customer_id.required' => 'Customer is required',
             'supplier_id.required' => 'Supplier is required',
@@ -326,14 +326,28 @@ class ShipmentController extends Controller
                 }
             }
 
-            // Log activity (FR-L-01)
+            // Log activity (FR-L-01) with full details
+            $creationDetails = [];
+            if (!empty($shipment->customer_po))
+                $creationDetails[] = "Customer PO: {$shipment->customer_po}";
+            if (!empty($shipment->scg_po))
+                $creationDetails[] = "SCG PO: {$shipment->scg_po}";
+            if (!empty($shipment->scg_so))
+                $creationDetails[] = "SCG SO: {$shipment->scg_so}";
+            if (!empty($shipment->booking_number))
+                $creationDetails[] = "Booking: {$shipment->booking_number}";
+            $creationDetails[] = "Type: {$shipment->type}";
+            $creationDetails[] = "Status: {$shipment->status}";
+            if ($shipment->customer)
+                $creationDetails[] = "Customer: {$shipment->customer->name}";
+
             ActivityLog::logActivity(
                 Auth::id(),
                 $shipment->id,
                 'created',
                 null,
                 'Shipment created',
-                'New shipment created with PO: ' . ($validated['customer_po'] ?? 'N/A')
+                'New shipment created with ' . implode(', ', $creationDetails)
             );
 
             DB::commit();
@@ -373,10 +387,10 @@ class ShipmentController extends Controller
             $this->authorize('updateStatus', $shipment);
             return view('shipments.edit-admin', compact('shipment'));
         }
-        
+
         // PIC Sales gets full edit access
         $this->authorize('update', $shipment);
-        
+
         $customers = Customer::orderBy('name')->get();
         $suppliers = Supplier::orderBy('name')->get();
         $products = Product::with('supplier')->orderBy('name')->get();
@@ -482,8 +496,8 @@ class ShipmentController extends Controller
                         if ($request->filled('etd_port')) {
                             $etd = strtotime($request->etd_port);
                             if ($ataCustomer > $etd + (365 * 24 * 60 * 60)) {
-                                    $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be at most 1 year (365 days) after ETD Port.'));
-                                    return;
+                                $fail(__('The Actual Time Arrival at Customer (ATA Customer) must be at most 1 year (365 days) after ETD Port.'));
+                                return;
                             }
                         }
                         if ($request->filled('ata_port')) {
@@ -516,7 +530,7 @@ class ShipmentController extends Controller
             'products' => 'nullable|array',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1|max:10000000',
-            'products.*.unit_price' => 'required|numeric|min:0|max:99999999.99',
+            'products.*.unit_price' => 'required|numeric|min:0|max:999999999999.99',
         ], [
             'customer_id.required' => 'Customer is required',
             'supplier_id.required' => 'Supplier is required',
@@ -554,35 +568,31 @@ class ShipmentController extends Controller
 
         DB::beginTransaction();
         try {
-            $oldStatus = $shipment->status;
-            
+            $original = $shipment->getAttributes();
+
             // Extract products from validated data
             $productsData = $validated['products'] ?? [];
             unset($validated['products']);
-            
+
             $shipment->update($validated);
 
             // Sync products
             $syncData = [];
+            $productDetails = [];
             foreach ($productsData as $product) {
                 $syncData[$product['product_id']] = [
                     'quantity' => $product['quantity'],
                     'unit_price' => $product['unit_price'],
                 ];
+                $prodModel = Product::find($product['product_id']);
+                if ($prodModel) {
+                    $productDetails[] = "{$prodModel->sku} (Qty: {$product['quantity']})";
+                }
             }
             $shipment->products()->sync($syncData);
 
-            // Log status change if changed
-            if ($oldStatus !== $validated['status']) {
-                ActivityLog::logActivity(
-                    Auth::id(),
-                    $shipment->id,
-                    'updated_status',
-                    $oldStatus,
-                    $validated['status'],
-                    "Status changed from {$oldStatus} to {$validated['status']}"
-                );
-            }
+            // Log activity for all changes made by Sales/Staff
+            $this->logShipmentChanges($shipment, $original, !empty($productDetails) ? $productDetails : null);
 
             DB::commit();
 
@@ -716,8 +726,7 @@ class ShipmentController extends Controller
 
         DB::beginTransaction();
         try {
-            $oldStatus = $shipment->status;
-            $oldAtaCustomer = $shipment->ata_customer?->toDateString();
+            $original = $shipment->getAttributes();
 
             // Auto-set status to Delivered if ata_customer is provided
             if (!empty($validated['ata_customer'])) {
@@ -761,25 +770,8 @@ class ShipmentController extends Controller
 
             $shipment->save();
 
-            // Log activity
-            $description = [];
-            if ($oldStatus !== $shipment->status) {
-                $description[] = "Status: {$oldStatus} → {$shipment->status}";
-            }
-            if ($oldAtaCustomer !== $shipment->ata_customer?->toDateString()) {
-                $description[] = "ATA Customer: " . ($oldAtaCustomer ?? 'null') . " → " . ($shipment->ata_customer?->toDateString() ?? 'null');
-            }
-
-            if (!empty($description)) {
-                ActivityLog::logActivity(
-                    Auth::id(),
-                    $shipment->id,
-                    'updated_status',
-                    $oldStatus,
-                    $shipment->status,
-                    implode(', ', $description)
-                );
-            }
+            // Log activity for all monitoring changes made by SCM Staff/Sales
+            $this->logShipmentChanges($shipment, $original);
 
             DB::commit();
 
@@ -813,6 +805,10 @@ class ShipmentController extends Controller
      */
     public function destroy(Shipment $shipment)
     {
+        if ($shipment->status === 'Delivered') {
+            return back()->with('error', __('Delivered shipments cannot be deleted.'));
+        }
+
         $this->authorize('delete', $shipment);
 
         try {
@@ -822,7 +818,7 @@ class ShipmentController extends Controller
                 'deleted',
                 $shipment->status,
                 'Deleted',
-                'Shipment deleted'
+                'Shipment deleted with Customer PO: ' . ($shipment->customer_po ?? 'N/A')
             );
 
             $shipment->delete();
@@ -833,5 +829,87 @@ class ShipmentController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete shipment: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Helper to log detailed activity for any shipment updates (Sales or SCM Staff).
+     */
+    private function logShipmentChanges(Shipment $shipment, array $original, ?array $productChanges = null): void
+    {
+        $shipment->refresh();
+
+        $fieldLabels = [
+            'status' => 'Status',
+            'type' => 'Type',
+            'customer_id' => 'Customer',
+            'supplier_id' => 'Supplier',
+            'customer_po' => 'Customer PO',
+            'scg_po' => 'SCG PO',
+            'scg_so' => 'SCG SO',
+            'booking_number' => 'Booking Number',
+            'delivery_note_number' => 'Delivery Note',
+            'supplier_invoice' => 'Supplier Invoice',
+            'etd_port' => 'ETD Port',
+            'eta_port' => 'ETA Port',
+            'ata_port' => 'ATA Port',
+            'customer_receiving_schedule' => 'Customer Receiving Schedule',
+            'ata_customer' => 'ATA Customer',
+            'shipping_cost' => 'Shipping Cost',
+            'customs_cost' => 'Customs Cost',
+            'other_costs' => 'Other Costs',
+            'notes' => 'Notes',
+        ];
+
+        $details = [];
+
+        foreach ($fieldLabels as $field => $label) {
+            $oldVal = $original[$field] ?? null;
+            $newVal = $shipment->{$field};
+
+            $oldStr = $oldVal instanceof \Carbon\Carbon ? $oldVal->toDateString() : (string) ($oldVal ?? '');
+            $newStr = $newVal instanceof \Carbon\Carbon ? $newVal->toDateString() : (string) ($newVal ?? '');
+
+            if ($oldStr !== $newStr) {
+                if (in_array($field, ['shipping_cost', 'customs_cost', 'other_costs'])) {
+                    $formattedOld = 'Rp ' . number_format((float) ($oldVal ?? 0), 0, ',', '.');
+                    $formattedNew = 'Rp ' . number_format((float) ($newVal ?? 0), 0, ',', '.');
+                    $details[] = "{$label}: {$formattedOld} → {$formattedNew}";
+                } elseif ($field === 'customer_id') {
+                    $oldCust = Customer::find($oldVal)?->name ?? 'N/A';
+                    $newCust = $shipment->customer?->name ?? 'N/A';
+                    $details[] = "Customer: {$oldCust} → {$newCust}";
+                } elseif ($field === 'supplier_id') {
+                    $oldSup = Supplier::find($oldVal)?->name ?? 'N/A';
+                    $newSup = $shipment->supplier?->name ?? 'N/A';
+                    $details[] = "Supplier: {$oldSup} → {$newSup}";
+                } else {
+                    $oldDisplay = $oldStr === '' ? '(empty)' : $oldStr;
+                    $newDisplay = $newStr === '' ? '(empty)' : $newStr;
+                    $details[] = "{$label}: {$oldDisplay} → {$newDisplay}";
+                }
+            }
+        }
+
+        if (!empty($productChanges)) {
+            $details[] = "Products: " . implode(', ', $productChanges);
+        }
+
+        if (empty($details)) {
+            $details[] = "Shipment record updated";
+        }
+
+        $oldStatus = $original['status'] ?? $shipment->status;
+        $newStatus = $shipment->status;
+        $action = ($oldStatus !== $newStatus) ? 'updated_status' : 'updated';
+        $description = implode('; ', $details);
+
+        ActivityLog::logActivity(
+            Auth::id(),
+            $shipment->id,
+            $action,
+            $oldStatus,
+            $newStatus,
+            $description
+        );
     }
 }

@@ -33,7 +33,7 @@
                 @endcan
                 
                 @can('delete', $shipment)
-                    <form action="{{ route('shipments.destroy', $shipment) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Are you sure you want to delete this shipment?') }}');">
+                    <form action="{{ route('shipments.destroy', $shipment) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Are you sure you want to delete this shipment? This is a fatal action and will affect all associated shipments.') }}');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 dark:from-red-500 dark:to-rose-500 hover:from-red-700 hover:to-rose-700 dark:hover:from-red-600 dark:hover:to-rose-600 text-white text-sm font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200">

@@ -80,6 +80,7 @@
     "Update Status": "Perbarui Status",
     "Delete Shipment": "Hapus Pengiriman",
     "Are you sure you want to delete this shipment?": "Apakah Anda yakin ingin menghapus pengiriman ini?",
+    "Are you sure you want to delete this shipment? This is a fatal action and will affect all associated shipments.": "Apakah Anda yakin ingin menghapus pengiriman ini? Ini adalah tindakan fatal dan akan mempengaruhi semua pengiriman terkait.",
     "Customers Management": "Manajemen Pelanggan",
     "Create Customer": "Buat Pelanggan",
     "Customer Name": "Nama Pelanggan",

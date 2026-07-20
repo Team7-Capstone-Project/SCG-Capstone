@@ -203,7 +203,7 @@
                                                     ];
                                                 @endphp
                                                 @can('updateStatus', $shipment)
-                                                    <div class="flex flex-col gap-1.5" onclick="event.stopPropagation()">
+                                                    <div class="flex flex-col gap-1" onclick="event.stopPropagation()">
                                                         <form action="{{ route('shipments.update-status', $shipment) }}" method="POST" class="inline">
                                                             @csrf
                                                             <select name="status" onchange="this.form.submit()" class="rounded-full text-xs font-semibold py-0.5 pl-2.5 pr-8 border {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800' }} focus:outline-none focus:ring-1 focus:ring-scg-red cursor-pointer">
@@ -213,11 +213,11 @@
                                                                 <option value="Cancelled" {{ $shipment->status == 'Cancelled' ? 'selected' : '' }}>{{ __('Cancelled') }}</option>
                                                             </select>
                                                         </form>
-                                                        
-                                                        <form action="{{ route('shipments.update-status', $shipment) }}" method="POST" class="inline flex items-center">
-                                                            @csrf
-                                                            <input type="text" name="notes" value="{{ $shipment->notes }}" placeholder="{{ __('Location/Note...') }}" onkeydown="if(event.key === 'Enter') { this.form.submit(); }" class="text-[10px] px-2 py-0.5 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-scg-red w-32 shadow-sm">
-                                                        </form>
+                                                        @if($shipment->notes)
+                                                            <div class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 max-w-[150px] truncate" title="{{ $shipment->notes }}">
+                                                                📝 {{ $shipment->notes }}
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 @else
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColors[$shipment->status] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">

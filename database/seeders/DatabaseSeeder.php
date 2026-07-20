@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         // Create Users with different roles (NEW SYSTEM: only admin_scm and pic_sales)
         $adminScm1 = User::create([
-            'name' => 'Admin SCM 1',
+            'name' => 'Agung Tanjung',
             'email' => 'admin.scm@scg.com',
             'password' => Hash::make('password'),
             'role' => 'admin_scm',
@@ -222,7 +222,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'SCG Low Carbon Cement',
                 'description' => 'Eco-friendly and high-strength construction cement',
                 'image' => 'images/products/scg_cement.png',
-                'unit_price' => 95000,
+                'unit_price' => 195000000,
                 'supplier_id' => 1,
             ],
             [
@@ -230,7 +230,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'SCG Smartwood Wall Capping',
                 'description' => 'Premium fiber cement decor wall paneling',
                 'image' => 'images/products/scg_smartwood.png',
-                'unit_price' => 120000,
+                'unit_price' => 220000000,
                 'supplier_id' => 1,
             ],
             [
@@ -238,7 +238,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'SCG Roofing Ceramic Tile',
                 'description' => 'Premium terracotta ceramic tiles for roofing',
                 'image' => 'images/products/scg_ceramic_tile.png',
-                'unit_price' => 15000,
+                'unit_price' => 150000000,
                 'supplier_id' => 1,
             ],
             [
@@ -246,7 +246,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'SCG Solar Panel System',
                 'description' => 'High efficiency monocrystalline solar PV panel system',
                 'image' => 'images/products/scg_solar_panel.png',
-                'unit_price' => 4500000,
+                'unit_price' => 280000000,
                 'supplier_id' => 2,
             ],
             [
@@ -254,7 +254,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'SCG Microgrid Energy Storage',
                 'description' => 'Battery energy storage system for microgrid solution',
                 'image' => 'images/products/scg_microgrid.png',
-                'unit_price' => 12500000,
+                'unit_price' => 350000000,
                 'supplier_id' => 2,
             ],
             [
@@ -262,7 +262,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Corn and Tapioca Starch',
                 'description' => 'Premium tapioca starch for industrial chemical binder',
                 'image' => 'images/products/tapioca_starch.png',
-                'unit_price' => 12000,
+                'unit_price' => 120000000,
                 'supplier_id' => 1,
             ],
             [
@@ -270,7 +270,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Recycled Plastic Resin',
                 'description' => 'Eco-friendly recycled PCR polyethylene resin pellets',
                 'image' => 'images/products/recycled_resin.png',
-                'unit_price' => 18000,
+                'unit_price' => 180000000,
                 'supplier_id' => 3,
             ],
             [
@@ -278,7 +278,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Recycled Paper Roll RCP',
                 'description' => 'Recycled cardboard medium craft paper roll',
                 'image' => 'images/products/recycled_paper_roll.png',
-                'unit_price' => 8500,
+                'unit_price' => 135000000,
                 'supplier_id' => 3,
             ],
             [
@@ -286,7 +286,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'High Purity Propylene Glycol',
                 'description' => 'Industrial grade solvent and raw material',
                 'image' => 'images/products/chemical_glycol.png',
-                'unit_price' => 28000,
+                'unit_price' => 210000000,
                 'supplier_id' => 4,
             ],
             [
@@ -294,7 +294,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Caustic Soda Flakes',
                 'description' => 'Sodium hydroxide flakes for soap and paper industries',
                 'image' => 'images/products/caustic_soda.png',
-                'unit_price' => 15000,
+                'unit_price' => 165000000,
                 'supplier_id' => 5,
             ],
             [
@@ -302,7 +302,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Polyurethane Foam Catalyst',
                 'description' => 'Polymer additive for high resiliency cushioning',
                 'image' => 'images/products/polyurethane_catalyst.png',
-                'unit_price' => 89000,
+                'unit_price' => 245000000,
                 'supplier_id' => 6,
             ],
             [
@@ -310,7 +310,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Polyethylene Resin DOWLEX',
                 'description' => 'Linear low density polyethylene film grade',
                 'image' => 'images/products/polyethylene_resin.png',
-                'unit_price' => 24500,
+                'unit_price' => 175000000,
                 'supplier_id' => 7,
             ],
             [
@@ -318,7 +318,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'PVC Resin Suspension Grade',
                 'description' => 'Polyvinyl chloride resin for pipe extrusion',
                 'image' => 'images/products/pvc_resin.png',
-                'unit_price' => 19500,
+                'unit_price' => 190000000,
                 'supplier_id' => 8,
             ],
             [
@@ -326,7 +326,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Polypropylene Homopolymer',
                 'description' => 'High flow injection molding PP granules',
                 'image' => 'images/products/polypropylene_homopolymer.png',
-                'unit_price' => 22000,
+                'unit_price' => 230000000,
                 'supplier_id' => 9,
             ],
         ];
@@ -734,6 +734,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($shipments as $index => $shipmentData) {
+            $salesUser = ($index % 2 === 0) ? $picSales1 : $picSales2;
+            $scmUser = ($index % 2 === 0) ? $adminScm1 : $adminScm2;
+
+            $shipmentData['created_by_user_id'] = $salesUser->id;
             $shipmentData['customer_po'] = $customerPos[$index % count($customerPos)];
             $shipmentData['scg_po'] = $scgPos[$index % count($scgPos)];
             $shipmentData['scg_so'] = $scgSos[$index % count($scgSos)];
@@ -746,17 +750,20 @@ class DatabaseSeeder extends Seeder
 
             $shipment = Shipment::create($shipmentData);
 
-            // Attach products
+            // Attach products (quantities adjusted so subtotals & grand totals stay in Ratusan Juta range: 100jt - 900jt)
             foreach ($products as $productData) {
+                $productModel = Product::find($productData['product_id']);
+                $unitPrice = $productModel ? $productModel->unit_price : 150000000;
+                $quantity = min($productData['quantity'], 2);
                 $shipment->products()->attach($productData['product_id'], [
-                    'quantity' => $productData['quantity'],
-                    'unit_price' => $productData['unit_price'],
+                    'quantity' => $quantity,
+                    'unit_price' => $unitPrice,
                 ]);
             }
 
-            // Create activity log
+            // Create activity log for creation (always PIC Sales)
             ActivityLog::logActivity(
-                $adminScm2->id,
+                $salesUser->id,
                 $shipment->id,
                 'created',
                 null,
@@ -764,15 +771,15 @@ class DatabaseSeeder extends Seeder
                 'New shipment created with PO: ' . ($shipment->customer_po ?? 'N/A')
             );
 
-            // Add status change log for delivered shipments
-            if ($shipment->status === 'Delivered') {
+            // Add status change log for delivered/in-transit shipments (always Admin SCM)
+            if (in_array($shipment->status, ['Delivered', 'In Transit'])) {
                 ActivityLog::logActivity(
-                    $adminScm2->id,
+                    $scmUser->id,
                     $shipment->id,
                     'updated_status',
                     'Pending',
-                    'Delivered',
-                    'Status changed to Delivered'
+                    $shipment->status,
+                    'Status changed to ' . $shipment->status
                 );
             }
         }

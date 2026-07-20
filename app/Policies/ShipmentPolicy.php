@@ -66,6 +66,11 @@ class ShipmentPolicy
      */
     public function delete(User $user, Shipment $shipment): bool
     {
+        // Delivered shipments cannot be deleted by anyone, regardless of role
+        if ($shipment->status === 'Delivered') {
+            return false;
+        }
+
         return $user->isPICSales();
     }
 
