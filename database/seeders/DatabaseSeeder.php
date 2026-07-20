@@ -719,7 +719,7 @@ class DatabaseSeeder extends Seeder
                 'created',
                 null,
                 'Shipment created',
-                'Shipment created via seeder'
+                'New shipment created with PO: ' . ($shipment->customer_po ?? 'N/A')
             );
 
             // Add status change log for delivered shipments
