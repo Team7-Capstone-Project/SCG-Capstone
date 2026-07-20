@@ -305,6 +305,26 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot class="bg-slate-50 dark:bg-slate-900/80 divide-y divide-slate-200 dark:divide-slate-800 border-t-2 border-slate-200 dark:border-slate-800">
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-3 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ __('Total Product Value') }}</td>
+                                        <td class="px-6 py-3 text-right text-sm font-bold text-slate-800 dark:text-slate-200">
+                                            Rp {{ number_format($shipment->total_products_value, 0, ',', '.') }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-3 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ __('Total Cost Structure') }}</td>
+                                        <td class="px-6 py-3 text-right text-sm font-semibold text-slate-600 dark:text-slate-300">
+                                            + Rp {{ number_format($shipment->total_cost, 0, ',', '.') }}
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-scg-red/5 dark:bg-scg-red/10 border-t-2 border-scg-red/30">
+                                        <td colspan="4" class="px-6 py-4 text-right text-xs font-extrabold text-scg-red dark:text-red-400 uppercase tracking-wider">{{ __('Grand Total (Products + Costs)') }}</td>
+                                        <td class="px-6 py-4 text-right text-base font-extrabold text-scg-red dark:text-red-400">
+                                            Rp {{ number_format($shipment->grand_total, 0, ',', '.') }}
+                                        </td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -316,7 +336,7 @@
                             {{ __('Cost Structure') }}
                         </h3>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
                                 <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{{ __('Shipping Cost') }}</label>
                                 <p class="mt-2 text-base font-semibold text-slate-800 dark:text-slate-200">Rp {{ number_format($shipment->shipping_cost, 0, ',', '.') }}</p>
@@ -329,9 +349,13 @@
                                 <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{{ __('Other Costs') }}</label>
                                 <p class="mt-2 text-base font-semibold text-slate-800 dark:text-slate-200">Rp {{ number_format($shipment->other_costs, 0, ',', '.') }}</p>
                             </div>
-                            <div class="bg-gradient-to-br from-scg-red/5 to-red-500/10 dark:from-scg-red/10 dark:to-transparent p-4 rounded-xl border border-scg-red/20 shadow-sm">
-                                <label class="block text-xs font-bold text-scg-red dark:text-red-400 uppercase tracking-wider">{{ __('Total Cost') }}</label>
-                                <p class="mt-2 text-xl font-extrabold text-scg-red dark:text-red-400">Rp {{ number_format($shipment->total_cost, 0, ',', '.') }}</p>
+                            <div class="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl border border-slate-300/60 dark:border-slate-700/60 shadow-sm">
+                                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{{ __('Total Cost') }}</label>
+                                <p class="mt-2 text-lg font-bold text-slate-900 dark:text-white">Rp {{ number_format($shipment->total_cost, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-scg-red/5 to-red-500/10 dark:from-scg-red/10 dark:to-transparent p-4 rounded-xl border border-scg-red/30 shadow-sm">
+                                <label class="block text-xs font-bold text-scg-red dark:text-red-400 uppercase tracking-wider">{{ __('Grand Total') }}</label>
+                                <p class="mt-2 text-lg font-extrabold text-scg-red dark:text-red-400">Rp {{ number_format($shipment->grand_total, 0, ',', '.') }}</p>
                             </div>
                         </div>
                     </div>

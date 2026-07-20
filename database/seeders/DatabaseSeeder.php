@@ -698,14 +698,48 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
+        $scgPos = [
+            '4200137435', '4200137562', '4200140124', '4200139812',
+            '4200140317', '4200140695', '4200141392', '4200142016',
+            '4200142017', '4200142018', '4200142019', '4200142020',
+            '4200142021', '4200142022', '4200142023', '4200142024', '4200142025'
+        ];
+
+        $scgSos = [
+            '4500002647', '4500002650', '4500002723', '4500002714',
+            '4500002728', '4500002741', '4500002753', '4500002765',
+            '4500002766', '4500002767', '4500002768', '4500002769',
+            '4500002770', '4500002771', '4500002772', '4500002773', '4500002774'
+        ];
+
+        $invoices = [
+            '4187483770', '4187484350', '4187484700', '4187485220',
+            '4187485240', '4187485250', '4187486020', '4187486150',
+            '4187486480', '4187486520', '4187487080', '4187488740',
+            '4187488920', '4187488330', '4187488670', '4187488680', '4187488690'
+        ];
+
+        $customerPos = [
+            '5102228001', '5102252002', '5102333003', '5102490004',
+            '5102667005', '5100064006', '5100215007', '5100217008',
+            '5100217009', '5100217010', '5100217011', '5100217012',
+            '5100217013', '5100217014', '5100217015', '5100217016', '5100217017'
+        ];
+
+        $deliveryNotes = [
+            '4517005264', '4517005263', '4517005287', '4517005288',
+            '4517005352', '4517005348', '4517005349', '4517005350',
+            '4517005354', '4517005355', '4517005353', '4517005331',
+            '4517005328', '4517005336', '4517005337', '4517005329', '4517005382'
+        ];
+
         foreach ($shipments as $index => $shipmentData) {
-            $idx = sprintf('%03d', $index + 1);
-            $shipmentData['customer_po'] = '51-PO2025-' . $idx;
-            $shipmentData['scg_po'] = '42-PO2025-' . $idx;
-            $shipmentData['scg_so'] = '45-SO2025-' . $idx;
-            $shipmentData['supplier_invoice'] = '41-INV2025-' . $idx;
-            $shipmentData['delivery_note_number'] = '45-DN2025-' . $idx;
-            $shipmentData['booking_number'] = 'BKG-2025-' . $idx;
+            $shipmentData['customer_po'] = $customerPos[$index % count($customerPos)];
+            $shipmentData['scg_po'] = $scgPos[$index % count($scgPos)];
+            $shipmentData['scg_so'] = $scgSos[$index % count($scgSos)];
+            $shipmentData['supplier_invoice'] = $invoices[$index % count($invoices)];
+            $shipmentData['delivery_note_number'] = $deliveryNotes[$index % count($deliveryNotes)];
+            $shipmentData['booking_number'] = 'BK-' . sprintf('%03d', $index + 1) . '-2025';
 
             $products = $shipmentData['products'];
             unset($shipmentData['products']);

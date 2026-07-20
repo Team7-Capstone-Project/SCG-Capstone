@@ -176,11 +176,29 @@ class Shipment extends Model
     }
 
     /**
-     * Get total cost
+     * Get total cost (shipping + customs + other)
      */
     public function getTotalCostAttribute(): float
     {
         return (float) ($this->shipping_cost + $this->customs_cost + $this->other_costs);
+    }
+
+    /**
+     * Get total products value (sum of quantity * unit_price)
+     */
+    public function getTotalProductsValueAttribute(): float
+    {
+        return (float) $this->products->sum(function ($product) {
+            return $product->pivot->quantity * $product->pivot->unit_price;
+        });
+    }
+
+    /**
+     * Get grand total (total products value + total cost structure)
+     */
+    public function getGrandTotalAttribute(): float
+    {
+        return $this->total_products_value + $this->total_cost;
     }
 
     /**
