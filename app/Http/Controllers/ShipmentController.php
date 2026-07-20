@@ -327,19 +327,9 @@ class ShipmentController extends Controller
             }
 
             // Log activity (FR-L-01) with full details
-            $creationDetails = [];
-            if (!empty($shipment->customer_po))
-                $creationDetails[] = "Customer PO: {$shipment->customer_po}";
-            if (!empty($shipment->scg_po))
-                $creationDetails[] = "SCG PO: {$shipment->scg_po}";
-            if (!empty($shipment->scg_so))
-                $creationDetails[] = "SCG SO: {$shipment->scg_so}";
-            if (!empty($shipment->booking_number))
-                $creationDetails[] = "Booking: {$shipment->booking_number}";
-            $creationDetails[] = "Type: {$shipment->type}";
-            $creationDetails[] = "Status: {$shipment->status}";
-            if ($shipment->customer)
-                $creationDetails[] = "Customer: {$shipment->customer->name}";
+            $poText = !empty($shipment->customer_po)
+                ? 'Customer PO: ' . $shipment->customer_po
+                : (!empty($shipment->scg_po) ? 'SCG PO: ' . $shipment->scg_po : 'ID: #' . $shipment->id);
 
             ActivityLog::logActivity(
                 Auth::id(),
@@ -347,7 +337,7 @@ class ShipmentController extends Controller
                 'created',
                 null,
                 'Shipment created',
-                'New shipment created with ' . implode(', ', $creationDetails)
+                'New shipment created with ' . $poText
             );
 
             DB::commit();
