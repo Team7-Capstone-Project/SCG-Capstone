@@ -17,10 +17,10 @@
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ __('Supply Chain Management Dashboard') }}</p>
             </div>
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-3">
                 <form id="dashboard-filter-form" action="{{ route('dashboard') }}" method="GET" class="inline-flex items-center">
-                    <select id="dashboard-month-select" name="month" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm cursor-pointer transition-all duration-200">
-                        <option value="">{{ __('All Time') }}</option>
+                    <select id="dashboard-month-select" name="month" onchange="document.getElementById('dashboard-filter-form').submit()" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm cursor-pointer transition-all duration-200">
+                        <option value="">📅 {{ __('All Time') }}</option>
                         @foreach($availableMonths as $m)
                             <option value="{{ $m['value'] }}" {{ request('month') == $m['value'] ? 'selected' : '' }}>
                                 {{ $m['label'] }}
@@ -28,15 +28,6 @@
                         @endforeach
                     </select>
                 </form>
-
-                @can('create', App\Models\Shipment::class)
-                    <a href="{{ route('shipments.create') }}" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-600 dark:to-red-700 hover:from-red-700 hover:to-red-800 dark:hover:from-red-500 dark:hover:to-red-600 text-white font-bold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-md shadow-red-600/10 hover:shadow-lg hover:shadow-red-600/20 transform hover:-translate-y-0.5 text-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        <span>{{ __('Create Shipment') }}</span>
-                    </a>
-                @endcan
             </div>
         </div>
     </x-slot>
@@ -228,6 +219,7 @@
                                 <thead class="bg-slate-50/70 dark:bg-slate-800/40">
                                     <tr>
                                         <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Customer PO') }}</th>
+                                        <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Type') }}</th>
                                         <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Customer') }}</th>
                                         <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Supplier') }}</th>
                                         <th class="px-6 py-3.5 text-left text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ __('Status') }}</th>
@@ -242,6 +234,17 @@
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                                                     {{ $shipment->customer_po ?? 'N/A' }}
                                                 </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @if($shipment->type === 'Export')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-xs">
+                                                        📦 Export
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-xs">
+                                                        🚢 Import
+                                                    </span>
+                                                @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">

@@ -32,11 +32,16 @@ class DashboardController extends Controller
             ->toArray();
 
         $selectedMonth = $request->query('month');
+        $selectedType = $request->query('type');
         $shipmentsQuery = Shipment::query();
 
         if ($selectedMonth && preg_match('/^\d{4}-\d{2}$/', $selectedMonth)) {
             list($year, $monthNum) = explode('-', $selectedMonth);
             $shipmentsQuery->whereYear('etd_port', $year)->whereMonth('etd_port', $monthNum);
+        }
+
+        if ($selectedType && in_array($selectedType, ['Import', 'Export'])) {
+            $shipmentsQuery->where('type', $selectedType);
         }
 
         // Total Shipments
@@ -57,6 +62,10 @@ class DashboardController extends Controller
         // Early Shipments (Delivered and ata_customer < customer_receiving_schedule)
         $earlyShipments = (clone $shipmentsQuery)->early()->count();
 
+        // Import & Export specific counts for summary metrics
+        $importShipmentsCount = (clone $shipmentsQuery)->where('type', 'Import')->count();
+        $exportShipmentsCount = (clone $shipmentsQuery)->where('type', 'Export')->count();
+
         // Calculate On-Time Delivery Rate
         $otdRate = $deliveredShipments > 0 
             ? round((($onTimeShipments + $earlyShipments) / $deliveredShipments) * 100, 1) 
@@ -69,7 +78,7 @@ class DashboardController extends Controller
             ->get();
 
         // Monthly Trend Data (last 6 months)
-        $monthlyData = $this->getMonthlyTrendData();
+        $monthlyData = $this->getMonthlyTrendData($selectedType);
 
         // Shipments by Status
         $shipmentsByStatus = (clone $shipmentsQuery)->select('status', DB::raw('count(*) as count'))
@@ -84,6 +93,8 @@ class DashboardController extends Controller
             'lateShipments',
             'earlyShipments',
             'onTimeShipments',
+            'importShipmentsCount',
+            'exportShipmentsCount',
             'otdRate',
             'recentShipments',
             'monthlyData',
@@ -95,7 +106,7 @@ class DashboardController extends Controller
     /**
      * Get monthly trend data for charts
      */
-    private function getMonthlyTrendData()
+    private function getMonthlyTrendData($type = null)
     {
         $months = [];
         $totalCounts = [];
@@ -109,18 +120,19 @@ class DashboardController extends Controller
 
             $months[] = $date->format('M Y');
 
+            $baseQuery = Shipment::whereBetween('created_at', [$monthStart, $monthEnd]);
+            if ($type && in_array($type, ['Import', 'Export'])) {
+                $baseQuery->where('type', $type);
+            }
+
             // Total shipments in this month
-            $totalCounts[] = Shipment::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+            $totalCounts[] = (clone $baseQuery)->count();
 
             // Delivered shipments in this month
-            $deliveredCounts[] = Shipment::delivered()
-                ->whereBetween('created_at', [$monthStart, $monthEnd])
-                ->count();
+            $deliveredCounts[] = (clone $baseQuery)->delivered()->count();
 
             // On-time shipments in this month
-            $onTimeCounts[] = Shipment::onTime()
-                ->whereBetween('created_at', [$monthStart, $monthEnd])
-                ->count();
+            $onTimeCounts[] = (clone $baseQuery)->onTime()->count();
         }
 
         return [

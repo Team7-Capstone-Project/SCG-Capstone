@@ -47,6 +47,20 @@ class DatabaseSeeder extends Seeder
             'role' => 'pic_sales',
         ]);
 
+        $adminScm3 = User::create([
+            'name' => 'Fahmi Zal',
+            'email' => 'fahmi.scm@scg.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin_scm',
+        ]);
+
+        $picSales3 = User::create([
+            'name' => 'Ve Nissa',
+            'email' => 'venissa.sales@scg.com',
+            'password' => Hash::make('password'),
+            'role' => 'pic_sales',
+        ]);
+
         // Create Customers
         $customers = [
             [
@@ -335,461 +349,229 @@ class DatabaseSeeder extends Seeder
             Product::create($productData);
         }
 
-        // Create Sample Shipments with various OTD scenarios
-        $shipments = [
-            // Shipment 1: On-Time Delivery
-            [
-                'customer_id' => 1,
-                'supplier_id' => 1,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-UNI-2025-001',
-                'scg_po' => 'SCG-2025-001',
-                'booking_number' => 'BK-001-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-01-05',
-                'eta_port' => '2025-01-15',
-                'ata_port' => '2025-01-14',
-                'customer_receiving_schedule' => '2025-01-20',
-                'ata_customer' => '2025-01-18', // Early (2 days early)
-                'shipping_cost' => 15000000,
-                'customs_cost' => 5000000,
-                'other_costs' => 1000000,
-                'products' => [
-                    ['product_id' => 1, 'quantity' => 100, 'unit_price' => 95000],
-                    ['product_id' => 2, 'quantity' => 50, 'unit_price' => 120000],
-                ],
-            ],
-            // Shipment 2: Late Delivery
-            [
-                'customer_id' => 2,
-                'supplier_id' => 1,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-IND-2025-002',
-                'scg_po' => 'SCG-2025-002',
-                'booking_number' => 'BK-002-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-01-10',
-                'eta_port' => '2025-01-20',
-                'ata_port' => '2025-01-22',
-                'customer_receiving_schedule' => '2025-01-25',
-                'ata_customer' => '2025-01-28', // Late
-                'shipping_cost' => 12000000,
-                'customs_cost' => 4000000,
-                'other_costs' => 800000,
-                'products' => [
-                    ['product_id' => 2, 'quantity' => 75, 'unit_price' => 120000],
-                ],
-            ],
-            // Shipment 3: In Transit
-            [
-                'customer_id' => 3,
-                'supplier_id' => 2,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-NES-2025-003',
-                'scg_po' => 'SCG-2025-003',
-                'booking_number' => 'BK-003-2025',
-                'status' => 'In Transit',
-                'etd_port' => '2025-02-01',
-                'eta_port' => '2025-02-10',
-                'ata_port' => '2025-02-09',
-                'customer_receiving_schedule' => '2025-02-15',
-                'ata_customer' => null,
-                'shipping_cost' => 18000000,
-                'customs_cost' => 6000000,
-                'other_costs' => 1200000,
-                'products' => [
-                    ['product_id' => 4, 'quantity' => 200, 'unit_price' => 4500000],
-                ],
-            ],
-            // Shipment 4: Pending
-            [
-                'customer_id' => 1,
-                'supplier_id' => 3,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-UNI-2025-004',
-                'scg_po' => 'SCG-2025-004',
-                'booking_number' => 'BK-004-2025',
-                'status' => 'Pending',
-                'etd_port' => '2025-02-15',
-                'eta_port' => '2025-02-25',
-                'ata_port' => null,
-                'customer_receiving_schedule' => '2025-03-01',
-                'ata_customer' => null,
-                'shipping_cost' => 8000000,
-                'customs_cost' => 2500000,
-                'other_costs' => 500000,
-                'products' => [
-                    ['product_id' => 7, 'quantity' => 500, 'unit_price' => 18000],
-                    ['product_id' => 8, 'quantity' => 20, 'unit_price' => 8500],
-                ],
-            ],
-            // Shipment 5: On-Time Delivery
-            [
-                'customer_id' => 2,
-                'supplier_id' => 2,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-IND-2025-005',
-                'scg_po' => 'SCG-2025-005',
-                'booking_number' => 'BK-005-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-01-20',
-                'eta_port' => '2025-01-30',
-                'ata_port' => '2025-01-29',
-                'customer_receiving_schedule' => '2025-02-05',
-                'ata_customer' => '2025-02-05', // On-time (Ideal)
-                'shipping_cost' => 16000000,
-                'customs_cost' => 5500000,
-                'other_costs' => 1100000,
-                'products' => [
-                    ['product_id' => 5, 'quantity' => 150, 'unit_price' => 12500000],
-                ],
-            ],
-            // Shipment 6: Early Delivery
-            [
-                'customer_id' => 3,
-                'supplier_id' => 1,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-NES-2025-006',
-                'scg_po' => 'SCG-2025-006',
-                'booking_number' => 'BK-006-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-02-10',
-                'eta_port' => '2025-02-20',
-                'ata_port' => '2025-02-19',
-                'customer_receiving_schedule' => '2025-02-28',
-                'ata_customer' => '2025-02-25', // Early (3 days early)
-                'shipping_cost' => 14000000,
-                'customs_cost' => 4500000,
-                'other_costs' => 900000,
-                'products' => [
-                    ['product_id' => 3, 'quantity' => 120, 'unit_price' => 2100000],
-                ],
-            ],
-            // Shipment 7: Late Delivery
-            [
-                'customer_id' => 1,
-                'supplier_id' => 2,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-UNI-2025-007',
-                'scg_po' => 'SCG-2025-007',
-                'booking_number' => 'BK-007-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-02-20',
-                'eta_port' => '2025-03-02',
-                'ata_port' => '2025-03-05',
-                'customer_receiving_schedule' => '2025-03-10',
-                'ata_customer' => '2025-03-15', // Late (5 days late)
-                'shipping_cost' => 17000000,
-                'customs_cost' => 5800000,
-                'other_costs' => 1300000,
-                'products' => [
-                    ['product_id' => 6, 'quantity' => 80, 'unit_price' => 850000],
-                ],
-            ],
-            // Shipment 8: On-Time Delivery
-            [
-                'customer_id' => 3,
-                'supplier_id' => 3,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-NES-2025-008',
-                'scg_po' => 'SCG-2025-008',
-                'booking_number' => 'BK-008-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-02-15',
-                'eta_port' => '2025-02-25',
-                'ata_port' => '2025-02-24',
-                'customer_receiving_schedule' => '2025-03-05',
-                'ata_customer' => '2025-03-05', // On-time (Ideal)
-                'shipping_cost' => 9000000,
-                'customs_cost' => 3000000,
-                'other_costs' => 600000,
-                'products' => [
-                    ['product_id' => 7, 'quantity' => 300, 'unit_price' => 18000],
-                ],
-            ],
-            // Shipment 9: Early Delivery
-            [
-                'customer_id' => 2,
-                'supplier_id' => 3,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-IND-2025-009',
-                'scg_po' => 'SCG-2025-009',
-                'booking_number' => 'BK-009-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-03-25',
-                'eta_port' => '2025-04-05',
-                'ata_port' => '2025-04-04',
-                'customer_receiving_schedule' => '2025-04-12',
-                'ata_customer' => '2025-04-10', // Early (2 days early)
-                'shipping_cost' => 11000000,
-                'customs_cost' => 3800000,
-                'other_costs' => 700000,
-                'products' => [
-                    ['product_id' => 8, 'quantity' => 150, 'unit_price' => 8500],
-                ],
-            ],
-            // Shipment 10: On-Time Delivery
-            [
-                'customer_id' => 1,
-                'supplier_id' => 2,
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-UNI-2025-010',
-                'scg_po' => 'SCG-2025-010',
-                'booking_number' => 'BK-010-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-04-01',
-                'eta_port' => '2025-04-10',
-                'ata_port' => '2025-04-09',
-                'customer_receiving_schedule' => '2025-04-20',
-                'ata_customer' => '2025-04-20', // On-time (Ideal)
-                'shipping_cost' => 15500000,
-                'customs_cost' => 5200000,
-                'other_costs' => 95000,
-                'products' => [
-                    ['product_id' => 1, 'quantity' => 250, 'unit_price' => 95000],
-                ],
-            ],
-            // Shipment 11: On-Time Delivery
-            [
-                'customer_id' => 4, // PT Astra International Tbk
-                'supplier_id' => 4, // Mitsui & Co.
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-AST-2025-011',
-                'scg_po' => 'SCG-2025-011',
-                'booking_number' => 'BK-011-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-04-10',
-                'eta_port' => '2025-04-20',
-                'ata_port' => '2025-04-19',
-                'customer_receiving_schedule' => '2025-04-25',
-                'ata_customer' => '2025-04-24', // Early (1 day early)
-                'shipping_cost' => 22000000,
-                'customs_cost' => 7500000,
-                'other_costs' => 1500000,
-                'products' => [
-                    ['product_id' => 9, 'quantity' => 1000, 'unit_price' => 28000],
-                ],
-            ],
-            // Shipment 12: In Transit
-            [
-                'customer_id' => 5, // Siam Cement Group (SCG)
-                'supplier_id' => 5, // Hanwha Corporation
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-SCG-2025-012',
-                'scg_po' => 'SCG-2025-012',
-                'booking_number' => 'BK-012-2025',
-                'status' => 'In Transit',
-                'etd_port' => '2025-04-15',
-                'eta_port' => '2025-04-25',
-                'ata_port' => '2025-04-24',
-                'customer_receiving_schedule' => '2025-05-01',
-                'ata_customer' => null,
-                'shipping_cost' => 13500000,
-                'customs_cost' => 4500000,
-                'other_costs' => 800000,
-                'products' => [
-                    ['product_id' => 10, 'quantity' => 500, 'unit_price' => 15000],
-                ],
-            ],
-            // Shipment 13: Pending
-            [
-                'customer_id' => 6, // Petronas Chemicals Group
-                'supplier_id' => 6, // BASF SE
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-PET-2025-013',
-                'scg_po' => 'SCG-2025-013',
-                'booking_number' => 'BK-013-2025',
-                'status' => 'Pending',
-                'etd_port' => '2025-05-01',
-                'eta_port' => '2025-05-10',
-                'ata_port' => null,
-                'customer_receiving_schedule' => '2025-05-15',
-                'ata_customer' => null,
-                'shipping_cost' => 19000000,
-                'customs_cost' => 6500000,
-                'other_costs' => 1200000,
-                'products' => [
-                    ['product_id' => 11, 'quantity' => 200, 'unit_price' => 89000],
-                ],
-            ],
-            // Shipment 14: Late Delivery
-            [
-                'customer_id' => 7, // JG Summit Holdings
-                'supplier_id' => 7, // Dow Chemical Company
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-JGS-2025-014',
-                'scg_po' => 'SCG-2025-014',
-                'booking_number' => 'BK-014-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-04-05',
-                'eta_port' => '2025-04-15',
-                'ata_port' => '2025-04-18',
-                'customer_receiving_schedule' => '2025-04-20',
-                'ata_customer' => '2025-04-23', // Late (3 days late)
-                'shipping_cost' => 26000000,
-                'customs_cost' => 9000000,
-                'other_costs' => 2000000,
-                'products' => [
-                    ['product_id' => 12, 'quantity' => 1500, 'unit_price' => 24500],
-                ],
-            ],
-            // Shipment 15: Early Delivery
-            [
-                'customer_id' => 8, // CP Group
-                'supplier_id' => 8, // Formosa Plastics Corporation
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-CPG-2025-015',
-                'scg_po' => 'SCG-2025-015',
-                'booking_number' => 'BK-015-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-04-12',
-                'eta_port' => '2025-04-22',
-                'ata_port' => '2025-04-19',
-                'customer_receiving_schedule' => '2025-04-28',
-                'ata_customer' => '2025-04-24', // Early (4 days early)
-                'shipping_cost' => 15000000,
-                'customs_cost' => 5000000,
-                'other_costs' => 1000000,
-                'products' => [
-                    ['product_id' => 13, 'quantity' => 800, 'unit_price' => 19500],
-                ],
-            ],
-            // Shipment 16: On-Time Delivery
-            [
-                'customer_id' => 9, // PT Semen Indonesia Tbk
-                'supplier_id' => 9, // SABIC
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-SIG-2025-016',
-                'scg_po' => 'SCG-2025-016',
-                'booking_number' => 'BK-016-2025',
-                'status' => 'Delivered',
-                'etd_port' => '2025-04-20',
-                'eta_port' => '2025-04-30',
-                'ata_port' => '2025-04-29',
-                'customer_receiving_schedule' => '2025-05-05',
-                'ata_customer' => '2025-05-05', // On-time
-                'shipping_cost' => 18500000,
-                'customs_cost' => 6000000,
-                'other_costs' => 1100000,
-                'products' => [
-                    ['product_id' => 14, 'quantity' => 1200, 'unit_price' => 22000],
-                ],
-            ],
-            // Shipment 17: In Transit
-            [
-                'customer_id' => 10, // Vinamilk
-                'supplier_id' => 3, // Singapore Trading
-                'created_by_user_id' => $adminScm2->id,
-                'customer_po' => 'PO-VNM-2025-017',
-                'scg_po' => 'SCG-2025-017',
-                'booking_number' => 'BK-017-2025',
-                'status' => 'In Transit',
-                'etd_port' => '2025-04-25',
-                'eta_port' => '2025-05-05',
-                'ata_port' => '2025-05-04',
-                'customer_receiving_schedule' => '2025-05-10',
-                'ata_customer' => null,
-                'shipping_cost' => 11000000,
-                'customs_cost' => 3500000,
-                'other_costs' => 600000,
-                'products' => [
-                    ['product_id' => 7, 'quantity' => 400, 'unit_price' => 18000],
-                ],
-            ],
+        // Create 62 shipments distributed across January - July 2026
+        $monthlyCounts = [
+            '2026-01' => 9,
+            '2026-02' => 8,
+            '2026-03' => 10,
+            '2026-04' => 11,
+            '2026-05' => 10,
+            '2026-06' => 12, // Increased June shipments
+            '2026-07' => 2,  // Only early July shipments (ETD on/before July 4th)
         ];
 
-        $scgPos = [
-            '4200137435', '4200137562', '4200140124', '4200139812',
-            '4200140317', '4200140695', '4200141392', '4200142016',
-            '4200142017', '4200142018', '4200142019', '4200142020',
-            '4200142021', '4200142022', '4200142023', '4200142024', '4200142025'
+        // Specific PO notes and activity logs requested by user
+        $specificNotes = [
+            '5102667005' => ['note' => 'Lembang', 'user' => $adminScm1->id, 'time' => '2026-07-20 16:58:00'],
+            '5102333003' => ['note' => 'Tol Cikampek', 'user' => $adminScm1->id, 'time' => '2026-07-20 16:57:00'],
+            '5102490004' => ['note' => 'Pelabuhan Singapura', 'user' => $adminScm1->id, 'time' => '2026-07-20 16:57:00'],
+            '5100064006' => ['note' => 'Tol Jagorawi', 'user' => $adminScm1->id, 'time' => '2026-07-20 16:57:00'],
+            '5102228001' => ['note' => 'Tegal', 'user' => $adminScm1->id, 'time' => '2026-07-20 16:56:00'],
         ];
 
-        $scgSos = [
-            '4500002647', '4500002650', '4500002723', '4500002714',
-            '4500002728', '4500002741', '4500002753', '4500002765',
-            '4500002766', '4500002767', '4500002768', '4500002769',
-            '4500002770', '4500002771', '4500002772', '4500002773', '4500002774'
+        // Weighted outcomes pool (OnTime, Early with varied days, Late with varied days, In Transit, Pending, Cancelled)
+        $outcomesPool = [
+            ['status' => 'Delivered', 'type_perf' => 'ontime', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'early', 'offset' => -2],
+            ['status' => 'Delivered', 'type_perf' => 'ontime', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'late', 'offset' => 3],
+            ['status' => 'Delivered', 'type_perf' => 'ontime', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'early', 'offset' => -4],
+            ['status' => 'In Transit', 'type_perf' => 'transit', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'ontime', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'late', 'offset' => 5],
+            ['status' => 'Delivered', 'type_perf' => 'early', 'offset' => -1],
+            ['status' => 'Delivered', 'type_perf' => 'ontime', 'offset' => 0],
+            ['status' => 'Pending', 'type_perf' => 'pending', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'ontime', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'early', 'offset' => -3],
+            ['status' => 'Delivered', 'type_perf' => 'late', 'offset' => 2],
+            ['status' => 'Cancelled', 'type_perf' => 'cancelled', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'ontime', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'early', 'offset' => -5],
+            ['status' => 'In Transit', 'type_perf' => 'transit', 'offset' => 0],
+            ['status' => 'Delivered', 'type_perf' => 'late', 'offset' => 7],
         ];
 
-        $invoices = [
-            '4187483770', '4187484350', '4187484700', '4187485220',
-            '4187485240', '4187485250', '4187486020', '4187486150',
-            '4187486480', '4187486520', '4187487080', '4187488740',
-            '4187488920', '4187488330', '4187488670', '4187488680', '4187488690'
-        ];
+        $types = ['Import', 'Export'];
+        $salesUsers = [$picSales1, $picSales2, $picSales3];
+        $scmUsers = [$adminScm1, $adminScm2, $adminScm3];
 
-        $customerPos = [
-            '5102228001', '5102252002', '5102333003', '5102490004',
-            '5102667005', '5100064006', '5100215007', '5100217008',
-            '5100217009', '5100217010', '5100217011', '5100217012',
-            '5100217013', '5100217014', '5100217015', '5100217016', '5100217017'
-        ];
+        $usedCustomerPos = [];
+        $usedScgPos = [];
+        $usedScgSos = [];
+        $usedInvoices = [];
+        $usedDeliveryNotes = [];
 
-        $deliveryNotes = [
-            '4517005264', '4517005263', '4517005287', '4517005288',
-            '4517005352', '4517005348', '4517005349', '4517005350',
-            '4517005354', '4517005355', '4517005353', '4517005331',
-            '4517005328', '4517005336', '4517005337', '4517005329', '4517005382'
-        ];
+        $shipmentCounter = 0;
 
-        foreach ($shipments as $index => $shipmentData) {
-            $salesUser = ($index % 2 === 0) ? $picSales1 : $picSales2;
-            $scmUser = ($index % 2 === 0) ? $adminScm1 : $adminScm2;
+        foreach ($monthlyCounts as $yearMonth => $countInMonth) {
+            for ($i = 1; $i <= $countInMonth; $i++) {
+                $shipmentCounter++;
 
-            $shipmentData['created_by_user_id'] = $salesUser->id;
-            $shipmentData['customer_po'] = $customerPos[$index % count($customerPos)];
-            $shipmentData['scg_po'] = $scgPos[$index % count($scgPos)];
-            $shipmentData['scg_so'] = $scgSos[$index % count($scgSos)];
-            $shipmentData['supplier_invoice'] = $invoices[$index % count($invoices)];
-            $shipmentData['delivery_note_number'] = $deliveryNotes[$index % count($deliveryNotes)];
-            $shipmentData['booking_number'] = 'BK-' . sprintf('%03d', $index + 1) . '-2025';
+                $salesUser = $salesUsers[($shipmentCounter - 1) % count($salesUsers)];
+                $scmUser = $scmUsers[($shipmentCounter - 1) % count($scmUsers)];
+                $customerId = (($shipmentCounter - 1) % count($customers)) + 1;
+                $supplierId = (($shipmentCounter - 1) % count($suppliers)) + 1;
 
-            $products = $shipmentData['products'];
-            unset($shipmentData['products']);
+                // Dates calculation (July shipments capped at July 4 ETD so no schedule reaches August)
+                if ($yearMonth === '2026-07') {
+                    $dayStart = sprintf('%02d', min($i * 2, 4));
+                    $etdPort = "{$yearMonth}-{$dayStart}";
+                    $etaPort = date('Y-m-d', strtotime("{$etdPort} +4 days"));
+                    $customerSchedule = date('Y-m-d', strtotime("{$etdPort} +10 days"));
+                } else {
+                    $dayStart = sprintf('%02d', min($i * 2 + 1, 27));
+                    $etdPort = "{$yearMonth}-{$dayStart}";
+                    $etaPort = date('Y-m-d', strtotime("{$etdPort} +7 days"));
+                    $customerSchedule = date('Y-m-d', strtotime("{$etdPort} +15 days"));
+                }
 
-            $shipment = Shipment::create($shipmentData);
+                $outcome = $outcomesPool[($shipmentCounter - 1) % count($outcomesPool)];
+                $status = $outcome['status'];
+                $type = $types[($shipmentCounter - 1) % count($types)];
 
-            // Attach products (quantities adjusted so subtotals & grand totals stay in Ratusan Juta range: 100jt - 900jt)
-            foreach ($products as $productData) {
-                $productModel = Product::find($productData['product_id']);
+                $ataPort = null;
+                $ataCustomer = null;
+
+                if ($status === 'Delivered') {
+                    $ataPort = date('Y-m-d', strtotime("{$etdPort} +6 days"));
+                    $offset = $outcome['offset'];
+                    $ataCustomer = date('Y-m-d', strtotime("{$customerSchedule} {$offset} days"));
+                } elseif ($status === 'In Transit') {
+                    $ataPort = date('Y-m-d', strtotime("{$etdPort} +6 days"));
+                }
+
+                // Document numbers (customer PO starting with 51, SCG PO starting with 42, SCG SO starting with 45)
+                if ($shipmentCounter === 1) {
+                    $customerPo = '5102228001';
+                } elseif ($shipmentCounter === 2) {
+                    $customerPo = '5102252002';
+                } elseif ($shipmentCounter === 3) {
+                    $customerPo = '5102333003';
+                } elseif ($shipmentCounter === 4) {
+                    $customerPo = '5102490004';
+                } elseif ($shipmentCounter === 5) {
+                    $customerPo = '5102667005';
+                } elseif ($shipmentCounter === 6) {
+                    $customerPo = '5100064006';
+                } else {
+                    do {
+                        $customerPo = '510' . sprintf('%07d', rand(1000000, 9999999));
+                    } while (in_array($customerPo, $usedCustomerPos));
+                }
+                $usedCustomerPos[] = $customerPo;
+
+                do {
+                    $scgPo = '420' . sprintf('%07d', rand(1000000, 9999999));
+                } while (in_array($scgPo, $usedScgPos));
+                $usedScgPos[] = $scgPo;
+
+                do {
+                    $scgSo = '450' . sprintf('%07d', rand(1000000, 9999999));
+                } while (in_array($scgSo, $usedScgSos));
+                $usedScgSos[] = $scgSo;
+
+                do {
+                    $invoice = '418' . sprintf('%07d', rand(1000000, 9999999));
+                } while (in_array($invoice, $usedInvoices));
+                $usedInvoices[] = $invoice;
+
+                do {
+                    $deliveryNote = '451' . sprintf('%07d', rand(1000000, 9999999));
+                } while (in_array($deliveryNote, $usedDeliveryNotes));
+                $usedDeliveryNotes[] = $deliveryNote;
+
+                $bookingNumber = 'BK-' . sprintf('%03d', $shipmentCounter) . '-2026';
+
+                // Check note for specific POs
+                $note = isset($specificNotes[$customerPo]) ? $specificNotes[$customerPo]['note'] : null;
+
+                $shipment = Shipment::create([
+                    'customer_id' => $customerId,
+                    'supplier_id' => $supplierId,
+                    'created_by_user_id' => $salesUser->id,
+                    'type' => $type,
+                    'customer_po' => $customerPo,
+                    'scg_po' => $scgPo,
+                    'scg_so' => $scgSo,
+                    'booking_number' => $bookingNumber,
+                    'supplier_invoice' => $invoice,
+                    'delivery_note_number' => $deliveryNote,
+                    'status' => $status,
+                    'etd_port' => $etdPort,
+                    'eta_port' => $etaPort,
+                    'ata_port' => $ataPort,
+                    'customer_receiving_schedule' => $customerSchedule,
+                    'ata_customer' => $ataCustomer,
+                    'shipping_cost' => rand(10, 20) * 1000000,
+                    'customs_cost' => rand(3, 8) * 1000000,
+                    'other_costs' => rand(5, 15) * 100000,
+                    'notes' => $note,
+                    'created_at' => "{$etdPort} 09:00:00",
+                    'updated_at' => "{$etdPort} 09:00:00",
+                ]);
+
+                // Attach product so total cost is in > 100jt range
+                $productId = (($shipmentCounter - 1) % 8) + 1;
+                $productModel = Product::find($productId);
                 $unitPrice = $productModel ? $productModel->unit_price : 150000000;
-                $quantity = min($productData['quantity'], 2);
-                $shipment->products()->attach($productData['product_id'], [
-                    'quantity' => $quantity,
+                $shipment->products()->attach($productId, [
+                    'quantity' => rand(1, 2),
                     'unit_price' => $unitPrice,
                 ]);
-            }
 
-            // Create activity log for creation (always PIC Sales)
-            ActivityLog::logActivity(
-                $salesUser->id,
-                $shipment->id,
-                'created',
-                null,
-                'Shipment created',
-                'New shipment created with PO: ' . ($shipment->customer_po ?? 'N/A')
-            );
+                // Creation Log (Sales)
+                ActivityLog::create([
+                    'user_id' => $salesUser->id,
+                    'shipment_id' => $shipment->id,
+                    'action' => 'created',
+                    'old_value' => null,
+                    'new_value' => 'Shipment created',
+                    'description' => 'New shipment created with PO: ' . $customerPo,
+                    'created_at' => "{$etdPort} 09:00:00",
+                    'updated_at' => "{$etdPort} 09:00:00",
+                ]);
 
-            // Add status change log for delivered/in-transit shipments (always Admin SCM)
-            if (in_array($shipment->status, ['Delivered', 'In Transit'])) {
-                ActivityLog::logActivity(
-                    $scmUser->id,
-                    $shipment->id,
-                    'updated_status',
-                    'Pending',
-                    $shipment->status,
-                    'Status changed to ' . $shipment->status
-                );
+                // Status Update Log (SCM)
+                if (in_array($status, ['Delivered', 'In Transit'])) {
+                    ActivityLog::create([
+                        'user_id' => $scmUser->id,
+                        'shipment_id' => $shipment->id,
+                        'action' => 'updated_status',
+                        'old_value' => 'Pending',
+                        'new_value' => $status,
+                        'description' => 'Status changed to ' . $status,
+                        'created_at' => "{$etdPort} 14:00:00",
+                        'updated_at' => "{$etdPort} 14:00:00",
+                    ]);
+                }
+
+                // Specific Note Log (Agung Tanjung)
+                if (isset($specificNotes[$customerPo])) {
+                    $noteData = $specificNotes[$customerPo];
+                    ActivityLog::create([
+                        'user_id' => $noteData['user'],
+                        'shipment_id' => $shipment->id,
+                        'action' => 'updated',
+                        'old_value' => null,
+                        'new_value' => $noteData['note'],
+                        'description' => 'Notes: (empty) → ' . $noteData['note'],
+                        'created_at' => $noteData['time'],
+                        'updated_at' => $noteData['time'],
+                    ]);
+                }
             }
         }
 
         $this->command->info('Database seeded successfully!');
         $this->command->info('');
         $this->command->info('Test Users:');
-        $this->command->info('Admin SCM 1: admin.scm@scg.com / password');
-        $this->command->info('Admin SCM 2: budi.scm@scg.com / password');
-        $this->command->info('PIC Sales 1: siti.sales@scg.com / password');
-        $this->command->info('PIC Sales 2: ahmad.sales@scg.com / password');
+        $this->command->info('Admin SCM 1: admin.scm@scg.com / password (Agung Tanjung)');
+        $this->command->info('Admin SCM 2: budi.scm@scg.com / password (Budi Santoso)');
+        $this->command->info('Admin SCM 3: fahmi.scm@scg.com / password (Fahmi Zal)');
+        $this->command->info('PIC Sales 1: siti.sales@scg.com / password (Siti Nurhaliza)');
+        $this->command->info('PIC Sales 2: ahmad.sales@scg.com / password (Ahmad Wijaya)');
+        $this->command->info('PIC Sales 3: venissa.sales@scg.com / password (Ve Nissa)');
     }
 }
