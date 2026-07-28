@@ -157,27 +157,30 @@
                                     <label for="shipping_cost" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
                                         {{ __('Shipping Cost') }}
                                     </label>
-                                    <input type="number" step="0.01" name="shipping_cost" id="shipping_cost"
+                                    <input type="text" name="shipping_cost" id="shipping_cost"
                                         value="{{ old('shipping_cost', $shipment->shipping_cost) }}"
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        data-max="999999999.99"
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 price-input">
                                 </div>
  
                                 <div>
                                     <label for="customs_cost" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
                                         {{ __('Customs Cost') }}
                                     </label>
-                                    <input type="number" step="0.01" name="customs_cost" id="customs_cost"
+                                    <input type="text" name="customs_cost" id="customs_cost"
                                         value="{{ old('customs_cost', $shipment->customs_cost) }}"
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        data-max="999999999.99"
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 price-input">
                                 </div>
  
                                 <div>
                                     <label for="other_costs" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
                                         {{ __('Other Costs') }}
                                     </label>
-                                    <input type="number" step="0.01" name="other_costs" id="other_costs"
+                                    <input type="text" name="other_costs" id="other_costs"
                                         value="{{ old('other_costs', $shipment->other_costs) }}"
-                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                        data-max="999999999.99"
+                                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 price-input">
                                 </div>
                             </div>
                         </div>

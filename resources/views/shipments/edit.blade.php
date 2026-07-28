@@ -278,27 +278,30 @@
                                 <label for="shipping_cost" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
                                     Shipping Cost
                                 </label>
-                                <input type="number" step="0.01" name="shipping_cost" id="shipping_cost"
+                                <input type="text" name="shipping_cost" id="shipping_cost"
                                     value="{{ old('shipping_cost', $shipment->shipping_cost) }}"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    data-max="999999999.99"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 price-input">
                             </div>
 
                             <div>
                                 <label for="customs_cost" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
                                     Customs Cost
                                 </label>
-                                <input type="number" step="0.01" name="customs_cost" id="customs_cost"
+                                <input type="text" name="customs_cost" id="customs_cost"
                                     value="{{ old('customs_cost', $shipment->customs_cost) }}"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    data-max="999999999.99"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 price-input">
                             </div>
 
                             <div>
                                 <label for="other_costs" class="block text-sm font-medium text-scg-gray-dark dark:text-gray-300 mb-2">
                                     Other Costs
                                 </label>
-                                <input type="number" step="0.01" name="other_costs" id="other_costs"
+                                <input type="text" name="other_costs" id="other_costs"
                                     value="{{ old('other_costs', $shipment->other_costs) }}"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50">
+                                    data-max="999999999.99"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 price-input">
                             </div>
                         </div>
 
@@ -336,8 +339,9 @@
                                     </div>
                                     <div class="col-span-5 md:col-span-3">
                                         <label class="block text-xs font-medium text-gray-500 mb-1">Unit Price (IDR)</label>
-                                        <input type="number" step="0.01" name="products[{{ $index }}][unit_price]" id="price_{{ $index }}" value="{{ $product->pivot->unit_price }}" placeholder="Price" min="0" required
-                                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-price">
+                                        <input type="text" name="products[{{ $index }}][unit_price]" id="price_{{ $index }}" value="{{ $product->pivot->unit_price }}" placeholder="Price" required
+                                            data-max="999999999999.99"
+                                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-price price-input">
                                     </div>
                                     <div class="col-span-2 md:col-span-1 flex items-end pb-3">
                                         <button type="button" onclick="removeProductRow(this)" title="Remove" class="remove-product text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-bold p-1">
@@ -410,8 +414,9 @@
                 </div>
                 <div class="col-span-5 md:col-span-3">
                     <label class="block text-xs font-medium text-gray-500 mb-1">Unit Price (IDR)</label>
-                    <input type="number" step="0.01" name="products[${productIndex}][unit_price]" id="price_${productIndex}" placeholder="Price" min="0" required
-                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-price">
+                    <input type="text" name="products[${productIndex}][unit_price]" id="price_${productIndex}" placeholder="Price" required
+                        data-max="999999999999.99"
+                        class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-scg-red focus:ring focus:ring-scg-red focus:ring-opacity-50 product-price price-input">
                 </div>
                 <div class="col-span-2 md:col-span-1 flex items-end pb-3">
                     <button type="button" onclick="removeProductRow(this)" title="Remove" class="remove-product text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-bold p-1">
@@ -431,6 +436,7 @@
             const priceInput = document.getElementById('price_' + index);
             if (price && priceInput) {
                 priceInput.value = price;
+                priceInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }
 

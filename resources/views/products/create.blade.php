@@ -160,9 +160,10 @@
                                             <div class="px-4 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 font-bold text-scg-red">
                                                 Rp
                                             </div>
-                                            <input type="number" step="0.01" name="unit_price" id="unit_price" value="{{ old('unit_price') }}" required
-                                                class="w-full border-none focus:ring-0 py-3 px-4 text-gray-900 dark:text-white font-bold"
-                                                placeholder="0.00">
+                                            <input type="text" name="unit_price" id="unit_price" value="{{ old('unit_price') }}" required
+                                                class="w-full border-none focus:ring-0 py-3 px-4 text-gray-900 dark:text-white font-bold price-input"
+                                                data-max="999999999999.99"
+                                                placeholder="0">
                                         </div>
                                         @error('unit_price')
                                             <p class="text-red-500 text-sm mt-1">❌ {{ $message }}</p>

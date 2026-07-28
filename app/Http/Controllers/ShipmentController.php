@@ -166,6 +166,7 @@ class ShipmentController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', Shipment::class);
+        $this->cleanPriceInputs($request);
 
         // Validation
         $validated = $request->validate([
@@ -394,6 +395,7 @@ class ShipmentController extends Controller
     public function update(Request $request, Shipment $shipment)
     {
         $this->authorize('update', $shipment);
+        $this->cleanPriceInputs($request);
 
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
@@ -604,6 +606,7 @@ class ShipmentController extends Controller
     public function updateStatus(Request $request, Shipment $shipment)
     {
         $this->authorize('updateStatus', $shipment);
+        $this->cleanPriceInputs($request);
         $validated = $request->validate([
             'status' => 'required|in:Pending,In Transit,Delivered,Cancelled',
             'ata_port' => [
@@ -901,5 +904,32 @@ class ShipmentController extends Controller
             $newStatus,
             $description
         );
+    }
+
+    protected function cleanPriceInputs(Request $request)
+    {
+        // Fields to clean: shipping_cost, customs_cost, other_costs
+        foreach (['shipping_cost', 'customs_cost', 'other_costs'] as $field) {
+            if ($request->has($field) && is_string($request->input($field))) {
+                $value = $request->input($field);
+                $value = str_replace('.', '', $value);
+                $value = str_replace(',', '.', $value);
+                $request->merge([$field => $value]);
+            }
+        }
+
+        // Clean products.*.unit_price
+        if ($request->has('products') && is_array($request->input('products'))) {
+            $products = $request->input('products');
+            foreach ($products as $index => $product) {
+                if (isset($product['unit_price']) && is_string($product['unit_price'])) {
+                    $value = $product['unit_price'];
+                    $value = str_replace('.', '', $value);
+                    $value = str_replace(',', '.', $value);
+                    $products[$index]['unit_price'] = $value;
+                }
+            }
+            $request->merge(['products' => $products]);
+        }
     }
 }

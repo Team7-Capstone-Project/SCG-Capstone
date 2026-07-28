@@ -29,6 +29,8 @@ class ProductController extends Controller
     {
         $this->authorize('create', Product::class);
         
+        $this->cleanPriceInputs($request);
+        
         $validated = $request->validate([
             'sku' => 'required|string|min:3|max:30|regex:/^[a-zA-Z0-9\-_]+$/|unique:products,sku',
             'name' => 'required|string|min:3|max:100|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/\+]+$/',
@@ -99,6 +101,8 @@ class ProductController extends Controller
     {
         $this->authorize('update', $product);
         
+        $this->cleanPriceInputs($request);
+        
         $validated = $request->validate([
             'sku' => 'required|string|min:3|max:30|regex:/^[a-zA-Z0-9\-_]+$/|unique:products,sku,' . $product->id,
             'name' => 'required|string|min:3|max:100|regex:/^[a-zA-Z0-9\s\.,&\'\-\(\)\/\+]+$/',
@@ -155,5 +159,15 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')
             ->with('success', 'Product deleted successfully!');
+    }
+
+    protected function cleanPriceInputs(Request $request)
+    {
+        if ($request->has('unit_price') && is_string($request->input('unit_price'))) {
+            $value = $request->input('unit_price');
+            $value = str_replace('.', '', $value);
+            $value = str_replace(',', '.', $value);
+            $request->merge(['unit_price' => $value]);
+        }
     }
 }
